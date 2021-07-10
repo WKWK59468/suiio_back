@@ -3,7 +3,8 @@
     "version": "0.0.0",
     "private": true,
     "scripts": {
-        "start": "nodemon node ./app.js"
+        "start": "nodemon node ./app.js",
+        "sendemail": "node ./models/email.js"
     },
     "dependencies": {
         "cookie-parser": "~1.4.4",
@@ -13,6 +14,7 @@
         "morgan": "~1.9.1",
         "multer": "^1.4.2",
         "mysql": "^2.18.1",
+        "nodemailer": "^6.6.2",
         "nodemon": "^2.0.9"
     }
 }
