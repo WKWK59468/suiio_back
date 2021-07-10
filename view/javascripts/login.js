@@ -12,7 +12,7 @@ $('#login').click(function() {
         success: function(data_in) {
             if (data_in[0].num > 0) {
                 alert("登入成功");
-                document.location.href = `../change.html?sID=${sID}`;
+                document.location.href = `./change.html?sID=${sID}`;
             } else {
                 alert("帳號或密碼輸入錯誤");
             }
