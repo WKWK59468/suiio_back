@@ -30,7 +30,11 @@ exports.delete = (req, res) => {
     });
 };
 
-// fetch all officers
+/***************
+ *    fetch    *
+ ***************/
+
+// fetch all officer
 exports.fetchAll = (req, res) => {
     Officer.fetchAll(req, (error, results) => {
         if (error)
@@ -41,9 +45,46 @@ exports.fetchAll = (req, res) => {
     });
 };
 
-// update officer
-exports.update = (req, res) => {
-    Officer.update(req, (error, results) => {
+// fetch by position
+exports.fetchByPosition = (req, res) => {
+    Officer.fetchByPosition(req, (error, results) => {
+        if (error)
+            return sendErrorMsg(res, 500, error);
+        if (!results.length)
+            return sendErrorMsg(res, 404, "There is nothing to show.");
+        res.send(results);
+    });
+};
+
+// fetch by authority
+exports.fetchByAuthority = (req, res) => {
+    Officer.fetchByAuthority(req, (error, results) => {
+        if (error)
+            return sendErrorMsg(res, 500, error);
+        if (!results.length)
+            return sendErrorMsg(res, 404, "There is nothing to show.");
+        res.send(results);
+    });
+};
+
+/****************
+ *    update    *
+ ****************/
+
+// update officer by position
+exports.updateOfficer = (req, res) => {
+    Officer.updateOfficer(req, (error, results) => {
+        if (error)
+            return sendErrorMsg(res, 500, error);
+        if (!results.affectedRows)
+            return sendErrorMsg(res, 404, "The condition is not exist.");
+        res.send(results);
+    });
+};
+
+// update authority by position
+exports.updateAuthorities = (req, res) => {
+    Officer.updateAuthority(req, (error, results) => {
         if (error)
             return sendErrorMsg(res, 500, error);
         if (!results.affectedRows)

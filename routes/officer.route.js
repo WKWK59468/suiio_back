@@ -1,12 +1,15 @@
 const officers = require("../controllers/officer.controller.js");
 const router = require("express").Router();
 
-// add officer
+// add
 router.route("/add").post(officers.add);
-// delete officer
+// delete
 router.route("/delete").post(officers.delete);
-// list officer
-router.route("/fetchAll").post(officers.fetchAll);
-// update officer
-router.route("/update").post(officers.update);
+// fetch
+router.route("/fetch/all").get(officers.fetchAll);
+router.route("/fetch/position/:position").get(officers.fetchByPosition);
+router.route("/fetch/authority/:authority").get(officers.fetchByAuthority);
+// update
+router.route("/update/officer").post(officers.updateOfficer);
+router.route("/update/authorities").post(officers.updateAuthorities);
 module.exports = router;
