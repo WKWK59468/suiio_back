@@ -5,29 +5,53 @@ class categoryController {
     addCategory = (req, res) => {
         models.add(req, (err, results) => {
             if (err) {
-                res.sendStatus(500);
+                res.status(500).json({ "result": "false" });
                 return console.error(err);
             }
 
-            res.json(results.insertId);
+            res.json({ "result": "true" });
         })
     }
-    patchCategory = (req, res) => {
-        models.patch(req, function(err, results, fields) {
+    listCategory = (req, res) => {
+        models.list(req, (err, results) => {
             if (err) {
-                res.sendStatus(500);
+                res.status(500).json({ "result": "false" })
+                return console.error(err);
+            }
+            if (!results.length) {
+                res.status(404).json({ "result": "false" });
+                console.log(err);
+                return;
+            }
+            res.json(results);
+        });
+    }
+    delCategory = (req, res) => {
+        models.del(req, (err, results) => {
+            if (err) {
+                res.status(500).json({ "result": "false" });
+                return console.error(err);
+            }
+
+            res.json({ "result": "true" });
+        })
+    }
+    patchStatus = (req, res) => {
+        models.setStatus(req, function(err, results, fields) {
+            if (err) {
+                res.status(500).json({ "result": "false" });
                 return console.error(err);
             }
 
             if (!results.affectedRows) {
-                res.sendStatus(410);
+                res.status(404).json({ "result": "false" });
                 console.log(err);
                 return;
             }
-
-            res.json(req.body);
+            res.status(200).json({ "result": "true" });
         });
     }
+
 
 }
 
