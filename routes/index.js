@@ -9,7 +9,6 @@ const officer = require('./officer.route');
 router.use('/user', user);
 router.use('/account', account);
 router.use('/category', category);
-// officers
 router.use('/officers', officer);
 
 module.exports = router;
