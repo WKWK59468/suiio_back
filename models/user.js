@@ -31,8 +31,9 @@ module.exports = {
         let sex = jsonObj.sex;
         let birth = jsonObj.birth;
         let phone = jsonObj.phone;
+        let nickname = jsonObj.nickname;
 
-        sql = mysql.format('INSERT INTO user(sID,password,name,sex,birth,phone) VALUES(?,?,?,?,?,?)', [sID, password, name, sex, birth, phone]);
+        sql = mysql.format('INSERT INTO user(sID,password,name,nickname,sex,birth,phone) VALUES(?,?,?,?,?,?)', [sID, password, name, nickname, sex, birth, phone]);
         return conn.query(sql, callback);
     },
     del: (req, callback) => {
