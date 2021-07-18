@@ -11,5 +11,5 @@ router.route("/fetch/position/:position").get(officers.fetchByPosition);
 router.route("/fetch/authority/:authority").get(officers.fetchByAuthority);
 // update
 router.route("/update/officer").post(officers.updateOfficer);
-router.route("/update/authorities").post(officers.updateAuthorities);
+router.route("/update/authorities").post(officers.updateAuthory);
 module.exports = router;
