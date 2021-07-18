@@ -6,11 +6,9 @@ let sql = '';
 
 module.exports = {
     add: (req, callback) => {
-        let arr = JSON.parse(req.body.params);
-        let name = arr.name;
-        let status = arr.status;
-
-        console.log(name);
+        let body = req.body;
+        let name = body.name;
+        let status = '0';
 
         sql = mysql.format('INSERT INTO category(name,status) VALUES(?,?)', [name, status]);
         return conn.query(sql, callback);
