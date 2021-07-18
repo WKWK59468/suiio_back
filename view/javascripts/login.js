@@ -6,11 +6,11 @@ $('#login').click(function() {
         type: "post",
         dataType: 'json',
         async: true,
-        // data: { 'sID': acc },
-        data: { 'sID': sID, 'pwd': pwd },
+        data: { 'sID': sID, 'password': pwd },
         url: 'http://127.0.0.1:3000/api/user/login',
         success: function(data_in) {
-            if (data_in[0].num > 0) {
+            console.log(data_in);
+            if (data_in.result) {
                 alert("登入成功");
                 document.location.href = `./change.html?sID=${sID}`;
             } else {
