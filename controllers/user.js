@@ -1,23 +1,11 @@
 let models = require('../models/user');
+const bcrypt = require('bcrypt');
 
 class UserController {
-    testUser = (req, res) => {
-            models.test(req, (err, results) => {
-                if (err) {
-                    res.sendStatus(500);
-                    return console.error(err);
-                }
-                if (!results.length) {
-                    res.sendStatus(404);
-                    console.log(err);
-                    return;
-                }
-                res.json(results);
-            })
-        }
-        //查證帳號密碼是否正確
+
+    //查證帳號密碼是否正確
     getLogin = (req, res) => {
-            models.check(req, (err, results) => {
+            models.check(req, async(err, results) => {
                 if (err) {
                     res.sendStatus(500);
                     return console.error(err);
@@ -27,7 +15,8 @@ class UserController {
                     console.log(err);
                     return;
                 }
-                res.json(results);
+                const validPassword2 = await bcrypt.compare(req.body.password, results[0].password);
+                res.json({ "result": validPassword2 });
             })
         }
         //取得單一user
@@ -73,20 +62,30 @@ class UserController {
         }
         //刪除user
     delUser = (req, res) => {
-            models.del(req, (err, results) => {
+            models.check(req, async(err, results) => {
                 if (err) {
                     res.sendStatus(500);
                     return console.error(err);
                 }
-
-                if (!results.affectedRows) {
-                    res.sendStatus(404);
+                if (!results.length) {
+                    res.status(404).json({ "result": "User Not Found" });
                     console.log(err);
                     return;
                 }
+                const validPassword2 = await bcrypt.compare(req.body.password, results[0].password);
+                if (validPassword2) {
+                    models.del(req, (err, results) => {
+                        if (err) {
+                            res.sendStatus(500);
+                            return console.error(err);
+                        }
+                        res.json({ 'result': 'true' });
+                    });
+                } else {
+                    res.json({ 'result': 'Password ERROR' });
+                }
+            });
 
-                res.json({ 'result': 'true' });
-            })
         }
         //修改user資訊
     patchUser = (req, res) => {

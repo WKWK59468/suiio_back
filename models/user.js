@@ -1,18 +1,39 @@
-const { json } = require('express');
 let mysql = require('mysql');
 let conf = require('../conf');
+const bcrypt = require('bcrypt');
 
 let conn = mysql.createConnection(conf.db);
 let sql = '';
 
+function rand(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+let num = () => String.fromCharCode(rand(48, 57));
+let up = () => String.fromCharCode(rand(65, 90));
+let low = () => String.fromCharCode(rand(97, 122));
+
+//隨機碼
+function pwd_rand() {
+    let str = "";
+    for (let i = 0; i < 8; i++) {
+        switch (rand(1, 3)) {
+            case 1:
+                str += num();
+                break;
+            case 2:
+                str += up();
+                break;
+            case 3:
+                str += low();
+                break;
+        }
+    }
+    return str;
+}
 module.exports = {
-    test: (req, callback) => {
-
-        console.log(JSON.parse(req.body.js));
-
-    },
     check: (req, callback) => {
-        sql = mysql.format('SELECT COUNT(*) AS num FROM user WHERE sID=? AND password=?', [req.body.sID, req.body.pwd]);
+        sql = mysql.format('SELECT password FROM user WHERE sID=?', [req.body.sID]);
         return conn.query(sql, callback);
     },
     find: (req, callback) => {
@@ -23,21 +44,22 @@ module.exports = {
         sql = mysql.format('SELECT sID,name,sex,birth,phone FROM user');
         return conn.query(sql, callback);
     },
-    add: (req, callback) => {
-        let jsonObj = JSON.parse(req.body.params);
-        let sID = jsonObj.sID;
-        let password = jsonObj.password;
-        let name = jsonObj.name;
-        let sex = jsonObj.sex;
-        let birth = jsonObj.birth;
-        let phone = jsonObj.phone;
+    add: async(req, callback) => {
+        let sID = req.body.sID;
+        let name = "姓名";
+        let nickname = "暱稱";
+        let sex = "男";
+        let birth = "2021-07-14";
+        let phone = "0912345678";
 
-        sql = mysql.format('INSERT INTO user(sID,password,name,sex,birth,phone) VALUES(?,?,?,?,?,?)', [sID, password, name, sex, birth, phone]);
+        let salt = await bcrypt.genSalt(10);
+        let password = await bcrypt.hash("12345678", salt)
+
+        sql = mysql.format('INSERT INTO user(sID,password,name,nickname,sex,birth,phone) VALUES(?,?,?,?,?,?,?)', [sID, password, name, nickname, sex, birth, phone]);
         return conn.query(sql, callback);
     },
     del: (req, callback) => {
-        console.log(req.body);
-        sql = mysql.format('DELETE FROM user WHERE sID = ? AND password = ?', [req.body.sID, req.body.password]);
+        sql = mysql.format('DELETE FROM user WHERE sID = ?', [req.body.sID]);
         return conn.query(sql, callback);
     },
     patch: (req, callback) => {
