@@ -1,22 +1,22 @@
-const models = require('../models/conference');
+const models = require("../models/conference");
 
 const errMessage = (status, err) => {
     if (status == 500) {
-        return { "result": err }
+        return { result: err };
     }
     if (status == 404) {
-        return { "result": "Not Found" }
+        return { result: "Not Found" };
     }
     if (status == 401) {
-        return { "result": "err" }
+        return { result: "err" };
     }
     if (status == 403) {
-        return { "result": "UPDATE ERROR" }
+        return { result: "UPDATE ERROR" };
     }
-}
+};
 const successMessage = {
-    "result": "true"
-}
+    result: "true",
+};
 
 class Conference {
     list = (req, res) => {
@@ -30,8 +30,9 @@ class Conference {
                 return console.error(err);
             }
             res.status(200).json(results);
-        })
-    }
+        });
+    };
+
     fetchCategory = (req, res) => {
         models.fetchBycategory(req, (err, results) => {
             if (err) {
@@ -43,8 +44,9 @@ class Conference {
                 return console.error(err);
             }
             res.status(200).json(results);
-        })
-    }
+        });
+    };
+
     fetchContent = (req, res) => {
         models.fetchOne(req, (err, results) => {
             if (err) {
@@ -56,21 +58,51 @@ class Conference {
                 return console.error(err);
             }
             res.status(200).json(results);
-        })
-    }
+        });
+    };
+
     upload = (req, res) => {
-        models.upload(req, (err, results) => {
-            if (err) {
-                res.status(500).json(errMessage(500, err));
-                return console.error(err);
-            }
-            if (!results.affectedRows) {
-                res.status(404).json(errMessage(401, err));
-                return console.error(err);
-            }
-            res.status(200).json(successMessage);
-        })
-    }
+        // models.upload(req, (err, results) => {
+        //   if (err) {
+        //     res.status(500).json(errMessage(500, err));
+        //     return console.error(err);
+        //   }
+        //   if (!results.affectedRows) {
+        //     res.status(404).json(errMessage(401, err));
+        //     return console.error(err);
+        //   }
+        //   res.status(200).json(successMessage);
+        // });
+
+        //attendees
+        let attendees = req.body.attendees;
+        console.log(JSON.parse(attendees)[2]);
+        // models.addAttendees(req, (err, results) => {
+        //     if (err) {
+        //       res.status(500).json(errMessage(500, err));
+        //       return console.error(err);
+        //     }
+        //     if (!results.affectedRows) {
+        //       res.status(404).json(errMessage(401, err));
+        //       return console.error(err);
+        //     }
+        //     res.status(200).json(successMessage);
+        //   });
+
+        //   //absentees
+        // models.addAbsentees(req, (err, results) => {
+        //     if (err) {
+        //       res.status(500).json(errMessage(500, err));
+        //       return console.error(err);
+        //     }
+        //     if (!results.affectedRows) {
+        //       res.status(404).json(errMessage(401, err));
+        //       return console.error(err);
+        //     }
+        //     res.status(200).json(successMessage);
+        //   });
+    };
+
     updateStatus = (req, res) => {
         models.updateStatus(req, (err, results) => {
             if (err) {
@@ -82,8 +114,9 @@ class Conference {
                 return console.error(err);
             }
             res.status(200).json(successMessage);
-        })
-    }
+        });
+    };
+
     updateContent = (req, res) => {
         models.updateContent(req, (err, results) => {
             if (err) {
@@ -95,8 +128,8 @@ class Conference {
                 return console.error(err);
             }
             res.status(200).json(successMessage);
-        })
-    }
+        });
+    };
 }
 
 module.exports = new Conference();
