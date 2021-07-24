@@ -38,6 +38,14 @@ module.exports = {
         sql = mysql.format('INSERT INTO conference(category,name,date,attached_file,content,host,status) VALUES(?,?,?,?,?,?,?)', [category, name, date, attached_file, content, host, status]);
         return conn.query(sql, callback);
     },
+    addAbsentees: (req, callback) => {
+        sql = mysql.format('INSERT INTO absentees(conference,absentees) VALUES(?,?)', [req.body.conference, req.body.absentees]);
+        return conn.query(sql, callback);
+    },
+    addAttendees: (req, callback) => {
+        sql = mysql.format('INSERT INTO absentees(conference,attendees) VALUES(?,?)', [req.body.conference, req.body.attendees]);
+        return conn.query(sql, callback);
+    },
     updateStatus: (req, callback) => {
         let status = req.body.status;
         let id = req.params.id;

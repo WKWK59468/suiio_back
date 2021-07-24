@@ -60,6 +60,30 @@ class Conference {
     }
     upload = (req, res) => {
         models.upload(req, (err, results) => {
+                if (err) {
+                    res.status(500).json(errMessage(500, err));
+                    return console.error(err);
+                }
+                if (!results.affectedRows) {
+                    res.status(404).json(errMessage(401, err));
+                    return console.error(err);
+                }
+                res.status(200).json(successMessage);
+            })
+            //attendees
+        models.addAttendees(req, (err, results) => {
+                if (err) {
+                    res.status(500).json(errMessage(500, err));
+                    return console.error(err);
+                }
+                if (!results.affectedRows) {
+                    res.status(404).json(errMessage(401, err));
+                    return console.error(err);
+                }
+                res.status(200).json(successMessage);
+            })
+            //absentees
+        models.addAbsentees(req, (err, results) => {
             if (err) {
                 res.status(500).json(errMessage(500, err));
                 return console.error(err);
