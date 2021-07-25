@@ -71,24 +71,29 @@ module.exports = {
         return conn.query(sql, callback);
     },
     // update authority by position
-    updateAuthority: async (req, callback) => {
-        const { authority, position } = req.body;
-        const cur = {};
-        const tar = {};
-        await getAuthByPos(position).then(async cur_auth => {
-            await getAuthNum(cur_auth).then(num => (cur.name = cur_auth) && (cur.count = num));
-            await getAuthNum(authority).then(num => (tar.name = authority) && (tar.count = num));
-        });
-        if (tar.name == cur.name)
-            throw new Error("Can't update. Same authority.");
-        if (cur.name != "一般幹部")
-            if (cur.count <= 1)
-                throw new Error(`Can't update. Count of ${cur.name} <= 1.`);
-        if (tar.name != "一般幹部")
-            if (tar.count >= 2)
-                throw new Error(`Can't update. Count of ${tar.name} >= 2.`);
-        const values = [authority, position];
-        const sql = mysql.format('UPDATE `officer` SET `authority` = ? WHERE `position` = ?;', values);
+    updateAuthority: (req, callback) => {
+        const organize = JSON.parse(req.body.organize);
+        const finance = JSON.parse(req.body.finance);
+        const conference = JSON.parse(req.body.conference);
+        const data = { organize, finance, conference };
+        console.log(data);
+        if (organize.length == 0 || finance.length == 0 || conference.length == 0)
+            throw new Error("Can't update. Each authority must be no less than 1 person.");
+        if (organize.length > 2 || finance.length > 2 || conference.length > 2)
+            throw new Error("Can't update. Each authority must be no more than 2 people.");
+        const auth = {
+            organize: "組織負責人",
+            finance: "財務負責人",
+            conference: "會議負責人"
+        };
+        const sql = "UPDATE officer SET authority = CASE " +
+            Object.keys(auth).reduce((str, key) => {
+                return str + data[key].reduce((x, pos) => {
+                    return `${x}WHEN position='${pos}' THEN '${auth[key]}' `;
+                }, "")
+            }, "") + `ELSE '一般幹部' END`;
+        console.log(sql);
         return conn.query(sql, callback);
+
     }
 }
