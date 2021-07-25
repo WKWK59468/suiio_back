@@ -31,8 +31,15 @@ module.exports = {
         return conn.query(sql, callback);
     },
     // delete officer
-    delete: (req, callback) => {
+    delete: async (req, callback) => {
         const data = req.body;
+        let bool = false;
+        await getAuthByPos(data.position).then(async auth => {
+            if (auth != "一般幹部")
+                await getAuthNum(auth).then(num => bool = (num == 1));
+        });
+        if (bool)
+            throw new Error("Can't delete. Authority problem.");
         const values = [data.sID, data.position];
         const sql = mysql.format('DELETE FROM `officer` WHERE `sID` = ? AND `position` = ?;', values);
         return conn.query(sql, callback);
