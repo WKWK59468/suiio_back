@@ -52,17 +52,17 @@ module.exports = {
         );
         return conn.query(sql, callback);
     },
-    addAbsentees: (req, callback) => {
+    addAbsentees: (req, absentees) => {
         sql = mysql.format(
-            "INSERT INTO absentees SET ? ", [req.body]
+            "INSERT INTO absentees(conference,absentees) VALUES(?,?)", [req.body.conference,absentees]
         );
-        return conn.query(sql, callback);
+        return conn.query(sql);
     },
-    addAttendees: (req, callback) => {
+    addAttendees: (req, attendees) => {
         sql = mysql.format(
-            "INSERT INTO attendees SET ? ", [req.body]
+            "INSERT INTO attendees(conference,attendees) VALUES(?,?)", [req.body.conference, attendees]
         );
-        return conn.query(sql, callback);
+        return conn.query(sql);
     },
     updateStatus: (req, callback) => {
         let status = req.body.status;

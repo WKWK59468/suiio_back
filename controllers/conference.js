@@ -61,46 +61,28 @@ class Conference {
         });
     };
 
-    upload = (req, res) => {
-        // models.upload(req, (err, results) => {
-        //   if (err) {
-        //     res.status(500).json(errMessage(500, err));
-        //     return console.error(err);
-        //   }
-        //   if (!results.affectedRows) {
-        //     res.status(404).json(errMessage(401, err));
-        //     return console.error(err);
-        //   }
-        //   res.status(200).json(successMessage);
-        // });
-
-        //attendees
-        let attendees = req.body.attendees;
-        console.log(JSON.parse(attendees)[2]);
-        // models.addAttendees(req, (err, results) => {
-        //     if (err) {
-        //       res.status(500).json(errMessage(500, err));
-        //       return console.error(err);
-        //     }
-        //     if (!results.affectedRows) {
-        //       res.status(404).json(errMessage(401, err));
-        //       return console.error(err);
-        //     }
-        //     res.status(200).json(successMessage);
-        //   });
-
-        //   //absentees
-        // models.addAbsentees(req, (err, results) => {
-        //     if (err) {
-        //       res.status(500).json(errMessage(500, err));
-        //       return console.error(err);
-        //     }
-        //     if (!results.affectedRows) {
-        //       res.status(404).json(errMessage(401, err));
-        //       return console.error(err);
-        //     }
-        //     res.status(200).json(successMessage);
-        //   });
+     upload = (req, res) => {
+        models.upload(req, async(err, results) => {
+          if (err) {
+            res.status(500).json(errMessage(500, err));
+            return console.error(err);
+          }
+          if (!results.affectedRows) {
+            res.status(404).json(errMessage(401, err));
+            return console.error(err);
+          }
+            //attendees
+          const attendees = JSON.parse(req.body.attendees);
+          for(let k in attendees){
+            await models.addAttendees(req, attendees[k]);
+          }
+            //absentees
+          const absentees = JSON.parse(req.body.absentees);
+          for(let k in absentees){
+            await models.addAbsentees(req, absentees[k]);
+          }
+          res.status(200).json(successMessage);
+        });     
     };
 
     updateStatus = (req, res) => {
