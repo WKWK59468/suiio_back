@@ -1,4 +1,4 @@
-let models = require('../models/user');
+let models = require('../models/member');
 const bcrypt = require('bcrypt');
 
 class UserController {
@@ -35,7 +35,7 @@ class UserController {
             })
         }
         //列出所有user
-    listUser = (req, res) => {
+    listMember = (req, res) => {
             models.list(req, (err, results) => {
                 if (err) {
                     res.status(500).json({ "result": "false" })
@@ -50,7 +50,7 @@ class UserController {
             })
         }
         //新增
-    addUser = (req, res) => {
+    addMember = (req, res) => {
             models.add(req, (err, results) => {
                 if (err) {
                     res.status(500).json({ "result": "false" });
@@ -61,7 +61,7 @@ class UserController {
             })
         }
         //刪除user
-    delUser = (req, res) => {
+    delMember = (req, res) => {
             models.check(req, async(err, results) => {
                 if (err) {
                     res.sendStatus(500);

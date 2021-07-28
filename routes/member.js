@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const UserController = require('../controllers/user');
+const UserController = require('../controllers/member');
 
-router.route('/del').post(UserController.delUser);
-router.route('/add').post(UserController.addUser);
-router.route('/list').get(UserController.listUser);
+router.route('/del').post(UserController.delMember);
+router.route('/add').post(UserController.addMember);
+router.route('/list').get(UserController.listMember);
 
 router.route('/login').post(UserController.getLogin);
 router.route('/get').post(UserController.getUser);
