@@ -1,4 +1,4 @@
-let models = require('../models/member');
+const models = require('../models/member');
 const bcrypt = require('bcrypt');
 
 let check_sID = (sID) => {

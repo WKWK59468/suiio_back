@@ -1,4 +1,4 @@
-let models = require('../models/category');
+const models = require('../models/category');
 
 class categoryController {
 
