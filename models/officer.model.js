@@ -31,7 +31,7 @@ module.exports = {
         return conn.query(sql, callback);
     },
     // delete officer
-    delete: async (req, callback) => {
+    delete: async(req, callback) => {
         const data = req.body;
         let bool = false;
         await getAuthByPos(data.position).then(async auth => {
