@@ -32,16 +32,12 @@ function pwd_rand() {
     return str;
 }
 module.exports = {
-    check: (req, callback) => {
-        sql = mysql.format('SELECT password FROM user WHERE sID=?', [req.body.sID]);
-        return conn.query(sql, callback);
-    },
     find: (req, callback) => {
-        sql = mysql.format('SELECT ID,sID,name,sex,birth,phone FROM user WHERE sID=?', [req.body.sID]);
+        sql = mysql.format('SELECT ID,sID,name,sex,birth,phone FROM member WHERE sID=?', [req.body.sID]);
         return conn.query(sql, callback);
     },
     list: (req, callback) => {
-        sql = mysql.format('SELECT sID,name,sex,birth,phone FROM user');
+        sql = mysql.format('SELECT sID,name,nickname,sex,birth,phone FROM member');
         return conn.query(sql, callback);
     },
     add: async(req, callback) => {
@@ -55,19 +51,19 @@ module.exports = {
         let salt = await bcrypt.genSalt(10);
         let password = await bcrypt.hash("12345678", salt)
 
-        sql = mysql.format('INSERT INTO user(sID,password,name,nickname,sex,birth,phone) VALUES(?,?,?,?,?,?,?)', [sID, password, name, nickname, sex, birth, phone]);
+        sql = mysql.format('INSERT INTO member(sID,password,name,nickname,sex,birth,phone) VALUES(?,?,?,?,?,?,?)', [sID, password, name, nickname, sex, birth, phone]);
         return conn.query(sql, callback);
     },
     del: (req, callback) => {
-        sql = mysql.format('DELETE FROM user WHERE sID = ?', [req.body.sID]);
+        sql = mysql.format('DELETE FROM member WHERE sID = ?', [req.body.sID]);
         return conn.query(sql, callback);
     },
     patch: (req, callback) => {
-        sql = mysql.format('UPDATE user SET name=?,sex=?,birth=?,phone=? WHERE sID = ?', [req.body.name, req.body.sex, req.body.birth, req.body.phone, req.body.sID]);
+        sql = mysql.format('UPDATE member SET name=?,sex=?,birth=?,phone=? WHERE sID = ?', [req.body.name, req.body.sex, req.body.birth, req.body.phone, req.body.sID]);
         return conn.query(sql, callback);
     },
     patchPwd: (req, callback) => {
-        sql = mysql.format('UPDATE user SET password=? WHERE sID = ?', [req.body.password, req.body.sID]);
+        sql = mysql.format('UPDATE member SET password=? WHERE sID = ?', [req.body.password, req.body.sID]);
         return conn.query(sql, callback);
     }
 }
