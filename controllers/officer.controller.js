@@ -3,7 +3,7 @@ const Officer = require('../models/officer.model');
 let sendErrorMsg = (res, statusCode, error) => {
     if (!error)
         error = "Some error occurred in the api of officer.";
-    if (typeof(error) == "object")
+    if (typeof (error) == "object")
         error = error.message;
     res.status(statusCode).send(error);
     return console.error(error);
@@ -83,7 +83,7 @@ exports.updateOfficer = (req, res) => {
 };
 
 // update authority by position
-exports.updateAuthorities = (req, res) => {
+exports.updateAuthority = (req, res) => {
     Officer.updateAuthority(req, (error, results) => {
         if (error)
             return sendErrorMsg(res, 500, error);
