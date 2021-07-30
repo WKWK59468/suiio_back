@@ -118,8 +118,8 @@ exports.fetchByPosition = (req, res) => {
 };
 
 // fetch by authority
-exports.fetchByAuthority = (req, res) => {
-    Officer.fetchByAuthority(req, (error, results) => {
+exports.fetchByPermission = (req, res) => {
+    Officer.fetchByPermission(req, (error, results) => {
         if (error)
             return sendErrorMsg(res, 500, error);
         if (!results.length)
@@ -144,8 +144,8 @@ exports.updateOfficer = (req, res) => {
 };
 
 // update authority by position
-exports.updateAuthority = (req, res) => {
-    Officer.updateAuthority(req, (error, results) => {
+exports.updatePermission = (req, res) => {
+    Officer.updatePermission(req, (error, results) => {
         if (error)
             return sendErrorMsg(res, 500, error);
         if (!results.affectedRows)
