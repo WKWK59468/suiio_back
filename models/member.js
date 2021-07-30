@@ -32,10 +32,6 @@ function pwd_rand() {
     return str;
 }
 module.exports = {
-    check: (req, callback) => {
-        sql = mysql.format('SELECT password FROM member WHERE sID=?', [req.body.sID]);
-        return conn.query(sql, callback);
-    },
     find: (req, callback) => {
         sql = mysql.format('SELECT ID,sID,name,sex,birth,phone FROM member WHERE sID=?', [req.body.sID]);
         return conn.query(sql, callback);
