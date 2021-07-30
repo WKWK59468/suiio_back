@@ -1,4 +1,4 @@
-let models = require('../models/account');
+const models = require('../models/account');
 
 class AccountController {
 
