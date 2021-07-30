@@ -37,7 +37,7 @@ module.exports = {
         return conn.query(sql, callback);
     },
     list: (req, callback) => {
-        sql = mysql.format('SELECT sID,name,sex,birth,phone FROM member');
+        sql = mysql.format('SELECT sID,name,nickname,sex,birth,phone FROM member');
         return conn.query(sql, callback);
     },
     add: async(req, callback) => {
