@@ -19,7 +19,7 @@ const getAuthNum = (auth) => {
 const getAuthByPos = (pos) => {
     const syntax = "SELECT `permission` FROM `officer` WHERE `position` = ?;";
     const params = [pos];
-    const field = "authority";
+    const field = "permission";
     return query(syntax, params, field);
 };
 module.exports = {
@@ -59,8 +59,8 @@ module.exports = {
     // fetch by authority
     fetchByPermission: (req, callback) => {
         const data = req.params;
-        const values = [data.authority];
-        const sql = mysql.format("SELECT * FROM `officer` WHERE `authority` = ?;", values);
+        const values = [data.permission];
+        const sql = mysql.format("SELECT * FROM `officer` WHERE `permission` = ?;", values);
         return conn.query(sql, callback);
     },
     // update officer by position

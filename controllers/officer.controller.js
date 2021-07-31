@@ -75,20 +75,25 @@ exports.add = (req, res) => {
             res.send("Add Officer Successfully.");
         });
     } else {
-        sendErrorMsg(res, 500, error);
+        res.status(500).json({ "result": "sID format error" });
     }
 };
 
 // delete officer
 exports.delete = (req, res) => {
-    Officer.delete(req, (error, results) => {
-        console.log("res: " + results);
-        if (error)
-            return sendErrorMsg(res, 500, error);
-        if (!results.affectedRows)
-            return sendErrorMsg(res, 404, "The condition is not exist.");
-        res.send("Delete Officer Successfully.");
-    });
+    const sID = req.body.sID;
+    if (check_sID(sID)) {
+        Officer.delete(req, (error, results) => {
+            if (error)
+                return sendErrorMsg(res, 500, error);
+            if (!results.affectedRows)
+                return sendErrorMsg(res, 404, "The condition is not exist.");
+            res.send("Delete Officer Successfully.");
+        });
+    } else {
+        res.status(500).json({ "result": "sID format error" });
+    }
+
 };
 
 /***************
@@ -134,13 +139,19 @@ exports.fetchByPermission = (req, res) => {
 
 // update officer by position
 exports.updateOfficer = (req, res) => {
-    Officer.updateOfficer(req, (error, results) => {
-        if (error)
-            return sendErrorMsg(res, 500, error);
-        if (!results.affectedRows)
-            return sendErrorMsg(res, 404, "The condition is not exist.");
-        res.send(results);
-    });
+    const sID = req.body.sID;
+    if (check_sID(sID)) {
+        Officer.updateOfficer(req, (error, results) => {
+            if (error)
+                return sendErrorMsg(res, 500, error);
+            if (!results.affectedRows)
+                return sendErrorMsg(res, 404, "The condition is not exist.");
+            res.json({ "result": true });
+        });
+    } else {
+        res.status(500).json({ "result": "sID format error" });
+    }
+
 };
 
 // update authority by position
@@ -150,6 +161,6 @@ exports.updatePermission = (req, res) => {
             return sendErrorMsg(res, 500, error);
         if (!results.affectedRows)
             return sendErrorMsg(res, 404, "The condition is not exist.");
-        res.send(results);
+        res.json({ "result": true });
     });
 };

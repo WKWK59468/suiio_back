@@ -8,8 +8,8 @@ router.route("/delete").post(officers.delete);
 // fetch
 router.route("/fetch/all").get(officers.fetchAll);
 router.route("/fetch/position/:position").get(officers.fetchByPosition);
-router.route("/fetch/permission/:authority").get(officers.fetchByAuthority);
+router.route("/fetch/permission/:permission").get(officers.fetchByPermission);
 // update
 router.route("/update/officer").post(officers.updateOfficer);
-router.route("/update/authority").post(officers.updateAuthority);
+router.route("/update/permission").post(officers.updatePermission);
 module.exports = router;
