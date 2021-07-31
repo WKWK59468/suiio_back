@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主機： 127.0.0.1:3308
--- 產生時間： 2021-07-28 14:19:44
+-- 產生時間： 2021-07-31 18:05:02
 -- 伺服器版本： 5.7.31
 -- PHP 版本： 7.3.21
 
@@ -35,6 +35,16 @@ CREATE TABLE IF NOT EXISTS `absentees` (
   `absentees` varchar(10) NOT NULL,
   PRIMARY KEY (`conference`,`absentees`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='缺席者';
+
+--
+-- 傾印資料表的資料 `absentees`
+--
+
+INSERT INTO `absentees` (`conference`, `absentees`) VALUES
+(8, '副會長'),
+(8, '會長'),
+(8, '活動長'),
+(8, '財務長');
 
 -- --------------------------------------------------------
 
@@ -75,6 +85,14 @@ CREATE TABLE IF NOT EXISTS `attendees` (
   `attendees` varchar(10) NOT NULL,
   PRIMARY KEY (`conference`,`attendees`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='出席者';
+
+--
+-- 傾印資料表的資料 `attendees`
+--
+
+INSERT INTO `attendees` (`conference`, `attendees`) VALUES
+(8, '器材長'),
+(8, '體育長');
 
 -- --------------------------------------------------------
 
@@ -119,7 +137,7 @@ CREATE TABLE IF NOT EXISTS `category` (
   `status` int(1) NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COMMENT='活動類別';
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 COMMENT='活動類別';
 
 --
 -- 傾印資料表的資料 `category`
@@ -130,7 +148,8 @@ INSERT INTO `category` (`ID`, `name`, `status`) VALUES
 (2, '小迎新', 0),
 (3, '聖誕晚會', 0),
 (4, '籃球比賽', 0),
-(5, '躲避球比賽', 0);
+(5, '躲避球比賽', 0),
+(13, '民歌', 0);
 
 -- --------------------------------------------------------
 
@@ -148,21 +167,22 @@ CREATE TABLE IF NOT EXISTS `conference` (
   `content` varchar(500) NOT NULL,
   `host` varchar(10) NOT NULL,
   `status` char(1) NOT NULL,
-  PRIMARY KEY (`ID`,`category`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COMMENT='會議紀錄';
+  PRIMARY KEY (`ID`,`category`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COMMENT='會議紀錄';
 
 --
 -- 傾印資料表的資料 `conference`
 --
 
 INSERT INTO `conference` (`ID`, `category`, `name`, `date`, `attached_file`, `content`, `host`, `status`) VALUES
-(1, 1, '大迎新會議', '2021-07-14', NULL, '無', '會長', '1'),
+(1, 1, '大迎新會議', '2021-07-14', NULL, '內容', '會長', '0'),
 (2, 2, '小迎新會議', '2021-07-05', NULL, '暫無', '會長', '0'),
 (3, 3, '聖誕晚會會議', '2021-12-08', NULL, '編列預算、人員配置', '會長', '0'),
 (4, 4, '籃球比賽會議', '2021-07-23', NULL, '無', '體育長', '0'),
 (5, 4, '籃球比賽第二次會議', '2021-07-15', NULL, '調整獎金金額', '會長', '0'),
 (6, 3, '聖誕晚會第二次會議', '2021-07-25', NULL, '表演獎金增加', '活動長', '0'),
-(7, 2, '小迎新第二次會議', '2021-07-28', NULL, '表演獎金增加', '活動長', '0');
+(7, 2, '小迎新第二次會議', '2021-07-28', NULL, '表演獎金增加', '活動長', '0'),
+(8, 1, '大迎新第二次會議', '2021-07-28', 'new.doc', '場地費用增加', '活動長', '0');
 
 -- --------------------------------------------------------
 
@@ -188,6 +208,7 @@ CREATE TABLE IF NOT EXISTS `member` (
 --
 
 INSERT INTO `member` (`sID`, `password`, `name`, `nickname`, `sex`, `birth`, `phone`) VALUES
+('1110634000', '$2b$10$2ZzyVyXQrPeFy7U/Jq8ZkeyUkynzjmfMlrVvcxoDL.pnUDGs/g0xe', '姓名', '暱稱', '男', '2021-07-14', '0912345678'),
 ('1110634001', '$2b$10$mlCH6.r9WdQLPMsErOYaTuyYfeQocTGWgV/aElT4MxykNMIWGLYnK', '何宛珊', '小何', '女', '2002-05-01', '0966610085'),
 ('1110634002', '$2b$10$eZQ9Mo1Goo.x8f/TNOhGXuDyRtIsk9KWnvRfoG8SPb2jCkiCRKmCC', '李品萱', '小李', '女', '2002-06-23', '0937662585'),
 ('1110634003', '$2b$10$Pcq2oBufpcQetFOOjollferCTUFwX1sDzEcYFN4Ij2s8j1mROo15e', '施羽珊', '小施', '女', '2002-02-02', '0933449557'),
@@ -238,6 +259,7 @@ INSERT INTO `officer` (`permission`, `position`, `sID`) VALUES
 ('一般幹部', '器材長', '1110634038'),
 ('組織負責人', '會長', '1110634039'),
 ('一般幹部', '活動長', '1110634006'),
+('會議負責人', '秘書長', '1110634000'),
 ('財務負責人', '財務長', '1110634025'),
 ('一般幹部', '體育長', '1110634041');
 
