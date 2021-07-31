@@ -7,15 +7,9 @@ const errMessage = (status, err) => {
     if (status == 404) {
         return { result: "Not Found" };
     }
-    if (status == 401) {
-        return { result: "err" };
-    }
-    if (status == 403) {
-        return { result: "UPDATE ERROR" };
-    }
 };
 const successMessage = {
-    result: "true",
+    result: true,
 };
 
 class Conference {
@@ -61,42 +55,55 @@ class Conference {
         });
     };
 
-     upload = (req, res) => {
-        models.upload(req, async(err, results) => {
-          if (err) {
-            res.status(500).json(errMessage(500, err));
-            return console.error(err);
-          }
-          if (!results.affectedRows) {
-            res.status(404).json(errMessage(401, err));
-            return console.error(err);
-          }
-            //attendees
-          const attendees = JSON.parse(req.body.attendees);
-          for(let k in attendees){
-            await models.addAttendees(req, attendees[k]);
-          }
-            //absentees
-          const absentees = JSON.parse(req.body.absentees);
-          for(let k in absentees){
-            await models.addAbsentees(req, absentees[k]);
-          }
-          res.status(200).json(successMessage);
-        });     
-    };
-
-    updateStatus = (req, res) => {
-        models.updateStatus(req, (err, results) => {
+    upload = async(req, res) => {
+        let ConferenceID;
+        await models.upload(req, (err, results) => {
             if (err) {
                 res.status(500).json(errMessage(500, err));
                 return console.error(err);
             }
             if (!results.affectedRows) {
-                res.status(404).json(errMessage(403, err));
+                res.status(404).json(errMessage(404, err));
                 return console.error(err);
+            }
+
+        });
+
+        //GET ConferenceID
+        await models.getConferenceID(req, async(err, results) => {
+            ConferenceID = results[0].ID;
+            //attendees
+            const attendees = JSON.parse(req.body.attendees);
+            for (let k in attendees) {
+                await models.addAttendees(ConferenceID, attendees[k]);
+            }
+
+            //absentees
+            const absentees = JSON.parse(req.body.absentees);
+            for (let k in absentees) {
+                await models.addAbsentees(ConferenceID, absentees[k]);
             }
             res.status(200).json(successMessage);
         });
+    };
+
+    updateStatus = (req, res) => {
+        if (req.body.status == 0 || req.body.status == 1) {
+            models.updateStatus(req, (err, results) => {
+                if (err) {
+                    res.status(500).json(errMessage(500, err));
+                    return console.error(err);
+                }
+                if (!results.affectedRows) {
+                    res.status(404).json(errMessage(404, err));
+                    return console.error(err);
+                }
+                res.status(200).json(successMessage);
+            });
+        } else {
+            res.status(500).json({ "result": "Please Enter 0 or 1." });
+        }
+
     };
 
     updateContent = (req, res) => {
@@ -106,7 +113,7 @@ class Conference {
                 return console.error(err);
             }
             if (!results.affectedRows) {
-                res.status(404).json(errMessage(403, err));
+                res.status(404).json(errMessage(404, err));
                 return console.error(err);
             }
             res.status(200).json(successMessage);
