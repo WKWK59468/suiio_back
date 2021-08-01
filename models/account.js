@@ -9,7 +9,11 @@ module.exports = {
         sql = mysql.format('INSERT INTO account(name,coin,content) VALUES(?,?,?)', [req.body.name, req.body.coin, req.body.content]);
         return conn.query(sql, callback);
     },
-    search: (req, callback) => {
+    delete: (req, callback) => {
+        sql = mysql.format('DELETE FROM account WHERE ID=?', [req.body.ID]);
+        return conn.query(sql, callback);
+    },
+    update: (req, callback) => {
         sql = mysql.format('SELECT * FROM account WHERE ID=?', [req.body.aID]);
         return conn.query(sql, callback);
     },

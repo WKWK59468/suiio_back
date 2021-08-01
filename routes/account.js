@@ -2,8 +2,11 @@ const express = require('express');
 const router = express.Router();
 const AccountController = require('../controllers/account');
 
-router.route('/add').post(AccountController.addAccount); //ADD
-router.route('/search').post(AccountController.searchAccount); //ONE
-router.route('/get').post(AccountController.getAccount); //ALL
+//POST
+router.route('/add').post(AccountController.add);
+router.route('/delete').post(AccountController.delete);
+router.route('/update').post(AccountController.update);
+//GET
+router.route('/fetch/all').get(AccountController.fetchAll);
 
 module.exports = router;
