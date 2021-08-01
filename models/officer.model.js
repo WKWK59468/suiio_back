@@ -72,9 +72,9 @@ module.exports = {
     },
     // update authority by position
     updatePermission: (req, callback) => {
-        const organize = JSON.parse(req.body.organize);
-        const finance = JSON.parse(req.body.finance);
-        const conference = JSON.parse(req.body.conference);
+        const organize = req.body.organize;
+        const finance = req.body.finance;
+        const conference = req.body.conference;
         const data = { organize, finance, conference };
         console.log(data);
         if (organize.length == 0 || finance.length == 0 || conference.length == 0)
