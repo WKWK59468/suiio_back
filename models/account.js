@@ -13,7 +13,7 @@ module.exports = {
         sql = mysql.format('SELECT * FROM account WHERE ID=?', [req.body.aID]);
         return conn.query(sql, callback);
     },
-    get: (req, callback) => {
+    fetchAll: (req, callback) => {
         sql = 'SELECT * FROM account';
         return conn.query(sql, callback);
     }

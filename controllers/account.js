@@ -2,14 +2,14 @@ const models = require('../models/account');
 
 class AccountController {
 
-    addAccount = (req, res) => {
+    addAccount = (req, res) => { // 8/11 02:51 做到這裡
         models.add(req, (err, results) => {
             if (err) {
-                res.sendStatus(500);
+                res.status(500).json({ "result": err });
                 return console.error(err);
             }
 
-            res.json(results.insertId);
+            res.status(200).json({ "result": true });
         })
     }
     searchAccount = (req, res) => {
@@ -26,8 +26,8 @@ class AccountController {
             res.json(results);
         })
     }
-    getAccount = (req, res) => {
-        models.get(req, (err, results) => {
+    fetchAll = (req, res) => {
+        models.fetchAll(req, (err, results) => {
             if (err) {
                 res.sendStatus(500);
                 return console.error(err);
