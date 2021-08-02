@@ -8,6 +8,7 @@ const errMessage = (status, err) => {
         return { result: "Not Found" };
     }
 };
+
 const successMessage = {
     result: true,
 };
@@ -23,7 +24,12 @@ class Conference {
                 res.status(404).json(errMessage(404, err));
                 return console.error(err);
             }
-            res.status(200).json(results);
+            let result = [];
+            results.forEach((element, index) => {
+                element.date = element.date.getFullYear() + "-" + (element.date.getMonth() + 1) + "-" + element.date.getDate();
+                result.push(element);
+            });
+            res.status(200).json(result);
         });
     };
 
@@ -88,7 +94,7 @@ class Conference {
     };
 
     updateStatus = (req, res) => {
-        if (req.body.status == 0 || req.body.status == 1) {
+        if (req.body.status == 0 || req.body.status == 1 || req.body.status == 2 || req.body.status == 3 || req.body.status == 4) {
             models.updateStatus(req, (err, results) => {
                 if (err) {
                     res.status(500).json(errMessage(500, err));
@@ -101,7 +107,7 @@ class Conference {
                 res.status(200).json(successMessage);
             });
         } else {
-            res.status(500).json({ "result": "Please Enter 0 or 1." });
+            res.status(500).json({ "result": "Please Enter 0 ~ 4." });
         }
 
     };
