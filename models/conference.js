@@ -31,6 +31,7 @@ module.exports = {
         let attached_file;
         const content = body.content;
         const host = body.host;
+        const recorder = body.recorder;
         const status = "0";
 
         if (body.attached_file == null || body.attached_file == "") {
@@ -40,7 +41,7 @@ module.exports = {
         }
 
         sql = mysql.format(
-            "INSERT INTO conference(category,name,date,attached_file,content,host,status) VALUES(?,?,?,?,?,?,?)", [category, name, date, attached_file, content, host, status]
+            "INSERT INTO conference(category,name,date,attached_file,content,host,recorder,status) VALUES(?,?,?,?,?,?,?,?)", [category, name, date, attached_file, content, host, recorder, status]
         );
         return conn.query(sql, callback);
     },
