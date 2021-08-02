@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主機： 127.0.0.1:3308
--- 產生時間： 2021-07-31 18:05:02
+-- 產生時間： 2021-08-02 18:00:59
 -- 伺服器版本： 5.7.31
 -- PHP 版本： 7.3.21
 
@@ -59,8 +59,8 @@ CREATE TABLE IF NOT EXISTS `account` (
   `name` varchar(20) NOT NULL,
   `cost` int(11) NOT NULL,
   `content` varchar(200) DEFAULT NULL,
-  `receipt` varchar(50) NOT NULL,
-  `review` char(1) NOT NULL,
+  `receipt` varchar(50) DEFAULT NULL,
+  `status` char(1) NOT NULL,
   `uploadBy` varchar(10) NOT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='收支紀錄';
@@ -69,9 +69,9 @@ CREATE TABLE IF NOT EXISTS `account` (
 -- 傾印資料表的資料 `account`
 --
 
-INSERT INTO `account` (`ID`, `date`, `name`, `cost`, `content`, `receipt`, `review`, `uploadBy`) VALUES
-(1, '2021-07-07 17:58:06', '大迎新場地租借', 150000, '僅包含場地租借費用', '', '0', '0'),
-(2, '2021-07-09 03:32:27', '小迎新場地費', 5000, '僅包含場地費用', '', '0', '0');
+INSERT INTO `account` (`ID`, `date`, `name`, `cost`, `content`, `receipt`, `status`, `uploadBy`) VALUES
+(1, '2021-07-07 17:58:06', '大迎新場地租借', 150000, '僅包含場地租借費用', 'Orientation', '0', '會長'),
+(2, '2021-07-09 03:32:27', '小迎新場地費', 5000, '僅包含場地費用', 'Orientation', '0', '會長');
 
 -- --------------------------------------------------------
 
@@ -160,7 +160,7 @@ INSERT INTO `category` (`ID`, `name`, `status`) VALUES
 DROP TABLE IF EXISTS `conference`;
 CREATE TABLE IF NOT EXISTS `conference` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `category` int(11) NOT NULL,
+  `category` varchar(10) NOT NULL,
   `name` varchar(20) NOT NULL,
   `date` date NOT NULL,
   `attached_file` varchar(50) DEFAULT NULL,
@@ -168,21 +168,21 @@ CREATE TABLE IF NOT EXISTS `conference` (
   `host` varchar(10) NOT NULL,
   `status` char(1) NOT NULL,
   PRIMARY KEY (`ID`,`category`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COMMENT='會議紀錄';
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COMMENT='會議紀錄';
 
 --
 -- 傾印資料表的資料 `conference`
 --
 
 INSERT INTO `conference` (`ID`, `category`, `name`, `date`, `attached_file`, `content`, `host`, `status`) VALUES
-(1, 1, '大迎新會議', '2021-07-14', NULL, '內容', '會長', '0'),
-(2, 2, '小迎新會議', '2021-07-05', NULL, '暫無', '會長', '0'),
-(3, 3, '聖誕晚會會議', '2021-12-08', NULL, '編列預算、人員配置', '會長', '0'),
-(4, 4, '籃球比賽會議', '2021-07-23', NULL, '無', '體育長', '0'),
-(5, 4, '籃球比賽第二次會議', '2021-07-15', NULL, '調整獎金金額', '會長', '0'),
-(6, 3, '聖誕晚會第二次會議', '2021-07-25', NULL, '表演獎金增加', '活動長', '0'),
-(7, 2, '小迎新第二次會議', '2021-07-28', NULL, '表演獎金增加', '活動長', '0'),
-(8, 1, '大迎新第二次會議', '2021-07-28', 'new.doc', '場地費用增加', '活動長', '0');
+(1, '大迎新', '大迎新會議', '2021-07-14', NULL, '內容', '會長', '0'),
+(2, '小迎新', '小迎新會議', '2021-07-05', NULL, '暫無', '會長', '0'),
+(3, '聖誕晚會', '聖誕晚會會議', '2021-12-08', NULL, '編列預算、人員配置', '會長', '0'),
+(4, '籃球比賽', '籃球比賽會議', '2021-07-23', NULL, '無', '體育長', '0'),
+(5, '籃球比賽', '籃球比賽第二次會議', '2021-07-15', NULL, '調整獎金金額', '會長', '0'),
+(6, '聖誕晚會', '聖誕晚會第二次會議', '2021-07-25', NULL, '表演獎金增加', '活動長', '0'),
+(7, '小迎新', '小迎新第二次會議', '2021-07-28', NULL, '表演獎金增加', '活動長', '0'),
+(8, '大迎新', '大迎新第二次會議', '2021-07-28', 'new.doc', '場地費用增加', '活動長', '0');
 
 -- --------------------------------------------------------
 
