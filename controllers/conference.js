@@ -48,7 +48,8 @@ class Conference {
     };
 
     fetchContent = (req, res) => {
-        models.fetchOne(req, (err, results) => {
+
+        models.fetchOne(req, async(err, results) => {
             if (err) {
                 res.status(500).json(errMessage(500, err));
                 return console.error(err);
@@ -57,7 +58,22 @@ class Conference {
                 res.status(404).json(errMessage(404, err));
                 return console.error(err);
             }
-            res.status(200).json(results);
+            await models.fetchAbsentees(req, (err, absentees) => {
+                let arr = [];
+                absentees.forEach((element) => {
+                    arr.push(element.absentees);
+                });
+                results[0]["absentees"] = arr;
+
+            });
+            await models.fetchAttendees(req, (err, attendees) => {
+                let arr2 = [];
+                attendees.forEach((element) => {
+                    arr2.push(element.attendees);
+                });
+                results[0]["attendees"] = arr2;
+                res.status(200).json(results);
+            });
         });
     };
 

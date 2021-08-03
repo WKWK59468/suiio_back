@@ -16,7 +16,15 @@ module.exports = {
         return conn.query(sql, callback);
     },
     fetchOne: (req, callback) => {
-        sql = mysql.format('SELECT * FROM conference WHERE conference.ID = ?', [req.params.id]);
+        sql = mysql.format('SELECT content FROM conference WHERE conference.ID = ?', [req.params.id]);
+        return conn.query(sql, callback);
+    },
+    fetchAbsentees: (req, callback) => {
+        sql = mysql.format('SELECT absentees FROM absentees WHERE conference = ?', [req.params.id]);
+        return conn.query(sql, callback);
+    },
+    fetchAttendees: (req, callback) => {
+        sql = mysql.format('SELECT attendees FROM attendees WHERE conference = ?', [req.params.id]);
         return conn.query(sql, callback);
     },
     getConferenceID: (req, callback) => {
