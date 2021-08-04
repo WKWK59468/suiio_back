@@ -2,7 +2,7 @@ const { check } = require('../models/officer.model');
 const officerModel = require('../models/officer.model');
 const Officer = require('../models/officer.model');
 
-let check_sID = (sID) => {
+const check_sID = (sID) => {
     if (sID.length == 10) {
         const sIDArray = sID.split("");
         if (sIDArray[0] == "1" || sIDArray[0] == "2" || sIDArray[0] == "3" || sIDArray[0] == "4") {
@@ -58,7 +58,7 @@ let check_sID = (sID) => {
     }
 }
 
-let sendErrorMsg = (res, statusCode, error) => {
+const sendErrorMsg = (res, statusCode, error) => {
     if (!error)
         error = "Some error occurred in the api of officer.";
     if (typeof(error) == "object")

@@ -66,14 +66,14 @@ module.exports = {
         return conn.query(sql);
     },
     updateStatus: (req, callback) => {
-        let status = req.body.status;
-        let id = req.body.id;
+        const status = req.body.status;
+        const id = req.body.id;
         sql = mysql.format("UPDATE conference SET status=? WHERE ID=?", [status, id]);
         return conn.query(sql, callback);
     },
     updateContent: (req, callback) => {
-        let content = req.body.content;
-        let id = req.body.id;
+        const content = req.body.content;
+        const id = req.body.id;
         sql = mysql.format("UPDATE conference SET content=? WHERE ID=?", [content, id]);
         return conn.query(sql, callback);
     },
