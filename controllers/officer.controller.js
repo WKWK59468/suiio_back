@@ -187,11 +187,12 @@ exports.updatePermission = (req, res) => {
     let cnt = 0;
     for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 2; j++) {
-            arr.push(data[i][j]);
-            arr2.push(data[i][j]);
+            if (data[i][j]) {
+                arr.push(data[i][j]);
+                arr2.push(data[i][j]);
+            }
         }
     }
-
     for (let i = 0; i < arr.length; i++) {
         for (let j = i + 1; j < arr2.length; j++) {
             if (arr[i] == arr2[j]) {
@@ -199,7 +200,6 @@ exports.updatePermission = (req, res) => {
             }
         }
     }
-
     if (cnt > 0) {
         res.status(500).json({ "result": "Permission cannot be repeated" });
     } else {
