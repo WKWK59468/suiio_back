@@ -101,7 +101,7 @@ exports.delete = (req, res) => {
             if (!results.affectedRows)
                 return sendErrorMsg(res, 404, "The condition is not exist.");
             res.send("Delete Officer Successfully.");
-        });
+        }).catch(error => sendErrorMsg(res, 500, error));
     } else {
         res.status(500).json({ "result": "sID format error" });
     }

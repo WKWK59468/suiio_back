@@ -5,8 +5,13 @@ const query = (syntax, params, field) => {
     const sql = mysql.format(syntax, params);
     return new Promise((resolve, reject) => {
         conn.query(sql, (error, results) => {
-            if (error) reject(error);
-            resolve(results[0][field]);
+            if (error) {
+                reject(error)
+            } else if (!results.length) {
+                reject(new Error("Position Not Found."));
+            } else {
+                resolve(results[0][field]);
+            }
         });
     });
 }
