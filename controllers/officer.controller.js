@@ -176,13 +176,39 @@ exports.updateOfficer = (req, res) => {
 
 };
 
-// update authority by position
+// update permission by position
 exports.updatePermission = (req, res) => {
-    Officer.updatePermission(req, (error, results) => {
-        if (error)
-            return sendErrorMsg(res, 500, error);
-        if (!results.affectedRows)
-            return sendErrorMsg(res, 404, "The condition is not exist.");
-        res.json({ "result": true });
-    });
+    const organize = req.body.organize;
+    const finance = req.body.finance;
+    const conference = req.body.conference;
+    const data = [organize, finance, conference];
+    let arr = [];
+    let arr2 = [];
+    let cnt = 0;
+    for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 2; j++) {
+            arr.push(data[i][j]);
+            arr2.push(data[i][j]);
+        }
+    }
+
+    for (let i = 0; i < arr.length; i++) {
+        for (let j = i + 1; j < arr2.length; j++) {
+            if (arr[i] == arr2[j]) {
+                cnt += 1;
+            }
+        }
+    }
+
+    if (cnt > 0) {
+        res.status(500).json({ "result": "Permission cannot be repeated" });
+    } else {
+        Officer.updatePermission(req, (error, results) => {
+            if (error)
+                return sendErrorMsg(res, 500, error);
+            if (!results.affectedRows)
+                return sendErrorMsg(res, 404, "The condition is not exist.");
+            res.status(200).json({ "result": true });
+        });
+    }
 };
