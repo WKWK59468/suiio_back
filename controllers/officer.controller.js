@@ -153,12 +153,22 @@ exports.fetchByPermission = (req, res) => {
 exports.updateOfficer = (req, res) => {
     const sID = req.body.sID;
     if (check_sID(sID)) {
-        Officer.updateOfficer(req, (error, results) => {
-            if (error)
-                return sendErrorMsg(res, 500, error);
-            if (!results.affectedRows)
-                return sendErrorMsg(res, 404, "The condition is not exist.");
-            res.json({ "result": true });
+        Officer.check(sID, (error, results) => {
+            if (error || !results.length) {
+                res.status(500).json({ "result": error })
+            }
+            if (results[0].total == "0") {
+                res.status(404).json({ "result": "Member Not Found" })
+            }
+            if (results[0].total == "1") {
+                Officer.updateOfficer(req, (error, results) => {
+                    if (error)
+                        return sendErrorMsg(res, 500, error);
+                    if (!results.affectedRows)
+                        return sendErrorMsg(res, 404, "The condition is not exist.");
+                    res.json({ "result": true });
+                });
+            }
         });
     } else {
         res.status(500).json({ "result": "sID format error" });
