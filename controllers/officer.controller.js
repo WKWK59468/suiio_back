@@ -1,3 +1,5 @@
+const { check } = require('../models/officer.model');
+const officerModel = require('../models/officer.model');
 const Officer = require('../models/officer.model');
 
 let check_sID = (sID) => {
@@ -69,10 +71,20 @@ let sendErrorMsg = (res, statusCode, error) => {
 exports.add = (req, res) => {
     const sID = req.body.sID;
     if (check_sID(sID)) {
-        Officer.add(req, (error, results) => {
-            if (error || !results.affectedRows)
-                return sendErrorMsg(res, 500, error);
-            res.send("Add Officer Successfully.");
+        Officer.check(sID, (error, results) => {
+            if (error || !results.length) {
+                res.status(500).json({ "result": error })
+            }
+            if (results[0].total == "0") {
+                res.status(404).json({ "result": "Member Not Found" })
+            }
+            if (results[0].total == "1") {
+                Officer.add(req, (error, results) => {
+                    if (error || !results.affectedRows)
+                        return sendErrorMsg(res, 500, error);
+                    res.send("Add Officer Successfully.");
+                });
+            }
         });
     } else {
         res.status(500).json({ "result": "sID format error" });

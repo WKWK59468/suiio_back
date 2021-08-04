@@ -23,6 +23,11 @@ const getAuthByPos = (pos) => {
     return query(syntax, params, field);
 };
 module.exports = {
+    // check
+    check: (sID, callback) => {
+        const sql = mysql.format('SELECT COUNT(*) AS total FROM member WHERE sID = ?', sID);
+        return conn.query(sql, callback);
+    },
     // add officer
     add: (req, callback) => {
         const data = req.body;
