@@ -11,7 +11,7 @@ module.exports = {
     },
     fetchBycategory: (req, callback) => {
         sql = mysql.format(
-            "SELECT conference.* FROM conference,category WHERE category.ID = ? AND conference.category = category.ID", [req.params.id]
+            "SELECT conference.* FROM conference,category WHERE category = ? AND conference.category = category.name", [req.params.id]
         );
         return conn.query(sql, callback);
     },
