@@ -1,7 +1,6 @@
 const models = require('../models/member');
-const bcrypt = require('bcrypt');
 
-let check_sID = (sID) => {
+const check_sID = (sID) => {
     if (sID.length == 10) {
         const sIDArray = sID.split("");
         if (sIDArray[0] == "1" || sIDArray[0] == "2" || sIDArray[0] == "3" || sIDArray[0] == "4") {
@@ -85,6 +84,9 @@ class UserController {
                     console.log(err);
                     return;
                 }
+                results.forEach(element => {
+                    element.birth = element.birth.getFullYear() + "-" + (element.birth.getMonth() + 1) + "-" + element.birth.getDate()
+                });
                 res.json(results);
             })
         }

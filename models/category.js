@@ -1,7 +1,7 @@
 const mysql = require('mysql');
 const conf = require('../conf');
 
-let conn = mysql.createConnection(conf.db);
+const conn = mysql.createConnection(conf.db);
 let sql = '';
 
 module.exports = {
