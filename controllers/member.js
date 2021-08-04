@@ -84,6 +84,9 @@ class UserController {
                     console.log(err);
                     return;
                 }
+                results.forEach(element => {
+                    element.birth = element.birth.getFullYear() + "-" + (element.birth.getMonth() + 1) + "-" + element.birth.getDate()
+                });
                 res.json(results);
             })
         }
