@@ -48,6 +48,9 @@ class AccountController {
                 res.status(404).json({ "result": err });
                 return;
             }
+            results.forEach(element => {
+                element.date = element.date.getFullYear() + "-" + (element.date.getMonth()) + 1 + "-" + element.date.getDate();
+            });
             res.status(200).json(results);
         })
     }
