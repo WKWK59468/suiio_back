@@ -46,12 +46,11 @@ module.exports = {
         const nickname = "小王";
         const sex = "男";
         const birth = "2021-07-14";
-        const phone = "0912345678";
 
         const salt = await bcrypt.genSalt(10);
         const password = await bcrypt.hash("12345678", salt)
 
-        sql = mysql.format('INSERT INTO member(sID,password,name,nickname,sex,birth,phone) VALUES(?,?,?,?,?,?,?)', [sID, password, name, nickname, sex, birth, phone]);
+        sql = mysql.format('INSERT INTO member(sID,password,name,nickname,sex,birth) VALUES(?,?,?,?,?,?)', [sID, password, name, nickname, sex, birth]);
         return conn.query(sql, callback);
     },
     del: (req, callback) => {
