@@ -18,7 +18,7 @@ module.exports = {
         return conn.query(sql, callback);
     },
     StatusOn: (req, callback) => {
-        sql = mysql.format('SELECT * FROM category WHERE status = 1');
+        sql = mysql.format(`SELECT * FROM category WHERE status = ${req.params.status}`);
         return conn.query(sql, callback);
     },
     del: (req, callback) => {
