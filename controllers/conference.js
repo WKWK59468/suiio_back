@@ -1,4 +1,5 @@
 const models = require("../models/conference");
+const officerModels = require('../models/officer.model');
 
 const errMessage = (status, err) => {
     if (status == 500) {
@@ -79,6 +80,8 @@ class Conference {
 
     upload = async(req, res) => {
         let ConferenceID;
+        let position = [];
+        const attendees = JSON.parse(req.body.attendees);
         await models.upload(req, (err, results) => {
             if (err) {
                 res.status(500).json(errMessage(500, err));
@@ -91,21 +94,35 @@ class Conference {
 
         });
 
-        //GET ConferenceID
-        await models.getConferenceID(req, async(err, results) => {
-            ConferenceID = results[0].ID;
-            //attendees
-            const attendees = JSON.parse(req.body.attendees);
-            for (let k in attendees) {
-                await models.addAttendees(ConferenceID, attendees[k]);
-            }
+        await officerModels.fetchAll(req, (err, positionArray) => {
 
-            //absentees
-            const absentees = JSON.parse(req.body.absentees);
-            for (let k in absentees) {
-                await models.addAbsentees(ConferenceID, absentees[k]);
-            }
-            res.status(200).json(successMessage);
+            positionArray.forEach(element => {
+                position.push(element.position);
+            });
+
+            const absentees = position.concat(attendees).filter((element, index, arr) => {
+                return arr.indexOf(element) === arr.lastIndexOf(element);
+            });
+
+            //GET ConferenceID
+            models.getConferenceID(req, async(err, results) => {
+
+                ConferenceID = results[0].ID;
+
+                //attendees
+                const attendees = JSON.parse(req.body.attendees);
+                for (let k in attendees) {
+                    await models.addAttendees(ConferenceID, attendees[k]);
+                }
+
+                //absentees
+                for (let k in absentees) {
+                    await models.addAbsentees(ConferenceID, absentees[k]);
+                }
+
+                res.status(200).json(successMessage);
+
+            });
         });
     };
 
