@@ -29,6 +29,19 @@ class categoryController {
             res.json(results);
         });
     }
+    fetchStatusOn = (req, res) => {
+        models.StatusOn(req, (err, results) => {
+            if (err) {
+                res.status(500).json({ "result": err })
+                return console.error(err);
+            }
+            if (!results.length) {
+                res.status(404).json({ "result": "There is nothing to show." });
+                return;
+            }
+            res.json(results);
+        });
+    }
     delCategory = (req, res) => {
         models.del(req, (err, results) => {
             if (err) {
