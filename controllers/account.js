@@ -38,7 +38,7 @@ class AccountController {
             res.status(200).json({ "result": true });
         })
     }
-    fetchAll = (req, res) => {
+    fetchAll = (req, res) => { //OK
         models.fetchAll(req, (err, results) => {
             if (err) {
                 res.status(500).json({ "result": err });
@@ -49,7 +49,7 @@ class AccountController {
                 return;
             }
             results.forEach(element => {
-                element.date = element.date.getFullYear() + "-" + (element.date.getMonth()) + 1 + "-" + element.date.getDate();
+                element.date = element.date.getFullYear() + "-" + ((element.date.getMonth()) + 1) + "-" + element.date.getDate();
             });
             res.status(200).json(results);
         })
