@@ -3,14 +3,25 @@ const models = require('../models/account');
 class AccountController {
 
     add = (req, res) => { // 8/11 02:51 做到這裡
-        models.add(req, (err, results) => {
-            if (err) {
-                res.status(500).json({ "result": err });
-                return console.error(err);
+        const position = req.body.uploadBy;
+        models.checkOfficer(position, (err, results) => {
+            const check = results[0].num;
+            if (check) {
+                models.add(req, (err, results) => {
+                    if (err) {
+                        res.status(500).json({ "result": err });
+                        return console.error(err);
+                    }
+                    if (!results.affectedRows) {
+                        res.status(404).json({ "result": err });
+                        return console.error(err);
+                    }
+                    res.status(200).json({ "result": true });
+                })
+            } else {
+                res.status(500).json({ "result": "Position does not exist." });
             }
-
-            res.status(200).json({ "result": true });
-        })
+        });
     }
     delete = (req, res) => {
         models.delete(req, (err, results) => {
@@ -19,7 +30,7 @@ class AccountController {
                 return console.error(err);
             }
             if (!results.affectedRows) {
-                res.status(404).json({ "result": err });
+                res.status(404).json({ "result": "The account is not exist." });
                 return console.error(err);
             }
             res.status(200).json({ "result": true });
