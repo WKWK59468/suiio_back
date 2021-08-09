@@ -17,6 +17,7 @@ class categoryController {
         })
     }
     listCategory = (req, res) => {
+        let arr = [];
         models.list(req, (err, results) => {
             if (err) {
                 res.status(500).json({ "result": err })
@@ -26,7 +27,12 @@ class categoryController {
                 res.status(404).json({ "result": "There is nothing to show." });
                 return;
             }
-            res.json(results);
+            results.forEach(element => {
+                if (element.ID != 1) {
+                    arr.push(element);
+                }
+            });
+            res.status(200).json(arr);
         });
     }
     fetchStatusOn = (req, res) => {
