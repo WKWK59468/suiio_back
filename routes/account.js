@@ -8,5 +8,6 @@ router.route('/delete').post(AccountController.delete);
 router.route('/update').post(AccountController.update);
 //GET
 router.route('/fetch/all').get(AccountController.fetchAll);
+router.route('/fetch/status/:status').get(AccountController.fetchStatus);
 
 module.exports = router;

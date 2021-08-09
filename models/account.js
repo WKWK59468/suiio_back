@@ -34,5 +34,12 @@ module.exports = {
     fetchAll: (req, callback) => {
         sql = 'SELECT * FROM account';
         return conn.query(sql, callback);
-    }
+    },
+    fetchStatus: (req, callback) => {
+        const body = req.params;
+        const status = body.status;
+
+        sql = mysql.format('SELECT * FROM account WHERE status = ?', status)
+        return conn.query(sql, callback);
+    },
 }
