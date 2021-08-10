@@ -56,6 +56,16 @@ const check_sID = (sID) => {
     }
 }
 
+const dateFormat = (res) => {
+    res.forEach((element, index) => {
+        const Year = element.birth.getFullYear();
+        const Month = ((element.birth.getMonth() + 1) < 10) ? "0" + (element.birth.getMonth() + 1) : (element.birth.getMonth() + 1);
+        const Date = (element.birth.getDate() < 10) ? "0" + element.birth.getDate() : element.birth.getDate();
+        element.birth = Year + "-" + Month + "-" + Date;
+    });
+    return res;
+}
+
 class UserController {
     //取得單一user
     getUser = (req, res) => {
@@ -84,9 +94,7 @@ class UserController {
                     console.log(err);
                     return;
                 }
-                results.forEach(element => {
-                    element.birth = element.birth.getFullYear() + "-" + (element.birth.getMonth() + 1) + "-" + element.birth.getDate()
-                });
+                results = dateFormat(results);
                 res.json(results);
             })
         }

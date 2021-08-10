@@ -10,6 +10,16 @@ const errMessage = (status, err) => {
     }
 };
 
+const dateFormat = (res) => {
+    res.forEach((element, index) => {
+        const Year = element.date.getFullYear();
+        const Month = ((element.date.getMonth() + 1) < 10) ? "0" + (element.date.getMonth() + 1) : (element.date.getMonth() + 1);
+        const Date = (element.date.getDate() < 10) ? "0" + element.date.getDate() : element.date.getDate();
+        element.date = Year + "-" + Month + "-" + Date;
+    });
+    return res;
+}
+
 const successMessage = {
     result: true,
 };
@@ -25,12 +35,8 @@ class Conference {
                 res.status(404).json(errMessage(404, err));
                 return console.error(err);
             }
-            let result = [];
-            results.forEach((element, index) => {
-                element.date = element.date.getFullYear() + "-" + (element.date.getMonth() + 1) + "-" + element.date.getDate();
-                result.push(element);
-            });
-            res.status(200).json(result);
+            results = dateFormat(results);
+            res.status(200).json(results);
         });
     };
 
@@ -44,6 +50,7 @@ class Conference {
                 res.status(404).json(errMessage(404, err));
                 return console.error(err);
             }
+            results = dateFormat(results)
             res.status(200).json(results);
         });
     };
