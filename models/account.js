@@ -6,7 +6,7 @@ let sql = '';
 
 module.exports = {
     checkOfficer: (position, callback) => {
-        sql = mysql.format('SELECT COUNT(*) AS num FROM officer WHERE position = ?', position);
+        sql = mysql.format(`SELECT COUNT(*) AS num FROM officer WHERE position = '${position}'`);
         conn.query(sql, callback);
     },
     add: (req, callback) => {
@@ -18,28 +18,75 @@ module.exports = {
         const uploadBy = body.uploadBy;
         const status = "0";
 
-        sql = mysql.format('INSERT INTO account(name,cost,content,receipt,status,uploadBy) VALUES(?,?,?,?,?,?)', [name, cost, content, receipt, status, uploadBy]);
+        sql = mysql.format(`INSERT INTO account(name,cost,content,receipt,status,uploadBy) VALUES('${name}','${cost}','${content}','${receipt}','${status}','${uploadBy}')`);
         return conn.query(sql, callback);
     },
     delete: (req, callback) => {
         const body = req.body;
         const ID = body.ID;
-        sql = mysql.format('DELETE FROM account WHERE ID=?', [ID]);
+        sql = mysql.format(`DELETE FROM account WHERE ID = ${ID}`);
         return conn.query(sql, callback);
     },
     update: (req, callback) => {
-        sql = mysql.format('SELECT * FROM account WHERE ID=?', [req.body.aID]);
+        const body = req.body;
+        const ID = body.ID;
+        const name = body.name;
+        const cost = body.cost;
+        const content = body.content;
+        const receipt = body.receipt;
+
+        sql = mysql.format(`UPDATE account SET name = '${name}', cost = '${cost}', content = '${content}', receipt = '${receipt}' WHERE ID = ${ID}`);
+        return conn.query(sql, callback);
+    },
+    updateStatus: (req, callback) => {
+        const body = req.body;
+        const ID = body.ID;
+        const status = body.status;
+
+        sql = mysql.format(`UPDATE account SET status = '${status}' WHERE ID = ${ID}`);
         return conn.query(sql, callback);
     },
     fetchAll: (req, callback) => {
         sql = 'SELECT * FROM account';
         return conn.query(sql, callback);
     },
-    fetchStatus: (req, callback) => {
+    fetchByStatus: (req, callback) => {
         const body = req.params;
         const status = body.status;
 
-        sql = mysql.format('SELECT * FROM account WHERE status = ?', status)
+        sql = mysql.format(`SELECT * FROM account WHERE status = '${status}'`);
+        return conn.query(sql, callback);
+    },
+    fetchByName: (req, callback) => {
+        const body = req.params;
+        const name = "%" + body.name + "%";
+
+        sql = mysql.format(`SELECT * FROM account WHERE name like '${name}'`);
+        console.log(sql);
+        return conn.query(sql, callback);
+    },
+    fetchByWhom: (req, callback) => {
+        const body = req.params;
+        const whom = body.whom;
+
+        sql = mysql.format(`SELECT * FROM account WHERE uploadBy = '${whom}'`);
+        console.log(sql);
+        return conn.query(sql, callback);
+    },
+    fetchByDate: (req, callback) => {
+        const body = req.params;
+        const date = "%" + body.date + "%";
+
+        sql = mysql.format(`SELECT * FROM account WHERE date like '${date}'`);
+        console.log(sql);
+        return conn.query(sql, callback);
+    },
+    fetchByID: (req, callback) => {
+        const body = req.params;
+        const ID = body.ID;
+
+        sql = mysql.format(`SELECT * FROM account WHERE ID = ${ID}`);
+        console.log(sql);
         return conn.query(sql, callback);
     },
 }
