@@ -1,8 +1,11 @@
 const models = require('../models/account');
 
 const dateFormat = (res) => {
-    res.forEach(element => {
-        element.date = element.date.getFullYear() + "-" + 0 + (element.date.getMonth() + 1) + "-" + 0 + element.date.getDate();
+    res.forEach((element, index) => {
+        const Year = element.date.getFullYear();
+        const Month = ((element.date.getMonth() + 1) < 10) ? "0" + (element.date.getMonth() + 1) : (element.date.getMonth() + 1);
+        const Date = (element.date.getDate() < 10) ? "0" + element.date.getDate() : element.date.getDate();
+        element.date = Year + "-" + Month + "-" + Date;
     });
     return res;
 }
