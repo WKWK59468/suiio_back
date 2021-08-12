@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主機： 127.0.0.1:3308
--- 產生時間： 2021-08-09 19:40:43
+-- 產生時間： 2021-08-12 06:36:23
 -- 伺服器版本： 5.7.31
 -- PHP 版本： 7.3.21
 
@@ -101,24 +101,25 @@ DROP TABLE IF EXISTS `account`;
 CREATE TABLE IF NOT EXISTS `account` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `category` int(11) NOT NULL,
   `name` varchar(20) NOT NULL,
   `cost` int(11) NOT NULL,
   `content` varchar(200) DEFAULT NULL,
   `receipt` varchar(50) DEFAULT NULL,
   `status` char(1) NOT NULL,
   `uploadBy` varchar(10) NOT NULL,
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COMMENT='收支紀錄';
+  PRIMARY KEY (`ID`,`category`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COMMENT='收支紀錄';
 
 --
 -- 傾印資料表的資料 `account`
 --
 
-INSERT INTO `account` (`ID`, `date`, `name`, `cost`, `content`, `receipt`, `status`, `uploadBy`) VALUES
-(1, '2021-07-07 17:58:06', '大迎新場地租借', 150000, '僅包含場地租借費用', '大迎新場地費.jpg', '0', '會長'),
-(2, '2021-07-09 03:32:27', '小迎新場地費', 5000, '僅包含場地費用', '小迎新場地費.jpg', '0', '會長'),
-(3, '2021-08-08 04:10:15', '民歌場地費用', 10000, '僅場地租借費用', '民歌場地費.jpg', '0', '財務長'),
-(6, '2021-08-08 05:00:56', '籃球比賽獎金', 10000, '第一名:5000，第二名:3000，第三名:2000', '籃球比賽獎金收據.jpg', '0', '財務長');
+INSERT INTO `account` (`ID`, `date`, `category`, `name`, `cost`, `content`, `receipt`, `status`, `uploadBy`) VALUES
+(1, '2021-07-07 17:58:06', 2, '大迎新場地租借', 150000, '僅包含場地租借費用', '大迎新場地費.jpg', '1', '會長'),
+(2, '2021-07-09 03:32:27', 3, '小迎新場地費', 5000, '僅包含場地費用', '小迎新場地費.jpg', '0', '會長'),
+(3, '2021-08-08 04:10:15', 7, '民歌場地費用', 10000, '僅場地租借費用', '民歌場地費.jpg', '0', '財務長'),
+(6, '2021-08-08 05:00:56', 5, '籃球比賽獎金', 10000, '第一名:5000，第二名:3000，第三名:2000', '籃球比賽獎金收據.jpg', '3', '財務長');
 
 -- --------------------------------------------------------
 
@@ -222,7 +223,7 @@ CREATE TABLE IF NOT EXISTS `category` (
   `status` int(1) NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COMMENT='活動類別';
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COMMENT='活動類別';
 
 --
 -- 傾印資料表的資料 `category`
