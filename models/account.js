@@ -12,13 +12,14 @@ module.exports = {
     add: (req, callback) => {
         const body = req.body;
         const name = body.name;
+        const category = body.category;
         const cost = body.cost;
         const content = body.content;
         const receipt = body.receipt;
         const uploadBy = body.uploadBy;
         const status = "0";
 
-        sql = mysql.format(`INSERT INTO account(name,cost,content,receipt,status,uploadBy) VALUES('${name}','${cost}','${content}','${receipt}','${status}','${uploadBy}')`);
+        sql = mysql.format(`INSERT INTO account(name,category,cost,content,receipt,status,uploadBy) VALUES('${name}','${category}','${cost}','${content}','${receipt}','${status}','${uploadBy}')`);
         return conn.query(sql, callback);
     },
     delete: (req, callback) => {
