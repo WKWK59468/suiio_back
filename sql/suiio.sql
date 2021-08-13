@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主機： 127.0.0.1:3308
--- 產生時間： 2021-08-09 19:40:43
+-- 產生時間： 2021-08-13 14:20:43
 -- 伺服器版本： 5.7.31
 -- PHP 版本： 7.3.21
 
@@ -33,7 +33,8 @@ DROP TABLE IF EXISTS `absentees`;
 CREATE TABLE IF NOT EXISTS `absentees` (
   `conference` int(11) NOT NULL,
   `absentees` varchar(10) NOT NULL,
-  PRIMARY KEY (`conference`,`absentees`)
+  PRIMARY KEY (`conference`,`absentees`),
+  KEY `officer_position_absentees` (`absentees`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='缺席者';
 
 --
@@ -42,54 +43,45 @@ CREATE TABLE IF NOT EXISTS `absentees` (
 
 INSERT INTO `absentees` (`conference`, `absentees`) VALUES
 (1, '副會長'),
-(1, '會長'),
-(1, '活動長'),
-(1, '資訊長'),
 (2, '副會長'),
-(2, '會長'),
-(2, '活動長'),
-(2, '資訊長'),
 (3, '副會長'),
-(3, '會長'),
-(3, '活動長'),
-(3, '資訊長'),
 (4, '副會長'),
-(4, '會長'),
-(4, '活動長'),
-(4, '資訊長'),
 (5, '副會長'),
-(5, '會長'),
-(5, '活動長'),
-(5, '資訊長'),
 (6, '副會長'),
-(6, '會長'),
-(6, '活動長'),
-(6, '資訊長'),
 (7, '副會長'),
-(7, '會長'),
-(7, '活動長'),
-(7, '資訊長'),
 (8, '副會長'),
-(8, '會長'),
-(8, '活動長'),
-(8, '財務長'),
 (9, '副會長'),
-(9, '會長'),
-(9, '活動長'),
-(9, '財務長'),
-(10, '副會長'),
-(10, '會長'),
-(10, '活動長'),
-(10, '財務長'),
 (11, '副會長'),
+(1, '會長'),
+(2, '會長'),
+(3, '會長'),
+(4, '會長'),
+(5, '會長'),
+(6, '會長'),
+(7, '會長'),
+(8, '會長'),
+(9, '會長'),
 (11, '會長'),
+(1, '活動長'),
+(2, '活動長'),
+(3, '活動長'),
+(4, '活動長'),
+(5, '活動長'),
+(6, '活動長'),
+(7, '活動長'),
+(8, '活動長'),
+(9, '活動長'),
 (11, '活動長'),
+(8, '財務長'),
+(9, '財務長'),
 (11, '財務長'),
-(13, '公關長'),
-(13, '器材長'),
-(13, '秘書長'),
-(13, '資訊長'),
-(13, '體育長');
+(1, '資訊長'),
+(2, '資訊長'),
+(3, '資訊長'),
+(4, '資訊長'),
+(5, '資訊長'),
+(6, '資訊長'),
+(7, '資訊長');
 
 -- --------------------------------------------------------
 
@@ -101,24 +93,27 @@ DROP TABLE IF EXISTS `account`;
 CREATE TABLE IF NOT EXISTS `account` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `category` int(11) NOT NULL,
   `name` varchar(20) NOT NULL,
   `cost` int(11) NOT NULL,
   `content` varchar(200) DEFAULT NULL,
   `receipt` varchar(50) DEFAULT NULL,
   `status` char(1) NOT NULL,
   `uploadBy` varchar(10) NOT NULL,
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COMMENT='收支紀錄';
+  PRIMARY KEY (`ID`,`category`) USING BTREE,
+  KEY `category_ID_account` (`category`),
+  KEY `officer_position_account` (`uploadBy`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COMMENT='收支紀錄';
 
 --
 -- 傾印資料表的資料 `account`
 --
 
-INSERT INTO `account` (`ID`, `date`, `name`, `cost`, `content`, `receipt`, `status`, `uploadBy`) VALUES
-(1, '2021-07-07 17:58:06', '大迎新場地租借', 150000, '僅包含場地租借費用', '大迎新場地費.jpg', '0', '會長'),
-(2, '2021-07-09 03:32:27', '小迎新場地費', 5000, '僅包含場地費用', '小迎新場地費.jpg', '0', '會長'),
-(3, '2021-08-08 04:10:15', '民歌場地費用', 10000, '僅場地租借費用', '民歌場地費.jpg', '0', '財務長'),
-(6, '2021-08-08 05:00:56', '籃球比賽獎金', 10000, '第一名:5000，第二名:3000，第三名:2000', '籃球比賽獎金收據.jpg', '0', '財務長');
+INSERT INTO `account` (`ID`, `date`, `category`, `name`, `cost`, `content`, `receipt`, `status`, `uploadBy`) VALUES
+(1, '2021-07-07 17:58:06', 2, '大迎新場地租借', 150000, '僅包含場地租借費用', '大迎新場地費.jpg', '1', '會長'),
+(2, '2021-07-09 03:32:27', 3, '小迎新場地費', 5000, '僅包含場地費用', '小迎新場地費.jpg', '0', '會長'),
+(3, '2021-08-08 04:10:15', 7, '民歌場地費用', 10000, '僅場地租借費用', '民歌場地費.jpg', '0', '財務長'),
+(6, '2021-08-08 05:00:56', 5, '籃球比賽獎金', 10000, '第一名:5000，第二名:3000，第三名:2000', '籃球比賽獎金收據.jpg', '3', '財務長');
 
 -- --------------------------------------------------------
 
@@ -130,7 +125,8 @@ DROP TABLE IF EXISTS `attendees`;
 CREATE TABLE IF NOT EXISTS `attendees` (
   `conference` int(11) NOT NULL,
   `attendees` varchar(10) NOT NULL,
-  PRIMARY KEY (`conference`,`attendees`)
+  PRIMARY KEY (`conference`,`attendees`),
+  KEY `officer_position_attendees` (`attendees`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='出席者';
 
 --
@@ -139,45 +135,39 @@ CREATE TABLE IF NOT EXISTS `attendees` (
 
 INSERT INTO `attendees` (`conference`, `attendees`) VALUES
 (1, '公關長'),
-(1, '器材長'),
-(1, '秘書長'),
-(1, '體育長'),
 (2, '公關長'),
-(2, '器材長'),
-(2, '秘書長'),
-(2, '體育長'),
 (3, '公關長'),
-(3, '器材長'),
-(3, '秘書長'),
-(3, '體育長'),
 (4, '公關長'),
-(4, '器材長'),
-(4, '秘書長'),
-(4, '體育長'),
 (5, '公關長'),
-(5, '器材長'),
-(5, '秘書長'),
-(5, '體育長'),
 (6, '公關長'),
-(6, '器材長'),
-(6, '秘書長'),
-(6, '體育長'),
 (7, '公關長'),
+(1, '器材長'),
+(2, '器材長'),
+(3, '器材長'),
+(4, '器材長'),
+(5, '器材長'),
+(6, '器材長'),
 (7, '器材長'),
-(7, '秘書長'),
-(7, '體育長'),
 (8, '器材長'),
-(8, '體育長'),
 (9, '器材長'),
-(9, '體育長'),
-(10, '器材長'),
-(10, '體育長'),
 (11, '器材長'),
-(11, '體育長'),
-(13, '副會長'),
-(13, '會長'),
-(13, '活動長'),
-(13, '財務長');
+(1, '秘書長'),
+(2, '秘書長'),
+(3, '秘書長'),
+(4, '秘書長'),
+(5, '秘書長'),
+(6, '秘書長'),
+(7, '秘書長'),
+(1, '體育長'),
+(2, '體育長'),
+(3, '體育長'),
+(4, '體育長'),
+(5, '體育長'),
+(6, '體育長'),
+(7, '體育長'),
+(8, '體育長'),
+(9, '體育長'),
+(11, '體育長');
 
 -- --------------------------------------------------------
 
@@ -222,7 +212,7 @@ CREATE TABLE IF NOT EXISTS `category` (
   `status` int(1) NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COMMENT='活動類別';
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COMMENT='活動類別';
 
 --
 -- 傾印資料表的資料 `category`
@@ -247,7 +237,7 @@ INSERT INTO `category` (`ID`, `name`, `status`) VALUES
 DROP TABLE IF EXISTS `conference`;
 CREATE TABLE IF NOT EXISTS `conference` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `category` varchar(10) NOT NULL,
+  `category` int(11) NOT NULL,
   `name` varchar(20) NOT NULL,
   `date` date NOT NULL,
   `attached_file` varchar(50) DEFAULT NULL,
@@ -255,25 +245,41 @@ CREATE TABLE IF NOT EXISTS `conference` (
   `host` varchar(10) NOT NULL,
   `recorder` varchar(10) NOT NULL,
   `status` char(1) NOT NULL,
-  PRIMARY KEY (`ID`,`category`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 COMMENT='會議紀錄';
+  PRIMARY KEY (`ID`,`category`) USING BTREE,
+  KEY `category_ID_conference` (`category`),
+  KEY `recorder` (`recorder`),
+  KEY `host` (`host`)
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 COMMENT='會議紀錄';
 
 --
 -- 傾印資料表的資料 `conference`
 --
 
 INSERT INTO `conference` (`ID`, `category`, `name`, `date`, `attached_file`, `content`, `host`, `recorder`, `status`) VALUES
-(1, '2', '大迎新會議', '2021-07-14', NULL, '內容', '會長', '副會長', '0'),
-(2, '3', '小迎新會議', '2021-07-05', NULL, '暫無', '會長', '副會長', '0'),
-(3, '4', '聖誕晚會會議', '2021-12-08', NULL, '編列預算、人員配置', '會長', '副會長', '0'),
-(4, '5', '籃球比賽會議', '2021-07-23', NULL, '無', '體育長', '副會長', '0'),
-(5, '5', '籃球比賽第二次會議', '2021-07-15', NULL, '調整獎金金額', '會長', '副會長', '0'),
-(6, '4', '聖誕晚會第二次會議', '2021-07-25', NULL, '表演獎金增加', '活動長', '副會長', '0'),
-(7, '3', '小迎新第二次會議', '2021-07-28', NULL, '表演獎金增加', '活動長', '副會長', '0'),
-(8, '2', '大迎新第二次會議', '2021-07-28', 'new.doc', '場地費用增加', '活動長', '副會長', '0'),
-(9, '6', '躲避球比賽會議', '2021-09-17', 'new.doc', '獎金總金額10000', '會長', '副會長', '0'),
-(11, '8', '卡K會議', '2021-09-18', '卡K.doc', '獎金總金額10000', '活動長', '副會長', '0'),
-(13, '8', '卡K會議', '2021-09-18', '卡K.doc', '獎金總金額10000', '活動長', '副會長', '0');
+(1, 2, '大迎新會議', '2021-07-14', NULL, '內容', '會長', '副會長', '0'),
+(2, 3, '小迎新會議', '2021-07-05', NULL, '暫無', '會長', '副會長', '0'),
+(3, 4, '聖誕晚會會議', '2021-12-08', NULL, '編列預算、人員配置', '會長', '副會長', '0'),
+(4, 5, '籃球比賽會議', '2021-07-23', NULL, '無', '體育長', '副會長', '0'),
+(5, 5, '籃球比賽第二次會議', '2021-07-15', NULL, '調整獎金金額', '會長', '副會長', '0'),
+(6, 4, '聖誕晚會第二次會議', '2021-07-25', NULL, '表演獎金增加', '活動長', '副會長', '0'),
+(7, 3, '小迎新第二次會議', '2021-07-28', NULL, '表演獎金增加', '活動長', '副會長', '0'),
+(8, 2, '大迎新第二次會議', '2021-07-28', 'new.doc', '場地費用增加', '活動長', '副會長', '0'),
+(9, 6, '躲避球比賽會議', '2021-09-17', 'new.doc', '獎金總金額10000', '會長', '副會長', '0'),
+(11, 8, '卡K會議', '2021-09-18', '卡K.doc', '獎金總金額10000', '活動長', '副會長', '0');
+
+-- --------------------------------------------------------
+
+--
+-- 資料表結構 `content`
+--
+
+DROP TABLE IF EXISTS `content`;
+CREATE TABLE IF NOT EXISTS `content` (
+  `statement` int(11) NOT NULL,
+  `account` int(11) NOT NULL,
+  PRIMARY KEY (`statement`,`account`),
+  KEY `account_ID` (`account`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -335,7 +341,8 @@ CREATE TABLE IF NOT EXISTS `officer` (
   `position` varchar(10) NOT NULL,
   `sID` char(10) NOT NULL,
   PRIMARY KEY (`position`,`sID`),
-  UNIQUE KEY `position` (`position`)
+  UNIQUE KEY `position` (`position`),
+  KEY `user_sID_officer` (`sID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='幹部';
 
 --
@@ -345,7 +352,7 @@ CREATE TABLE IF NOT EXISTS `officer` (
 INSERT INTO `officer` (`permission`, `position`, `sID`) VALUES
 ('財務負責人', '公關長', '1110634006'),
 ('組織負責人', '副會長', '1110634029'),
-('一般幹部', '器材長', '1110634038'),
+('一般幹部', '器材長', '1110634015'),
 ('組織負責人', '會長', '1110634039'),
 ('一般幹部', '活動長', '1110634006'),
 ('會議負責人', '秘書長', '1110634001'),
@@ -365,10 +372,63 @@ CREATE TABLE IF NOT EXISTS `statement` (
   `category` int(11) NOT NULL,
   `name` varchar(20) NOT NULL,
   `date` datetime NOT NULL,
-  `review` varchar(10) NOT NULL,
+  `status` char(1) NOT NULL,
   `uploadBy` varchar(10) NOT NULL,
-  PRIMARY KEY (`ID`,`category`) USING BTREE
+  PRIMARY KEY (`ID`,`category`) USING BTREE,
+  KEY `officer_position_statement` (`uploadBy`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='財務報表';
+
+--
+-- 已傾印資料表的限制式
+--
+
+--
+-- 資料表的限制式 `absentees`
+--
+ALTER TABLE `absentees`
+  ADD CONSTRAINT `confernece_ID_absentees` FOREIGN KEY (`conference`) REFERENCES `conference` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `officer_position_absentees` FOREIGN KEY (`absentees`) REFERENCES `officer` (`position`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- 資料表的限制式 `account`
+--
+ALTER TABLE `account`
+  ADD CONSTRAINT `category_ID_account` FOREIGN KEY (`category`) REFERENCES `category` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `officer_position_account` FOREIGN KEY (`uploadBy`) REFERENCES `officer` (`position`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- 資料表的限制式 `attendees`
+--
+ALTER TABLE `attendees`
+  ADD CONSTRAINT `confernece_ID_attendees` FOREIGN KEY (`conference`) REFERENCES `conference` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `officer_position_attendees` FOREIGN KEY (`attendees`) REFERENCES `officer` (`position`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- 資料表的限制式 `conference`
+--
+ALTER TABLE `conference`
+  ADD CONSTRAINT `category_ID_conference` FOREIGN KEY (`category`) REFERENCES `category` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `officer_position_conference_host` FOREIGN KEY (`host`) REFERENCES `officer` (`position`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `officer_position_conference_recorder` FOREIGN KEY (`recorder`) REFERENCES `officer` (`position`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- 資料表的限制式 `content`
+--
+ALTER TABLE `content`
+  ADD CONSTRAINT `account_ID` FOREIGN KEY (`account`) REFERENCES `account` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `statement_ID` FOREIGN KEY (`statement`) REFERENCES `statement` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- 資料表的限制式 `officer`
+--
+ALTER TABLE `officer`
+  ADD CONSTRAINT `user_sID_officer` FOREIGN KEY (`sID`) REFERENCES `member` (`sID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- 資料表的限制式 `statement`
+--
+ALTER TABLE `statement`
+  ADD CONSTRAINT `officer_position_statement` FOREIGN KEY (`uploadBy`) REFERENCES `officer` (`position`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
