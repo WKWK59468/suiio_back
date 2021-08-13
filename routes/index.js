@@ -6,11 +6,13 @@ const account = require('./account');
 const category = require('./category');
 const officer = require('./officer.route');
 const conference = require('./conference');
+const statement = require('./statement');
 
 router.use('/member', member);
 router.use('/account', account);
 router.use('/category', category);
 router.use('/officers', officer);
 router.use('/conference', conference);
+router.use('/statement', statement);
 
 module.exports = router;
