@@ -63,7 +63,6 @@ module.exports = {
         const name = "%" + body.name + "%";
 
         sql = mysql.format(`SELECT * FROM account WHERE name like '${name}'`);
-        console.log(sql);
         return conn.query(sql, callback);
     },
     fetchByWhom: (req, callback) => {
@@ -71,7 +70,6 @@ module.exports = {
         const whom = body.whom;
 
         sql = mysql.format(`SELECT * FROM account WHERE uploadBy = '${whom}'`);
-        console.log(sql);
         return conn.query(sql, callback);
     },
     fetchByDate: (req, callback) => {
@@ -79,7 +77,6 @@ module.exports = {
         const date = "%" + body.date + "%";
 
         sql = mysql.format(`SELECT * FROM account WHERE date like '${date}'`);
-        console.log(sql);
         return conn.query(sql, callback);
     },
     fetchByID: (req, callback) => {
@@ -87,7 +84,6 @@ module.exports = {
         const ID = body.ID;
 
         sql = mysql.format(`SELECT * FROM account WHERE ID = ${ID}`);
-        console.log(sql);
         return conn.query(sql, callback);
     },
 }
