@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主機： 127.0.0.1:3308
--- 產生時間： 2021-08-13 14:20:43
+-- 產生時間： 2021-08-14 22:28:44
 -- 伺服器版本： 5.7.31
 -- PHP 版本： 7.3.21
 
@@ -103,17 +103,35 @@ CREATE TABLE IF NOT EXISTS `account` (
   PRIMARY KEY (`ID`,`category`) USING BTREE,
   KEY `category_ID_account` (`category`),
   KEY `officer_position_account` (`uploadBy`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COMMENT='收支紀錄';
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8 COMMENT='收支紀錄';
 
 --
 -- 傾印資料表的資料 `account`
 --
 
 INSERT INTO `account` (`ID`, `date`, `category`, `name`, `cost`, `content`, `receipt`, `status`, `uploadBy`) VALUES
-(1, '2021-07-07 17:58:06', 2, '大迎新場地租借', 150000, '僅包含場地租借費用', '大迎新場地費.jpg', '1', '會長'),
-(2, '2021-07-09 03:32:27', 3, '小迎新場地費', 5000, '僅包含場地費用', '小迎新場地費.jpg', '0', '會長'),
-(3, '2021-08-08 04:10:15', 7, '民歌場地費用', 10000, '僅場地租借費用', '民歌場地費.jpg', '0', '財務長'),
-(6, '2021-08-08 05:00:56', 5, '籃球比賽獎金', 10000, '第一名:5000，第二名:3000，第三名:2000', '籃球比賽獎金收據.jpg', '3', '財務長');
+(7, '2021-08-15 02:42:15', 2, '膠帶', -213, '', '膠帶收據.jpg', '0', '活動長'),
+(8, '2021-08-15 02:47:29', 2, '食材用品及生活組用品', -377, '', '食材用品及生活組用品費用收據.jpg', '0', '生活長'),
+(9, '2021-08-15 02:48:23', 2, '平安符及金紙', -550, '', '平安符及金紙收據.jpg', '0', '公關長'),
+(10, '2021-08-15 02:54:00', 9, '退費', -300, '轉科退費', '退費收據.jpg', '0', '財務長'),
+(11, '2021-08-15 02:55:21', 9, '醫療用品', -540, '藥用酒精', '酒精收據.jpg', '0', '會長'),
+(12, '2021-08-15 02:56:03', 9, '文具用品', -84, '收據本及紅包袋', '文具收據.jpg', '0', '財務長'),
+(13, '2021-08-15 02:57:02', 2, '場勘', -2635, '車費', '車費收據.jpg', '0', '活動長'),
+(14, '2021-08-15 02:57:35', 2, '影印', -97, '影印費', '影印費收據.jpg', '0', '活動長'),
+(15, '2021-08-15 02:58:26', 9, '科費補收', 5200, '大迎新(4人)', '科費收據.jpg', '0', '財務長'),
+(16, '2021-08-15 02:58:34', 9, '科費補收', 6500, '大迎新(5人)', '科費收據.jpg', '0', '財務長'),
+(17, '2021-08-15 02:58:46', 9, '科費補收', 5200, '大迎新(4人)', '科費收據.jpg', '0', '財務長'),
+(18, '2021-08-15 02:59:47', 5, '男籃球隊', -7200, '球衣補助', '輔助收據.jpg', '0', '體育長'),
+(19, '2021-08-15 03:00:21', 5, '男籃球隊', -2400, '比賽報名費', '報名收據.jpg', '0', '體育長'),
+(20, '2021-08-15 03:01:53', 2, '場勘', -610, '車費', '車費收據.jpg', '0', '活動長'),
+(21, '2021-08-15 03:04:37', 9, '科服費用', -22440, '', '科服費用收據.jpg', '0', '美宣長'),
+(22, '2021-08-15 03:05:27', 2, '美宣用品', -336, '文具', '文具用品收據.jpg', '0', '美宣長'),
+(23, '2021-08-15 03:07:57', 9, '科費補收', 5200, '大迎新(4人)', '科費收據.jpg', '0', '財務長'),
+(24, '2021-08-15 03:08:45', 9, '科服收入', 300, '1人', '科服收據.jpg', '0', '財務長'),
+(25, '2021-08-15 03:09:05', 9, '科服收入', 7800, '26人', '科服收據.jpg', '0', '財務長'),
+(26, '2021-08-15 03:09:50', 2, '食材用品及生活組用品', -8107, '', '食材用品及生活組用品收據.jpg', '0', '生活長'),
+(27, '2021-08-15 03:11:12', 9, '科費補收', 1300, '大迎新(1人)', '科費收據.jpg', '0', '財務長'),
+(28, '2021-08-15 03:11:44', 9, '科服收入', 900, '3人', '科服收據.jpg', '0', '財務長');
 
 -- --------------------------------------------------------
 
@@ -212,7 +230,7 @@ CREATE TABLE IF NOT EXISTS `category` (
   `status` int(1) NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COMMENT='活動類別';
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COMMENT='活動類別';
 
 --
 -- 傾印資料表的資料 `category`
@@ -226,7 +244,8 @@ INSERT INTO `category` (`ID`, `name`, `status`) VALUES
 (5, '籃球比賽', 0),
 (6, '躲避球比賽', 1),
 (7, '民歌', 0),
-(8, '卡K', 0);
+(8, '卡K', 0),
+(9, '餘額', 0);
 
 -- --------------------------------------------------------
 
@@ -249,7 +268,7 @@ CREATE TABLE IF NOT EXISTS `conference` (
   KEY `category_ID_conference` (`category`),
   KEY `recorder` (`recorder`),
   KEY `host` (`host`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 COMMENT='會議紀錄';
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8 COMMENT='會議紀錄';
 
 --
 -- 傾印資料表的資料 `conference`
@@ -280,6 +299,22 @@ CREATE TABLE IF NOT EXISTS `content` (
   PRIMARY KEY (`statement`,`account`),
   KEY `account_ID` (`account`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- 傾印資料表的資料 `content`
+--
+
+INSERT INTO `content` (`statement`, `account`) VALUES
+(12, 7),
+(12, 8),
+(12, 9),
+(12, 13),
+(12, 14),
+(13, 18),
+(13, 19),
+(12, 20),
+(12, 22),
+(12, 26);
 
 -- --------------------------------------------------------
 
@@ -350,12 +385,14 @@ CREATE TABLE IF NOT EXISTS `officer` (
 --
 
 INSERT INTO `officer` (`permission`, `position`, `sID`) VALUES
-('財務負責人', '公關長', '1110634006'),
+('財務負責人', '公關長', '1110634003'),
 ('組織負責人', '副會長', '1110634029'),
 ('一般幹部', '器材長', '1110634015'),
 ('組織負責人', '會長', '1110634039'),
 ('一般幹部', '活動長', '1110634006'),
+('一般幹部', '生活長', '1110634004'),
 ('會議負責人', '秘書長', '1110634001'),
+('一般幹部', '美宣長', '1110634002'),
 ('財務負責人', '財務長', '1110634025'),
 ('一般幹部', '資訊長', '1110634000'),
 ('會議負責人', '體育長', '1110634041');
@@ -375,8 +412,17 @@ CREATE TABLE IF NOT EXISTS `statement` (
   `status` char(1) NOT NULL,
   `uploadBy` varchar(10) NOT NULL,
   PRIMARY KEY (`ID`,`category`) USING BTREE,
-  KEY `officer_position_statement` (`uploadBy`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='財務報表';
+  KEY `officer_position_statement` (`uploadBy`),
+  KEY `category_ID_statement` (`category`)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 COMMENT='財務報表';
+
+--
+-- 傾印資料表的資料 `statement`
+--
+
+INSERT INTO `statement` (`ID`, `category`, `name`, `date`, `status`, `uploadBy`) VALUES
+(12, 2, '大迎新財務報表', '2021-09-14 00:00:00', '0', '財務長'),
+(13, 5, '籃球比賽報表', '2021-09-01 00:00:00', '0', '財務長');
 
 --
 -- 已傾印資料表的限制式
@@ -428,6 +474,7 @@ ALTER TABLE `officer`
 -- 資料表的限制式 `statement`
 --
 ALTER TABLE `statement`
+  ADD CONSTRAINT `category_ID_statement` FOREIGN KEY (`category`) REFERENCES `category` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `officer_position_statement` FOREIGN KEY (`uploadBy`) REFERENCES `officer` (`position`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
