@@ -6,7 +6,7 @@ const account = require('./account');
 const category = require('./category');
 const officer = require('./officer.route');
 const conference = require('./conference');
-const statement = require('./statement');
+const statement = require('./statement.route');
 
 router.use('/member', member);
 router.use('/account', account);
