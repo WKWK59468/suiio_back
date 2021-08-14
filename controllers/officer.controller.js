@@ -1,5 +1,3 @@
-const { check } = require('../models/officer.model');
-const officerModel = require('../models/officer.model');
 const Officer = require('../models/officer.model');
 
 const check_sID = (sID) => {
