@@ -88,7 +88,7 @@ class Conference {
     upload = async(req, res) => {
         let ConferenceID;
         let position = [];
-        const attendees = JSON.parse(req.body.attendees);
+        const attendees = req.body.attendees;
         await models.upload(req, (err, results) => {
             if (err) {
                 res.status(500).json(errMessage(500, err));
@@ -98,7 +98,6 @@ class Conference {
                 res.status(404).json(errMessage(404, err));
                 return console.error(err);
             }
-
         });
 
         await officerModels.fetchAll(req, (err, positionArray) => {
@@ -117,7 +116,7 @@ class Conference {
                 ConferenceID = results[0].ID;
 
                 //attendees
-                const attendees = JSON.parse(req.body.attendees);
+                const attendees = req.body.attendees;
                 for (let k in attendees) {
                     await models.addAttendees(ConferenceID, attendees[k]);
                 }
