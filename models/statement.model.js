@@ -50,46 +50,46 @@ module.exports = {
         return conn.query(sql, callback);
     },
     fetchAll: (req, callback) => {
-        sql = `SELECT statement.ID,category.name AS category,statement.name,statement.date,statement.status,statement.uploadBy FROM statement,category WHERE statement.category = category.ID ORDER BY date ACS`
+        sql = `SELECT statement.ID,category.name AS category,statement.name,statement.date,statement.status,statement.uploadBy FROM statement,category WHERE statement.category = category.ID ORDER BY date ASC`
         return conn.query(sql, callback);
     },
     fetchAccountByStatement: (statementID, callback) => {
-        sql = `SELECT account.* FROM statement,content,account WHERE statement.ID = '${statementID}' AND statement.ID = content.statement AND content.account = account.ID ORDER BY date ACS`;
+        sql = `SELECT account.* FROM statement,content,account WHERE statement.ID = '${statementID}' AND statement.ID = content.statement AND content.account = account.ID ORDER BY date ASC`;
         return conn.query(sql, callback);
     },
     fetchByName: (req, callback) => {
         const body = req.params;
         const name = "%" + body.name + "%";
 
-        sql = `SELECT * FROM statement WHERE name like '${name}' ORDER BY date ACS`
+        sql = `SELECT * FROM statement WHERE name like '${name}' ORDER BY date ASC`
         return conn.query(sql, callback);
     },
     fetchByStatus: (req, callback) => {
         const body = req.params;
         const status = body.status;
 
-        sql = `SELECT * FROM statement WHERE status = ${status} ORDER BY date ACS`
+        sql = `SELECT * FROM statement WHERE status = ${status} ORDER BY date ASC`
         return conn.query(sql, callback);
     },
     fetchByWhom: (req, callback) => {
         const body = req.params;
         const whom = body.whom;
 
-        sql = `SELECT * FROM statement WHERE uploadBy = '${whom}' ORDER BY date ACS`
+        sql = `SELECT * FROM statement WHERE uploadBy = '${whom}' ORDER BY date ASC`
         return conn.query(sql, callback);
     },
     fetchByID: (req, callback) => {
         const body = req.params;
         const ID = body.ID;
 
-        sql = `SELECT * FROM statement WHERE id = ${ID} ORDER BY date ACS`
+        sql = `SELECT * FROM statement WHERE id = ${ID} ORDER BY date ASC`
         return conn.query(sql, callback);
     },
     fetchByDate: (req, callback) => {
         const body = req.params;
         const date = "%" + body.date + "%";
 
-        sql = `SELECT * FROM statement WHERE date like '${date}' ORDER BY date ACS`
+        sql = `SELECT * FROM statement WHERE date like '${date}' ORDER BY date ASC`
         return conn.query(sql, callback);
     }
 }
