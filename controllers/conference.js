@@ -85,51 +85,43 @@ class Conference {
         });
     };
 
-    upload = async(req, res) => {
-        let ConferenceID;
+    upload = (req, res) => {
         let position = [];
         const attendees = req.body.attendees;
-        await models.upload(req, (err, results) => {
-            if (err) {
-                res.status(500).json(errMessage(500, err));
-                return console.error(err);
-            }
-            if (!results.affectedRows) {
-                res.status(404).json(errMessage(404, err));
-                return console.error(err);
-            }
-        });
+        models.upload(req).then(
 
-        await officerModels.fetchAll(req, (err, positionArray) => {
+            officerModels.fetchAll(req, (err, positionArray) => {
 
-            positionArray.forEach(element => {
-                position.push(element.position);
-            });
+                positionArray.forEach(element => {
+                    position.push(element.position);
+                });
 
-            const absentees = position.concat(attendees).filter((element, index, arr) => {
-                return arr.indexOf(element) === arr.lastIndexOf(element);
-            });
+                const absentees = position.concat(attendees).filter((element, index, arr) => {
+                    return arr.indexOf(element) === arr.lastIndexOf(element);
+                });
 
-            //GET ConferenceID
-            models.getConferenceID(req, async(err, results) => {
+                //GET ConferenceID
+                models.getConferenceID().then(ConferenceID => {
+                    //attendees
+                    const attendees = req.body.attendees;
+                    for (let k in attendees) {
+                        models.addAttendees(ConferenceID, attendees[k]).catch(err => {
+                            console.log(errMessage(500, err));
+                        });
+                    }
+                    //absentees
+                    for (let k in absentees) {
+                        models.addAbsentees(ConferenceID, absentees[k]).catch(err => {
+                            console.log(errMessage(500, err));
+                        });
+                    }
+                }).then(res.status(200).json(successMessage));
+            })
 
-                ConferenceID = results[0].ID;
+        ).catch(err => {
+            res.status(500).json(errMessage(500, err));
+        })
 
-                //attendees
-                const attendees = req.body.attendees;
-                for (let k in attendees) {
-                    await models.addAttendees(ConferenceID, attendees[k]);
-                }
-
-                //absentees
-                for (let k in absentees) {
-                    await models.addAbsentees(ConferenceID, absentees[k]);
-                }
-
-                res.status(200).json(successMessage);
-
-            });
-        });
     };
 
     updateStatus = (req, res) => {
