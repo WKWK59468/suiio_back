@@ -1,4 +1,5 @@
 const mysql = require('mysql');
+const { resolveContent } = require('nodemailer/lib/shared');
 const conf = require('../conf');
 
 const conn = mysql.createConnection(conf.db);
@@ -6,8 +7,12 @@ let sql = '';
 
 module.exports = {
     checkOfficer: (position, callback) => {
-        sql = mysql.format(`SELECT COUNT(*) AS num FROM officer WHERE position = '${position}'`);
-        conn.query(sql, callback);
+        return new Promise((resolve, reject) => {
+            sql = mysql.format(`SELECT COUNT(*) AS num FROM officer WHERE position = '${position}'`);
+            conn.query(sql, (err, res) => {
+                err ? reject(err) : resolve(res[0].num);
+            });
+        });
     },
     add: (req, callback) => {
         const body = req.body;
