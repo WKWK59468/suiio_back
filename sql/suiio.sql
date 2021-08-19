@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主機： 127.0.0.1:3308
--- 產生時間： 2021-08-18 15:03:41
+-- 產生時間： 2021-08-19 04:51:02
 -- 伺服器版本： 5.7.31
 -- PHP 版本： 7.3.21
 
@@ -42,6 +42,7 @@ CREATE TABLE IF NOT EXISTS `absentees` (
 --
 
 INSERT INTO `absentees` (`conference`, `absentees`) VALUES
+(16, '公關長'),
 (1, '副會長'),
 (2, '副會長'),
 (3, '副會長'),
@@ -51,7 +52,6 @@ INSERT INTO `absentees` (`conference`, `absentees`) VALUES
 (7, '副會長'),
 (8, '副會長'),
 (9, '副會長'),
-(11, '副會長'),
 (1, '會長'),
 (2, '會長'),
 (3, '會長'),
@@ -61,7 +61,6 @@ INSERT INTO `absentees` (`conference`, `absentees`) VALUES
 (7, '會長'),
 (8, '會長'),
 (9, '會長'),
-(11, '會長'),
 (1, '活動長'),
 (2, '活動長'),
 (3, '活動長'),
@@ -71,17 +70,19 @@ INSERT INTO `absentees` (`conference`, `absentees`) VALUES
 (7, '活動長'),
 (8, '活動長'),
 (9, '活動長'),
-(11, '活動長'),
+(16, '生活長'),
+(16, '秘書長'),
+(16, '美宣長'),
 (8, '財務長'),
 (9, '財務長'),
-(11, '財務長'),
 (1, '資訊長'),
 (2, '資訊長'),
 (3, '資訊長'),
 (4, '資訊長'),
 (5, '資訊長'),
 (6, '資訊長'),
-(7, '資訊長');
+(7, '資訊長'),
+(16, '資訊長');
 
 -- --------------------------------------------------------
 
@@ -92,7 +93,7 @@ INSERT INTO `absentees` (`conference`, `absentees`) VALUES
 DROP TABLE IF EXISTS `account`;
 CREATE TABLE IF NOT EXISTS `account` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `date` datetime NOT NULL,
   `category` int(11) NOT NULL,
   `name` varchar(20) NOT NULL,
   `amount` int(11) NOT NULL,
@@ -103,7 +104,7 @@ CREATE TABLE IF NOT EXISTS `account` (
   PRIMARY KEY (`ID`,`category`) USING BTREE,
   KEY `category_ID_account` (`category`),
   KEY `officer_position_account` (`uploadBy`)
-) ENGINE=InnoDB AUTO_INCREMENT=94 DEFAULT CHARSET=utf8 COMMENT='收支紀錄';
+) ENGINE=InnoDB AUTO_INCREMENT=97 DEFAULT CHARSET=utf8 COMMENT='收支紀錄';
 
 --
 -- 傾印資料表的資料 `account`
@@ -224,6 +225,7 @@ INSERT INTO `attendees` (`conference`, `attendees`) VALUES
 (5, '公關長'),
 (6, '公關長'),
 (7, '公關長'),
+(16, '副會長'),
 (1, '器材長'),
 (2, '器材長'),
 (3, '器材長'),
@@ -233,7 +235,9 @@ INSERT INTO `attendees` (`conference`, `attendees`) VALUES
 (7, '器材長'),
 (8, '器材長'),
 (9, '器材長'),
-(11, '器材長'),
+(16, '器材長'),
+(16, '會長'),
+(16, '活動長'),
 (1, '秘書長'),
 (2, '秘書長'),
 (3, '秘書長'),
@@ -241,6 +245,7 @@ INSERT INTO `attendees` (`conference`, `attendees`) VALUES
 (5, '秘書長'),
 (6, '秘書長'),
 (7, '秘書長'),
+(16, '財務長'),
 (1, '體育長'),
 (2, '體育長'),
 (3, '體育長'),
@@ -250,7 +255,7 @@ INSERT INTO `attendees` (`conference`, `attendees`) VALUES
 (7, '體育長'),
 (8, '體育長'),
 (9, '體育長'),
-(11, '體育長');
+(16, '體育長');
 
 -- --------------------------------------------------------
 
@@ -334,7 +339,7 @@ CREATE TABLE IF NOT EXISTS `conference` (
   KEY `category_ID_conference` (`category`),
   KEY `recorder` (`recorder`),
   KEY `host` (`host`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COMMENT='會議紀錄';
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8 COMMENT='會議紀錄';
 
 --
 -- 傾印資料表的資料 `conference`
@@ -350,7 +355,7 @@ INSERT INTO `conference` (`ID`, `category`, `name`, `date`, `attached_file`, `co
 (7, 3, '小迎新第二次會議', '2019-08-22', NULL, '表演獎金增加', '活動長', '副會長', '0'),
 (8, 2, '大迎新第二次會議', '2019-08-21', 'new.doc', '場地費用增加', '活動長', '副會長', '0'),
 (9, 6, '躲避球比賽會議', '2019-10-15', 'new.doc', '獎金總金額10000', '會長', '副會長', '0'),
-(11, 8, '卡K會議', '2020-03-18', '卡K.doc', '獎金總金額10000', '活動長', '副會長', '0');
+(16, 8, '卡K會議', '2020-03-18', '卡K.doc', '獎金總金額10000', '活動長', '副會長', '0');
 
 -- --------------------------------------------------------
 
@@ -608,7 +613,7 @@ CREATE TABLE IF NOT EXISTS `statement` (
   PRIMARY KEY (`ID`,`category`) USING BTREE,
   KEY `officer_position_statement` (`uploadBy`),
   KEY `category_ID_statement` (`category`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COMMENT='財務報表';
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8 COMMENT='財務報表';
 
 --
 -- 傾印資料表的資料 `statement`
