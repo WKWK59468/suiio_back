@@ -12,10 +12,9 @@ const dateFormat = (res) => {
 
 class AccountController {
 
-    add = (req, res) => { // 8/11 02:51 做到這裡
+    add = (req, res) => {
         const position = req.body.uploadBy;
-        models.checkOfficer(position, (err, results) => {
-            const check = results[0].num;
+        models.checkOfficer(position).then(check => {
             if (check) {
                 models.add(req, (err, results) => {
                     if (err) {
@@ -31,7 +30,11 @@ class AccountController {
             } else {
                 res.status(500).json({ "result": "Position does not exist." });
             }
+        }).catch(err => {
+            res.status(500).json({ "result": err });
         });
+
+
     }
     delete = (req, res) => {
         models.delete(req, (err, results) => {
