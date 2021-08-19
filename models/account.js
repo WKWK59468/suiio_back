@@ -18,13 +18,14 @@ module.exports = {
         const body = req.body;
         const name = body.name;
         const category = body.category;
+        const date = body.date;
         const amount = body.amount;
         const content = body.content;
         const receipt = body.receipt;
         const uploadBy = body.uploadBy;
         const status = "0";
 
-        sql = mysql.format(`INSERT INTO account(name,category,amount,content,receipt,status,uploadBy) VALUES('${name}','${category}','${amount}','${content}','${receipt}','${status}','${uploadBy}')`);
+        sql = mysql.format(`INSERT INTO account(name,category,amount,date,content,receipt,status,uploadBy) VALUES('${name}','${category}','${amount}','${date}','${content}','${receipt}','${status}','${uploadBy}')`);
         return conn.query(sql, callback);
     },
     delete: (req, callback) => {
