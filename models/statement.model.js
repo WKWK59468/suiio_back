@@ -4,25 +4,65 @@ const conf = require('../conf');
 const conn = mysql.createConnection(conf.db);
 let sql = '';
 
-module.exports = {
-    searchID: (req, callback) => {
-        sql = `SELECT ID FROM statement ORDER BY ID DESC`;
-        return conn.query(sql, callback);
-    },
-    add: (req, callback) => {
-        const body = req.body;
-        const category = body.category;
-        const name = body.name;
-        const date = body.date;
-        const status = 0;
-        const uploadBy = body.uploadBy;
+const searchbalance = (lastStatement, category, name, date, status, uploadBy) => {
+    return new Promise((resolve, reject) => {
+        sql = `SELECT balance FROM statement WHERE ID = ${lastStatement}`;
+        conn.query(sql, (err, res) => {
+            if (err) {
+                reject(err);
+            } else {
+                let sql2 = mysql.format(`INSERT INTO statement(name,category,date,status,uploadBy,balance) VALUES('${name}','${category}','${date}','${status}','${uploadBy}',${res[0].balance})`);
+                conn.query(sql2, (error, results) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(results);
+                    }
+                });
+            }
+        });
+    });
+}
 
-        sql = mysql.format(`INSERT INTO statement(name,category,date,status,uploadBy) VALUES('${name}','${category}','${date}','${status}','${uploadBy}')`);
-        return conn.query(sql, callback);
+module.exports = {
+    searchID: () => {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                sql = `SELECT ID FROM statement ORDER BY ID DESC`;
+                return conn.query(sql, (err, res) => {
+                    err ? reject(err) : resolve(res[0].ID);
+                });
+            }, 1000);
+        });
+    },
+    add: (req) => {
+        return new Promise((resolve, reject) => {
+            const body = req.body;
+            const lastStatement = body.lastStatement;
+            const category = body.category;
+            const name = body.name;
+            const date = body.date;
+            const status = 0;
+            const uploadBy = body.uploadBy;
+            let balance;
+            if (lastStatement == null || lastStatement == "") {
+                balance = 0;
+                sql = mysql.format(`INSERT INTO statement(name,category,date,status,uploadBy,balance) VALUES('${name}','${category}','${date}','${status}','${uploadBy}',${balance})`);
+                conn.query(sql, (err, res) => {
+                    err ? reject(err) : resolve(res);
+                });
+            } else {
+                searchbalance(lastStatement, category, name, date, status, uploadBy).then(res => { resolve(res) }).catch(err => { reject(err) });
+            }
+        })
     },
     addContent: (statement, account) => {
-        sql = mysql.format(`INSERT INTO content(statement,account) VALUES('${statement}','${account}')`);
-        return conn.query(sql);
+        return new Promise((resolve, reject) => {
+            sql = mysql.format(`INSERT INTO content(statement,account) VALUES('${statement}','${account}')`);
+            return conn.query(sql, (err, res) => {
+                err ? reject(err) : resolve(res);
+            });
+        })
     },
     delete: (req, callback) => {
         const body = req.body;

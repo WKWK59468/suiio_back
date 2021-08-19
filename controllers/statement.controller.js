@@ -11,29 +11,26 @@ const dateFormat = (res) => {
     });
     return res;
 }
-const getAccount = (statementID) => {
-
-}
 
 class StatementController {
-    add = async(req, res) => {
+    add = (req, res) => {
         const content = req.body.content;
-        await models.add(req, (err, results) => {
+        models.add(req).then(
+            models.searchID().then(statement => {
+                content.forEach(account => {
+                    models.addContent(statement, account).catch(err => {
+                        res.status(500).json({ "result": err });
+                    });
+                })
+            }).catch(err => {
+                res.status(500).json({ "result": err });
+            })
+        ).then(
+            res.status(200).json({ "result": true })
+        ).catch(err => {
             if (err) {
                 res.status(500).json({ "result": err });
-                return console.error(err);
             }
-        });
-        await models.searchID(req, (err, results) => {
-            const statement = results[0].ID;
-            if (err) {
-                res.status(500).json({ "result": err });
-                return console.error(err);
-            }
-            content.forEach(account => {
-                models.addContent(statement, account);
-            });
-            res.status(200).json({ "result": true });
         });
     }
     delete = (req, res) => {
