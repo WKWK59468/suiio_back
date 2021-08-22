@@ -159,6 +159,7 @@ class StatementController {
     fetchContent = (req, res) => {
         const body = req.params;
         const StatementID = body.ID
+        let array = [];
         models.fetchAccountByStatement(StatementID, (err, results) => {
             if (err) {
                 res.status(500).json({ 'result': err });
@@ -169,7 +170,13 @@ class StatementController {
                 return;
             }
             results = dateFormat(results);
-            res.status(200).json(results);
+            models.fetchByID(req, (err, result) => {
+                array.push(result[0]);
+                results.forEach(element => {
+                    array.push(element);
+                })
+                res.status(200).json(array);
+            })
         })
     }
 }
