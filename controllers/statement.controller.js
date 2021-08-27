@@ -1,7 +1,4 @@
-const account = require('../models/account');
-const category = require('../models/category');
 const models = require('../models/statement.model');
-const { lock } = require('../routes/statement.route');
 
 const dateFormat = (res) => {
     res.forEach((element, index) => {
