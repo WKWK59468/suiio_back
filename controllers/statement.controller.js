@@ -1,6 +1,7 @@
 const account = require('../models/account');
 const category = require('../models/category');
 const models = require('../models/statement.model');
+const { lock } = require('../routes/statement.route');
 
 const dateFormat = (res) => {
     res.forEach((element, index) => {
@@ -31,6 +32,60 @@ class StatementController {
             if (err) {
                 res.status(500).json({ "result": err });
             }
+        });
+    }
+    addByCategory = (req, res) => {
+        const category = req.body.category;
+        models.addByCategory(req).then(
+            models.searchID().then(statement => {
+
+                models.fetchAccountByCategory(category).then(accountArray => {
+                    accountArray.forEach(account => {
+                        models.addContent(statement, account.ID).catch(err => {
+                            res.status(500).json({ "result": err });
+                        });
+                    })
+                }).catch(err => {
+                    res.status(500).json({ "result": err })
+                    return new Promise((resolve, reject) => {})
+                }).then(accountArray => {
+                    res.status(200).json({ "result": true })
+                    return new Promise((resolve, reject) => {})
+                });
+
+            }).catch(err => {
+                res.status(500).json({ "result": err });
+                return new Promise((resolve, reject) => {})
+            })
+        ).catch(err => {
+            res.status(500).json({ "result": err });
+        });
+    }
+    addByMonth = (req, res) => {
+        const Month = new Date(req.body.date);
+        models.addByMonth(req).then(
+            models.searchID().then(statement => {
+
+                models.fetchAccountByMonth(Month.getMonth() + 1).then(accountArray => {
+                    accountArray.forEach(account => {
+                        models.addContent(statement, account.ID).catch(err => {
+                            res.status(500).json({ "result": err });
+                        });
+                    })
+                }).catch(err => {
+                    res.status(500).json({ "result": err });
+                    return new Promise((resolve, reject) => {});
+                }).then(accountArray => {
+                    res.status(200).json({ "result": true })
+                    return new Promise((resolve, reject) => {});
+                });
+
+            }).catch(err => {
+                res.status(500).json({ "result": err });
+                return new Promise((resolve, reject) => {});
+            })
+        ).catch(err => {
+            res.status(500).json({ "result": err });
         });
     }
     delete = (req, res) => {

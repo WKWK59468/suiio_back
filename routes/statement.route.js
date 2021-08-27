@@ -2,7 +2,10 @@ const express = require('express');
 const router = express.Router();
 const Statement = require("../controllers/statement.controller");
 
-router.route('/add').post(Statement.add);
+router.route('/add/byMonth').post(Statement.addByMonth);
+router.route('/add/byCategory').post(Statement.addByCategory);
+router.route('/add/').post(Statement.add);
+
 router.route('/delete').post(Statement.delete);
 router.route('/update').post(Statement.update);
 router.route('/update/status').post(Statement.updateStatus);
