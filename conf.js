@@ -4,6 +4,6 @@ module.exports = {
         user: 'root',
         password: '',
         database: 'suiio',
-        port: 3306
+        port: 3308
     }
 };

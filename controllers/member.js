@@ -1,4 +1,5 @@
 const models = require('../models/member');
+const bcrypt = require('bcrypt');
 
 const check_sID = (sID) => {
     if (sID.length == 10) {
@@ -12,35 +13,30 @@ const check_sID = (sID) => {
                         } else {
                             return false;
                         }
-                        break;
                     case "2":
                         if (sIDArray[6] == "1" || sIDArray[6] == "2" || sIDArray[6] == "3" || sIDArray[6] == "4") {
                             return true;
                         } else {
                             return false;
                         }
-                        break;
                     case "3":
                         if (sIDArray[6] == "1" || sIDArray[6] == "2" || sIDArray[6] == "3" || sIDArray[6] == "4") {
                             return true;
                         } else {
                             return false;
                         }
-                        break;
                     case "4":
                         if (sIDArray[6] == "1" || sIDArray[6] == "2" || sIDArray[6] == "3") {
                             return true;
                         } else {
                             return false;
                         }
-                        break;
                     case "5":
                         if (sIDArray[6] == "1" || sIDArray[6] == "2" || sIDArray[6] == "3") {
                             return true;
                         } else {
                             return false;
                         }
-                        break;
                     default:
                         return false;
                 }
@@ -67,22 +63,7 @@ const dateFormat = (res) => {
 }
 
 class UserController {
-    //取得單一user
-    getUser = (req, res) => {
-            models.find(req, (err, results) => {
-                if (err) {
-                    res.sendStatus(500);
-                    return console.error(err);
-                }
-                if (!results.length) {
-                    res.sendStatus(404);
-                    console.log(err);
-                    return;
-                }
-                res.json(results);
-            })
-        }
-        //列出所有user
+    //列出所有user
     listMember = (req, res) => {
             models.list(req, (err, results) => {
                 if (err) {
@@ -172,6 +153,64 @@ class UserController {
 
             res.status(200).json({ 'result': 'true' });
         })
+    }
+    login = (req, res) => {
+        const body = req.body;
+        const sID = body.sID;
+        const userPWD = body.password;
+
+        models.login(body).then((dbPWD) => {
+
+            bcrypt.compare(userPWD, dbPWD).then((checkpwd) => {
+                if (checkpwd) {
+                    models.find(sID).then((result) => {
+                        req.session.sID = sID;
+                        req.session.position = result[0].position;
+                        req.session.permission = result[0].permission;
+
+                        res.status(200).json({
+                            'result': true,
+                            "sID": req.session.sID,
+                            "position": req.session.position,
+                            "permission": req.session.permission
+                        });
+                        return new Promise((resolve, reject) => {});
+                    }).catch((err) => {
+                        res.status(500).json({ 'result': err });
+                        return new Promise((resolve, reject) => {});
+                    })
+                } else {
+                    res.status(500).json({ 'result': "Password Error." });
+                    return new Promise((resolve, reject) => {});
+                }
+            }).catch(err => {
+                res.status(500).json({ 'result': err });
+                return new Promise((resolve, reject) => {});
+            });
+        }).catch((err) => {
+            console.log(err);
+            res.status(500).json({ 'result': err })
+        });
+    }
+    logout = (req, res) => {
+        if (req.session.sID) {
+            req.session.destroy();
+            res.status(200).json({ 'result': true })
+        } else(
+            res.status(500).json({ 'result': 'Not Login' })
+        )
+    }
+    check = (req, res) => {
+        if (req.session.sID === req.body.sID) {
+            res.status(200).json({
+                'result': true,
+                "sID": req.session.sID,
+                "position": req.session.position,
+                "permission": req.session.permission
+            })
+        } else {
+            res.status(500).json({ 'result': 'Not Login' });
+        }
     }
 }
 module.exports = new UserController();

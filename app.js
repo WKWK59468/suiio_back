@@ -6,6 +6,7 @@ const logger = require('morgan');
 const multer = require('multer');
 const upload = multer();
 const cors = require('cors');
+const session = require('express-session');
 
 const index = require('./routes/index');
 
@@ -13,10 +14,19 @@ const app = express();
 
 app.use(cors());
 app.use(logger('dev'));
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'view')));
+
+// Session
+app.use(session({
+    secret: 'secret',
+    name: 'suiio',
+    cookie: { maxAge: 30 * 60 * 1000 }, // 分 * 60 * 1000
+    resave: false,
+    saveUninitialized: true
+}));
 
 //Router
 app.use('/api', upload.array(), index);

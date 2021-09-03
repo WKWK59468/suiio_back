@@ -32,9 +32,19 @@ function pwd_rand() {
     return str;
 }
 module.exports = {
-    find: (req, callback) => {
-        sql = mysql.format('SELECT ID,sID,name,sex,birth FROM member WHERE sID=?', [req.body.sID]);
-        return conn.query(sql, callback);
+    find: (sID) => {
+        return new Promise((resolve, reject) => {
+            sql = mysql.format(`SELECT position, permission FROM officer WHERE sID = ${sID}`);
+            conn.query(sql, (err, res) => {
+                if (err) {
+                    reject(err);
+                } else if (!res.length) {
+                    reject('There is nothing to show.');
+                } else {
+                    resolve(res);
+                }
+            });
+        });
     },
     list: (req, callback) => {
         sql = mysql.format('SELECT sID,name,nickname,sex,birth FROM member');
@@ -64,5 +74,20 @@ module.exports = {
     patchPwd: (req, callback) => {
         sql = mysql.format('UPDATE member SET password=? WHERE sID = ?', [req.body.password, req.body.sID]);
         return conn.query(sql, callback);
+    },
+    login: (body) => {
+        const sID = body.sID;
+        return new Promise((resolve, reject) => {
+            sql = `SELECT password FROM member WHERE sID = '${sID}'`;
+            conn.query(sql, (err, res) => {
+                if (err) {
+                    reject(err);
+                } else if (!res.length) {
+                    reject('There is nothing to show.');
+                } else {
+                    resolve(res[0].password);
+                }
+            });
+        });
     }
 }
