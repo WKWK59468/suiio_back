@@ -1,6 +1,6 @@
-const upload = require('../upload/fileupload');
+const upload = require('../upload/imageUpload');
 
-const URL = 'http://localhost/get-cfiles/';
+const URL = "/files/image/";
 const fs = require('fs');
 
 const uploadFile = async(req, res) => {
@@ -13,14 +13,14 @@ const uploadFile = async(req, res) => {
     } catch (error) {
         console.log(error);
         if (error.code == 'LIMIT_FILE_SIZE') {
-            return res.status(500).json({ 'result': 'File size should be less than 10MB.' });
+            return res.status(500).json({ 'result': 'File size should be less than 500MB.' });
         }
         res.status(500).json({ 'result': `Error occured: ${error}` });
     }
 }
 
 const getFilesList = (req, res) => {
-    const path = __basedir + '/files/document';
+    const path = __basedir + '/files/image/';
 
     fs.readdir(path, (err, files) => {
         if (err) {
@@ -31,7 +31,7 @@ const getFilesList = (req, res) => {
         files.forEach((file) => {
             filesList.push({
                 name: file,
-                url: URL + file
+                url: __basedir + URL + file
             });
         });
 
@@ -41,7 +41,7 @@ const getFilesList = (req, res) => {
 
 const downloadFiles = (req, res) => {
     const fileName = req.params.name;
-    const path = __basedir + "/files/document";
+    const path = __basedir + "/files/image/";
 
     res.download(path + fileName, (err) => {
         if (err) {
