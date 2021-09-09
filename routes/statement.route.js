@@ -16,6 +16,6 @@ router.route('/fetch/status/:status').get(Statement.fetchByStatus);
 router.route('/fetch/bywhom/:whom').get(Statement.fetchByWhom);
 router.route('/fetch/id/:ID').get(Statement.fetchByID);
 router.route('/fetch/date/:date').get(Statement.fetchByDate);
-router.route('/fetch/content/:ID').get(Statement.fetchContent);
+// router.route('/fetch/content/:ID').get(Statement.fetchContent);
 
 module.exports = router;

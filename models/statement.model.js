@@ -159,9 +159,17 @@ module.exports = {
         sql = `SELECT statement.ID,category.name AS category,statement.name,statement.date,statement.status,statement.uploadBy FROM statement,category WHERE statement.category = category.ID ORDER BY date DESC`
         return conn.query(sql, callback);
     },
-    fetchAccountByStatement: (statementID, callback) => {
-        sql = `SELECT account.ID, account.date, category.name AS category, account.name, account.amount, account.content, account.receipt, account.status, account.uploadBy FROM statement,content,account,category WHERE statement.ID = '${statementID}' AND statement.ID = content.statement AND content.account = account.ID AND account.category = category.ID ORDER BY date DESC`;
-        return conn.query(sql, callback);
+    fetchAccountByStatement: (statementID) => {
+        return new Promise((resolve, reject) => {
+            sql = `SELECT account.ID, account.date, category.name AS category, account.name, account.amount, account.content, account.receipt, account.status, account.uploadBy FROM statement,content,account,category WHERE statement.ID = '${statementID}' AND statement.ID = content.statement AND content.account = account.ID AND account.category = category.ID ORDER BY date DESC`;
+            return conn.query(sql, (err, res) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(res);
+                }
+            });
+        });
     },
     fetchByName: (req, callback) => {
         const body = req.params;
