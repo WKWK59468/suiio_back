@@ -7,6 +7,7 @@ const category = require('./category');
 const officer = require('./officer.route');
 const conference = require('./conference');
 const statement = require('./statement.route');
+const fileupload = require('./fileupload.route');
 const mail = require('./mail');
 
 router.use('/member', member);
@@ -16,5 +17,6 @@ router.use('/officers', officer);
 router.use('/conference', conference);
 router.use('/statement', statement);
 router.use('/mail', mail);
+router.use('/file', fileupload);
 
 module.exports = router;

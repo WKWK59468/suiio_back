@@ -12,7 +12,13 @@ const index = require('./routes/index');
 
 const app = express();
 
-app.use(cors());
+global.__basedir = __dirname;
+
+const corsConfig = {
+    origin: 'http://localhost:4000'
+};
+
+app.use(cors(corsConfig));
 app.use(logger('dev'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -29,7 +35,7 @@ app.use(session({
 }));
 
 //Router
-app.use('/api', upload.array(), index);
+app.use('/api', index);
 
 const server = http.createServer(app);
 //server Port
