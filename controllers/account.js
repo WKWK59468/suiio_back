@@ -1,4 +1,5 @@
 const models = require('../models/account');
+const myFunction = require('../myFunction');
 
 const dateFormat = (res) => {
     res.forEach((element, index) => {
@@ -13,28 +14,39 @@ const dateFormat = (res) => {
 class AccountController {
 
     add = (req, res) => {
-        const position = req.body.uploadBy;
-        models.checkOfficer(position).then(check => {
-            if (check) {
-                models.add(req, (err, results) => {
-                    if (err) {
-                        res.status(500).json({ "result": err });
-                        return console.error(err);
+        myFunction.check_permission(req).then((permission) => {
+            if (permission == "組織負責人") {
+                const position = req.body.uploadBy;
+                models.checkOfficer(position).then(check => {
+                    if (check) {
+                        models.add(req, (err, results) => {
+                            if (err) {
+                                res.status(500).json({ "result": err });
+                                return new Promise((resolve, reject) => {});
+                            }
+                            if (!results.affectedRows) {
+                                res.status(404).json({ "result": err });
+                                return new Promise((resolve, reject) => {});
+                            }
+                            res.status(200).json({ "result": true });
+                            return new Promise((resolve, reject) => {});
+                        })
+                    } else {
+                        res.status(500).json({ "result": "Position does not exist." });
+                        return new Promise((resolve, reject) => {});
                     }
-                    if (!results.affectedRows) {
-                        res.status(404).json({ "result": err });
-                        return console.error(err);
-                    }
-                    res.status(200).json({ "result": true });
-                })
+                }).catch(err => {
+                    res.status(500).json({ "result": err });
+                    return new Promise((resolve, reject) => {});
+                });
             } else {
-                res.status(500).json({ "result": "Position does not exist." });
+                res.status(403).json({ 'result': 'Permission denied.' })
+                return new Promise((resolve, reject) => {});
             }
-        }).catch(err => {
-            res.status(500).json({ "result": err });
-        });
-
-
+        }).catch(() => {
+            res.status(404).json({ 'result': 'Not Login' })
+            return new Promise((resolve, reject) => {});
+        })
     }
     delete = (req, res) => {
         models.delete(req, (err, results) => {

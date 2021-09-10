@@ -213,7 +213,11 @@ class UserController {
                             });
                             return new Promise((resolve, reject) => {});
                         }).catch((err) => {
-                            res.status(500).json({ 'result': err });
+                            req.session.sID = sID;
+                            res.status(200).json({
+                                'result': err,
+                                "sID": req.session.sID
+                            });
                             return new Promise((resolve, reject) => {});
                         })
                     } else {

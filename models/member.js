@@ -39,7 +39,7 @@ module.exports = {
                 if (err) {
                     reject(err);
                 } else if (!res.length) {
-                    reject('There is nothing to show.');
+                    reject('Member is not officer.');
                 } else {
                     resolve(res);
                 }
@@ -83,7 +83,7 @@ module.exports = {
                 if (err) {
                     reject(err);
                 } else if (!res.length) {
-                    reject('There is nothing to show.');
+                    reject('User Not Found.');
                 } else {
                     resolve(res[0].password);
                 }
