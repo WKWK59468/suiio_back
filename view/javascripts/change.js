@@ -10,12 +10,12 @@ $(document).ready(function() {
     }
 
     $.ajax({
-        type: "post",
+        type: "get",
         dataType: 'json',
         async: true,
         // data: { 'sID': acc },
-        data: { 'sID': sID },
-        url: 'http://127.0.0.1:3000/api/user/getUser',
+        // data: { 'sID': sID },
+        url: 'http://127.0.0.1:4000/api/member/fetch/all',
         success: function(data_in) {
             console.log(data_in);
         }

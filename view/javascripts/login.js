@@ -7,7 +7,7 @@ $('#login').click(function() {
         dataType: 'json',
         async: true,
         data: { 'sID': sID, 'password': pwd },
-        url: 'http://127.0.0.1:3000/api/user/login',
+        url: 'http://127.0.0.1:4000/api/member/login',
         success: function(data_in) {
             console.log(data_in);
             if (data_in.result) {
