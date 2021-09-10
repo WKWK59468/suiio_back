@@ -25,3 +25,30 @@ $(document).ready(function() {
 $('#change').click(function() {
     alert("修改成功");
 });
+
+$('#check').click(() => {
+    const sID = 1110634025;
+    $.ajax({
+        type: "post",
+        dataType: 'json',
+        async: true,
+        data: { 'sID': sID },
+        url: 'http://127.0.0.1:4000/api/member/check',
+        success: function(data_in) {
+            console.log(data_in);
+        }
+    })
+});
+
+$('#logout').click(() => {
+    $.ajax({
+        type: "post",
+        dataType: 'json',
+        async: true,
+        data: {},
+        url: 'http://127.0.0.1:4000/api/member/logout',
+        success: function(data_in) {
+            console.log(data_in);
+        }
+    })
+});

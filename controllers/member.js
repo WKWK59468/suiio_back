@@ -1,5 +1,6 @@
 const models = require('../models/member');
 const bcrypt = require('bcrypt');
+const myFunction = require('../myFunction');
 
 const check_sID = (sID) => {
     if (sID.length == 10) {
@@ -65,152 +66,190 @@ const dateFormat = (res) => {
 class UserController {
     //列出所有user
     listMember = (req, res) => {
-            models.list(req, (err, results) => {
-                if (err) {
-                    res.status(500).json({ "result": "false" })
-                    return console.error(err);
-                }
-                if (!results.length) {
-                    res.sendStatus(404);
-                    console.log(err);
-                    return;
-                }
-                results = dateFormat(results);
-                res.json(results);
+            myFunction.check_session(req).then(() => {
+                models.list(req, (err, results) => {
+                    if (err) {
+                        res.status(500).json({ "result": "false" })
+                        return console.error(err);
+                    }
+                    if (!results.length) {
+                        res.sendStatus(404);
+                        console.log(err);
+                        return;
+                    }
+                    results = dateFormat(results);
+                    res.json(results);
+                })
+            }).catch(() => {
+                res.status(404).json({ 'result': 'Not Login' })
             })
         }
         //新增
     addMember = (req, res) => {
-            const sID = req.body.sID;
-            if (check_sID(sID)) {
-                models.add(req, (err, results) => {
-                    if (err) {
-                        if (err.sqlState == "23000") {
-                            res.status(500).json({ "result": "Duplicate primary key" });
-                            return console.error(err);
-                        }
-                        res.status(500).json({ "result": "false" });
-                        return console.error(err);
-                    }
+            myFunction.check_permission(req).then((persission) => {
+                if (persission == "組織負責人") {
+                    const sID = req.body.sID;
+                    if (check_sID(sID)) {
+                        models.add(req, (err, results) => {
+                            if (err) {
+                                if (err.sqlState == "23000") {
+                                    res.status(500).json({ "result": "Duplicate primary key" });
+                                    return new Promise((resolve, reject) => {});
+                                }
+                                res.status(500).json({ "result": "false" });
+                                return new Promise((resolve, reject) => {});
+                            }
 
-                    res.json({ "result": "true" });
-                })
-            } else {
-                res.status(500).json({ "result": "format error" });
-            }
+                            res.status(200).json({ "result": "true" });
+                            return new Promise((resolve, reject) => {});
+                        })
+                    } else {
+                        res.status(500).json({ "result": "format error" });
+                        return new Promise((resolve, reject) => {});
+                    }
+                } else {
+                    res.status(403).json({ 'result': 'Permission denied.' })
+                    return new Promise((resolve, reject) => {});
+                }
+            }).catch(() => {
+                res.status(404).json({ 'result': 'Not Login' })
+                return new Promise((resolve, reject) => {});
+            });
         }
         //刪除user
     delMember = (req, res) => {
-            const sID = req.body.sID;
-            if (check_sID(sID)) {
-                models.del(req, (err, results) => {
-                    if (err) {
-                        res.status(500).json({ 'result': err });
-                        return console.error(err);
+            myFunction.check_permission(req).then((permission) => {
+                if (permission == "組織負責人") {
+                    const sID = req.body.sID;
+                    if (check_sID(sID)) {
+                        models.del(req, (err, results) => {
+                            if (err) {
+                                res.status(500).json({ 'result': err });
+                                return new Promise((resolve, reject) => {});
+                            }
+                            if (!results.affectedRows) {
+                                res.status(404).json({ 'result': "Can't find member." });
+                                return new Promise((resolve, reject) => {});
+                            }
+                            res.status(200).json({ 'result': 'true' });
+                            return new Promise((resolve, reject) => {});
+                        });
+                    } else {
+                        res.status(500).json({ "result": "format error" });
+                        return new Promise((resolve, reject) => {});
                     }
-                    if (!results.affectedRows) {
-                        res.status(404).json({ 'result': "Can't find member." });
-                        console.log(err);
-                        return;
-                    }
-                    res.status(200).json({ 'result': 'true' });
-                });
-            } else {
-                res.status(500).json({ "result": "format error" });
-            }
+                } else {
+                    res.status(403).json({ 'result': 'Permission denied.' })
+                    return new Promise((resolve, reject) => {});
+                }
+            }).catch(() => {
+                res.status(404).json({ "result": "Not Login" });
+                return new Promise((resolve, reject) => {});
+            });
         }
         //修改user資訊
     patchUser = (req, res) => {
-            models.patch(req, (err, results) => {
-                if (err) {
-                    res.sendStatus(500);
-                    return console.error(err);
-                }
+            myFunction.check_session(req).then(() => {
+                models.patch(req, (err, results) => {
+                    if (err) {
+                        res.sendStatus(500).json({ "result": err });
+                        return new Promise((resolve, reject) => {});
+                    }
 
-                if (!results.affectedRows) {
-                    // res.status(410).json(results);
-                    res.sendStatus(410);
-                    console.log(err);
-                    return;
-                }
-
-                res.status(200).json({ 'result': 'true' });
+                    if (!results.affectedRows) {
+                        res.sendStatus(410).json({ "result": err });
+                        return new Promise((resolve, reject) => {});
+                    }
+                    res.status(200).json({ 'result': true });
+                    return new Promise((resolve, reject) => {});
+                })
+            }).catch(() => {
+                res.status(404).json({ 'result': 'Not Login' })
             })
+
         }
         //修改密碼
     patchPassword = (req, res) => {
-        models.patchPwd(req, (err, results) => {
-            if (err) {
-                res.sendStatus(500);
-                return console.error(err);
-            }
-
-            if (!results.affectedRows) {
-                res.sendStatus(410);
-                console.log(err);
-                return;
-            }
-
-            res.status(200).json({ 'result': 'true' });
-        })
-    }
-    login = (req, res) => {
-        const body = req.body;
-        const sID = body.sID;
-        const userPWD = body.password;
-
-        models.login(body).then((dbPWD) => {
-
-            bcrypt.compare(userPWD, dbPWD).then((checkpwd) => {
-                if (checkpwd) {
-                    models.find(sID).then((result) => {
-                        req.session.sID = sID;
-                        req.session.position = result[0].position;
-                        req.session.permission = result[0].permission;
-
-                        res.status(200).json({
-                            'result': true,
-                            "sID": req.session.sID,
-                            "position": req.session.position,
-                            "permission": req.session.permission
-                        });
-                        return new Promise((resolve, reject) => {});
-                    }).catch((err) => {
-                        res.status(500).json({ 'result': err });
-                        return new Promise((resolve, reject) => {});
-                    })
-                } else {
-                    res.status(500).json({ 'result': "Password Error." });
+        myFunction.check_session(req).then(() => {
+            models.patchPwd(req, (err, results) => {
+                if (err) {
+                    res.sendStatus(500).json({ "result": err });
                     return new Promise((resolve, reject) => {});
                 }
-            }).catch(err => {
-                res.status(500).json({ 'result': err });
+                if (!results.affectedRows) {
+                    res.sendStatus(410).json({ "result": err });
+                    return new Promise((resolve, reject) => {});
+                }
+                res.status(200).json({ 'result': true });
                 return new Promise((resolve, reject) => {});
+            })
+        }).catch(() => {
+            res.status(404).json({ 'result': 'Not Login' })
+        })
+
+    }
+    login = (req, res) => {
+        myFunction.check_session(req).then(() => {
+            res.status(404).json({ 'result': 'isLogin' })
+            return new Promise((resolve, reject) => {});
+        }).catch(() => {
+            const body = req.body;
+            const sID = body.sID;
+            const userPWD = body.password;
+
+            models.login(body).then((dbPWD) => {
+
+                bcrypt.compare(userPWD, dbPWD).then((checkpwd) => {
+                    if (checkpwd) {
+                        models.find(sID).then((result) => {
+                            req.session.sID = sID;
+                            req.session.position = result[0].position;
+                            req.session.permission = result[0].permission;
+                            res.status(200).json({
+                                'result': true,
+                                "sID": req.session.sID,
+                                "position": req.session.position,
+                                "permission": req.session.permission
+                            });
+                            return new Promise((resolve, reject) => {});
+                        }).catch((err) => {
+                            res.status(500).json({ 'result': err });
+                            return new Promise((resolve, reject) => {});
+                        })
+                    } else {
+                        res.status(500).json({ 'result': "Password Error." });
+                        return new Promise((resolve, reject) => {});
+                    }
+                }).catch(err => {
+                    res.status(500).json({ 'result': err });
+                    return new Promise((resolve, reject) => {});
+                });
+            }).catch((err) => {
+                console.log(err);
+                res.status(500).json({ 'result': err })
             });
-        }).catch((err) => {
-            console.log(err);
-            res.status(500).json({ 'result': err })
-        });
+        })
+
     }
     logout = (req, res) => {
-        if (req.session.sID) {
+        myFunction.check_session(req).then(() => {
             req.session.destroy();
             res.status(200).json({ 'result': true })
-        } else(
-            res.status(500).json({ 'result': 'Not Login' })
-        )
+        }).catch(() => {
+            res.status(404).json({ 'result': 'Not Login' })
+        });
     }
     check = (req, res) => {
-        if (req.session.sID === req.body.sID) {
+        myFunction.check_session(req).then(() => {
             res.status(200).json({
                 'result': true,
                 "sID": req.session.sID,
                 "position": req.session.position,
                 "permission": req.session.permission
-            })
-        } else {
-            res.status(500).json({ 'result': 'Not Login' });
-        }
+            });
+        }).catch(() => {
+            res.status(404).json({ 'result': 'Not Login' });
+        });
     }
 }
 module.exports = new UserController();
