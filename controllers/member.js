@@ -202,22 +202,27 @@ class UserController {
                 bcrypt.compare(userPWD, dbPWD).then((checkpwd) => {
                     if (checkpwd) {
                         models.find(sID).then((result) => {
-                            req.session.sID = sID;
-                            req.session.position = result[0].position;
-                            req.session.permission = result[0].permission;
-                            res.status(200).json({
-                                'result': true,
-                                "sID": req.session.sID,
-                                "position": req.session.position,
-                                "permission": req.session.permission
-                            });
-                            return new Promise((resolve, reject) => {});
+                            if (result == 'Member is not officer.') {
+                                req.session.sID = sID;
+                                res.status(200).json({
+                                    'result': result,
+                                    "sID": req.session.sID
+                                });
+                                return new Promise((resolve, reject) => {});
+                            } else {
+                                req.session.sID = sID;
+                                req.session.position = result[0].position;
+                                req.session.permission = result[0].permission;
+                                res.status(200).json({
+                                    'result': true,
+                                    "sID": req.session.sID,
+                                    "position": req.session.position,
+                                    "permission": req.session.permission
+                                });
+                                return new Promise((resolve, reject) => {});
+                            }
                         }).catch((err) => {
-                            req.session.sID = sID;
-                            res.status(200).json({
-                                'result': err,
-                                "sID": req.session.sID
-                            });
+                            res.status(500).json({ 'result': err });
                             return new Promise((resolve, reject) => {});
                         })
                     } else {

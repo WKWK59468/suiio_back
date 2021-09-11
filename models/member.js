@@ -39,7 +39,7 @@ module.exports = {
                 if (err) {
                     reject(err);
                 } else if (!res.length) {
-                    reject('Member is not officer.');
+                    resolve('Member is not officer.');
                 } else {
                     resolve(res);
                 }

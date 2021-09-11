@@ -7,8 +7,8 @@ router.route('/add').post(UserController.addMember);
 router.route('/fetch/all').get(UserController.listMember);
 router.route('/login').post(UserController.login);
 router.route('/logout').post(UserController.logout);
-router.route('/check').post(UserController.check);
 
+router.route('/check').get(UserController.check);
 router.route('/patch').post(UserController.patchUser);
 router.route('/patchPassword').post(UserController.patchPassword);
 
