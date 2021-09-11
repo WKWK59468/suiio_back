@@ -204,9 +204,13 @@ class UserController {
                         models.find(sID).then((result) => {
                             if (result == 'Member is not officer.') {
                                 req.session.sID = sID;
+                                req.session.position = '組織成員';
+                                req.session.permission = '組織成員';
                                 res.status(200).json({
                                     'result': result,
-                                    "sID": req.session.sID
+                                    "sID": req.session.sID,
+                                    "position": req.session.position,
+                                    "permission": req.session.permission
                                 });
                                 return new Promise((resolve, reject) => {});
                             } else {

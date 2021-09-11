@@ -1,91 +1,137 @@
 const models = require('../models/category');
+const myFunction = require('../myFunction');
 
 class categoryController {
 
     addCategory = (req, res) => {
-        models.add(req, (err, results) => {
-            if (err) {
-                if (err.sqlState == "23000") {
-                    res.status(500).json({ "result": "Duplicate primary key" });
-                    return console.error(err);
-                }
-                res.status(500).json({ "result": err });
-                return console.error(err);
+        myFunction.check_permission(req).then((permission) => {
+            if (permission !== '組織成員') {
+                models.add(req, (err, results) => {
+                    if (err) {
+                        if (err.sqlState == "23000") {
+                            res.status(500).json({ "result": "Duplicate primary key" });
+                            return new Promise((resolve, reject) => {});
+                        }
+                        res.status(500).json({ "result": err });
+                        return new Promise((resolve, reject) => {});
+                    }
+                    res.json({ "result": true });
+                    return new Promise((resolve, reject) => {});
+                })
+            } else {
+                res.status(403).json({ 'result': 'Permission denied.' })
+                return new Promise((resolve, reject) => {});
             }
-
-            res.json({ "result": true });
+        }).catch(() => {
+            res.status(404).json({ 'result': 'Not Login' })
+            return new Promise((resolve, reject) => {});
         })
     }
     listCategory = (req, res) => {
-        let arr = [];
-        models.list(req, (err, results) => {
-            if (err) {
-                res.status(500).json({ "result": err })
-                return console.error(err);
-            }
-            if (!results.length) {
-                res.status(404).json({ "result": "There is nothing to show." });
-                return;
-            }
-            results.forEach(element => {
-                if (element.ID != 1 && element.ID != 9) {
-                    arr.push(element);
-                }
-            });
-            res.status(200).json(arr);
-        });
-    }
-    fetchStatusOn = (req, res) => {
-        const body = req.params;
-        const status = body.status;
-        if (status == "0" || status == "1") {
-            models.StatusOn(req, (err, results) => {
+        myFunction.check_session(req).then(() => {
+            let arr = [];
+            models.list(req, (err, results) => {
                 if (err) {
                     res.status(500).json({ "result": err })
-                    return console.error(err);
+                    return new Promise((resolve, reject) => {});
                 }
                 if (!results.length) {
                     res.status(404).json({ "result": "There is nothing to show." });
-                    return;
+                    return new Promise((resolve, reject) => {});
                 }
-                res.json(results);
+                results.forEach(element => {
+                    if (element.ID != 1 && element.ID != 9) {
+                        arr.push(element);
+                    }
+                });
+                res.status(200).json(arr);
+                return new Promise((resolve, reject) => {});
             });
-        } else {
-            res.status(500).json({ "result": "Please Enter 0 or 1." });
-        }
-    }
-    delCategory = (req, res) => {
-        models.del(req, (err, results) => {
-            if (err) {
-                res.status(500).json({ "result": err });
-                return console.error(err);
-            }
-            if (!results.affectedRows) {
-                res.status(404).json({ "result": "Can't find category." });
-                return console.error(err);
-            }
-            res.json({ "result": true });
+        }).catch(() => {
+            res.status(404).json({ 'result': 'Not Login' })
+            return new Promise((resolve, reject) => {});
         })
     }
-    patchStatus = (req, res) => {
-        const status = req.body.status;
-        if (status == 0 || status == 1) {
-            models.setStatus(req, function(err, results, fields) {
-                if (err) {
-                    res.status(500).json({ "result": err });
-                    return console.error(err);
-                }
+    fetchStatusOn = (req, res) => {
+        myFunction.check_session(req).then(() => {
+            const body = req.params;
+            const status = body.status;
+            if (status == "0" || status == "1") {
+                models.StatusOn(req, (err, results) => {
+                    if (err) {
+                        res.status(500).json({ "result": err })
+                        return new Promise((resolve, reject) => {});
+                    }
+                    if (!results.length) {
+                        res.status(404).json({ "result": "There is nothing to show." });
+                        return new Promise((resolve, reject) => {});
+                    }
+                    res.status(200).json(results);
+                    return new Promise((resolve, reject) => {});
+                });
+            } else {
+                res.status(500).json({ "result": "Please Enter 0 or 1." });
+                return new Promise((resolve, reject) => {});
+            }
+        }).catch(() => {
+            res.status(404).json({ 'result': 'Not Login' })
+            return new Promise((resolve, reject) => {});
+        })
+    }
+    delCategory = (req, res) => {
+        myFunction.check_permission(req).then((permission) => {
+            if (permission !== '組織成員') {
+                models.del(req, (err, results) => {
+                    if (err) {
+                        res.status(500).json({ "result": err });
+                        return new Promise((resolve, reject) => {});
+                    }
+                    if (!results.affectedRows) {
+                        res.status(404).json({ "result": "Can't find category." });
+                        return new Promise((resolve, reject) => {});
+                    }
+                    res.status(200).json({ "result": true });
+                    return new Promise((resolve, reject) => {});
+                })
+            } else {
+                res.status(403).json({ 'result': 'Permission denied.' })
+                return new Promise((resolve, reject) => {});
+            }
+        }).catch(() => {
+            res.status(404).json({ 'result': 'Not Login' })
+            return new Promise((resolve, reject) => {});
+        })
 
-                if (!results.affectedRows) {
-                    res.status(404).json({ "result": "Can't find category." });
-                    console.log(err);
-                    return;
+    }
+    patchStatus = (req, res) => {
+        myFunction.check_permission(req).then((permission) => {
+            if (permission !== '組織成員') {
+                const status = req.body.status;
+                if (status == 0 || status == 1) {
+                    models.setStatus(req, function(err, results, fields) {
+                        if (err) {
+                            res.status(500).json({ "result": err });
+                            return new Promise((resolve, reject) => {});
+                        }
+                        if (!results.affectedRows) {
+                            res.status(404).json({ "result": "Can't find category." });
+                            return new Promise((resolve, reject) => {});
+                        }
+                        res.status(200).json({ "result": true });
+                        return new Promise((resolve, reject) => {});
+                    });
+                } else {
+                    res.status(500).json({ "result": "Please Enter 0 or 1." });
+                    return new Promise((resolve, reject) => {});
                 }
-                res.status(200).json({ "result": true });
-            });
-        } else {
-            res.status(500).json({ "result": "Please Enter 0 or 1." });
-        }
+            } else {
+                res.status(403).json({ 'result': 'Permission denied.' })
+                return new Promise((resolve, reject) => {});
+            }
+        }).catch(() => {
+            res.status(404).json({ 'result': 'Not Login' })
+            return new Promise((resolve, reject) => {});
+        })
     }
 
 }
