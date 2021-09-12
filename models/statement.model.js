@@ -156,7 +156,7 @@ module.exports = {
         return conn.query(sql, callback);
     },
     fetchAll: (req, callback) => {
-        sql = `SELECT statement.ID,category.name AS category,statement.name,statement.date,statement.status,statement.uploadBy FROM statement,category WHERE statement.category = category.ID ORDER BY date DESC`
+        sql = `SELECT statement.ID,category.name AS category,statement.name,statement.date,statement.status,statement.uploadBy, statement.balance FROM statement,category WHERE statement.category = category.ID ORDER BY date DESC`
         return conn.query(sql, callback);
     },
     fetchAccountByStatement: (statementID) => {
@@ -175,35 +175,35 @@ module.exports = {
         const body = req.params;
         const name = "%" + body.name + "%";
 
-        sql = `SELECT statement.ID,category.name AS category,statement.name,statement.date,statement.status,statement.uploadBy FROM statement,category WHERE statement.name like '${name}' AND statement.category = category.ID ORDER BY date DESC`
+        sql = `SELECT statement.ID,category.name AS category,statement.name,statement.date,statement.status,statement.uploadBy, statement.balance FROM statement,category WHERE statement.name like '${name}' AND statement.category = category.ID ORDER BY date DESC`
         return conn.query(sql, callback);
     },
     fetchByStatus: (req, callback) => {
         const body = req.params;
         const status = body.status;
 
-        sql = `SELECT statement.ID,category.name AS category,statement.name,statement.date,statement.status,statement.uploadBy FROM statement,category WHERE statement.status = ${status} AND statement.category = category.ID ORDER BY date DESC`
+        sql = `SELECT statement.ID,category.name AS category,statement.name,statement.date,statement.status,statement.uploadBy, statement.balance FROM statement,category WHERE statement.status = ${status} AND statement.category = category.ID ORDER BY date DESC`
         return conn.query(sql, callback);
     },
     fetchByWhom: (req, callback) => {
         const body = req.params;
         const whom = body.whom;
 
-        sql = `SELECT statement.ID,category.name AS category,statement.name,statement.date,statement.status,statement.uploadBy FROM statement,category WHERE statement.uploadBy = '${whom}' AND statement.category = category.ID ORDER BY date DESC`
+        sql = `SELECT statement.ID,category.name AS category,statement.name,statement.date,statement.status,statement.uploadBy, statement.balance FROM statement,category WHERE statement.uploadBy = '${whom}' AND statement.category = category.ID ORDER BY date DESC`
         return conn.query(sql, callback);
     },
     fetchByID: (req, callback) => {
         const body = req.params;
         const ID = body.ID;
 
-        sql = `SELECT statement.ID,category.name AS category,statement.name,statement.date,statement.status,statement.uploadBy FROM statement,category WHERE statement.ID = ${ID} AND statement.category = category.ID ORDER BY date DESC`
+        sql = `SELECT statement.ID,category.name AS category,statement.name,statement.date,statement.status,statement.uploadBy, statement.balance FROM statement,category WHERE statement.ID = ${ID} AND statement.category = category.ID ORDER BY date DESC`
         return conn.query(sql, callback);
     },
     fetchByDate: (req, callback) => {
         const body = req.params;
         const date = "%" + body.date + "%";
 
-        sql = `SELECT statement.ID,cateory.name AS category,statement.name,statement.date,statement.status,statement.uploadBy FROM statement,category WHERE statement.date like '${date}' AND statement.category = category.ID ORDER BY date DESC`
+        sql = `SELECT statement.ID,category.name AS category,statement.name,statement.date,statement.status,statement.uploadBy, statement.balance FROM statement,category WHERE statement.date like '${date}' AND statement.category = category.ID ORDER BY date DESC`
         return conn.query(sql, callback);
     },
     fetchAccountByCategory: (category) => {
