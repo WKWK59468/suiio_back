@@ -50,18 +50,27 @@ module.exports = {
         sql = mysql.format('SELECT sID,name,nickname,sex,birth FROM member');
         return conn.query(sql, callback);
     },
-    add: async(req, callback) => {
-        const sID = req.body.sID;
-        const name = "王小明";
-        const nickname = "小王";
-        const sex = "男";
-        const birth = "2021-07-14";
+    add: (req) => {
+        return new Promise(async(resolve, reject) => {
+            const sID = req.body.sID;
+            const name = "王小明";
+            const nickname = "小王";
+            const sex = "男";
+            const birth = "2021-07-14";
+            const pwd = pwd_rand();
+            const salt = await bcrypt.genSalt(10);
+            const password = await bcrypt.hash(pwd, salt)
 
-        const salt = await bcrypt.genSalt(10);
-        const password = await bcrypt.hash("12345678", salt)
-
-        sql = mysql.format('INSERT INTO member(sID,password,name,nickname,sex,birth) VALUES(?,?,?,?,?,?)', [sID, password, name, nickname, sex, birth]);
-        return conn.query(sql, callback);
+            sql = mysql.format('INSERT INTO member(sID,password,name,nickname,sex,birth) VALUES(?,?,?,?,?,?)', [sID, password, name, nickname, sex, birth]);
+            conn.query(sql, (err, res) => {
+                if (err == null) {
+                    reject(err);
+                } else {
+                    console.log(err);
+                    resolve(pwd);
+                }
+            });
+        })
     },
     del: (req, callback) => {
         sql = mysql.format('DELETE FROM member WHERE sID = ?', [req.body.sID]);

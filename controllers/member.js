@@ -1,6 +1,8 @@
 const models = require('../models/member');
 const bcrypt = require('bcrypt');
 const myFunction = require('../myFunction');
+const mail = require('../mail/mail');
+const { Server } = require('http');
 
 const check_sID = (sID) => {
     if (sID.length == 10) {
@@ -86,22 +88,30 @@ class UserController {
         }
         //新增
     addMember = (req, res) => {
-            myFunction.check_permission(req).then((persission) => {
-                if (persission == "組織負責人") {
+            myFunction.check_permission(req).then((permission) => {
+                if (permission == "組織負責人") {
                     const sID = req.body.sID;
                     if (check_sID(sID)) {
-                        models.add(req, (err, results) => {
+                        models.add(req).then(function(pwd) {
                             if (err) {
                                 if (err.sqlState == "23000") {
                                     res.status(500).json({ "result": "Duplicate primary key" });
-                                    return new Promise((resolve, reject) => {});
                                 }
-                                res.status(500).json({ "result": "false" });
-                                return new Promise((resolve, reject) => {});
+                                console.log("add：" + err)
+                                res.status(500).json({ "result": err });
+                            } else {
+                                console.log(pwd);
+                                mail.sendMail(pwd).then(() => {
+                                    res.status(200).json({ "result": true });
+                                    return new Promise((resolve, reject) => {});
+                                });
                             }
+                        }).catch(function(err) {
+                            if (err != null) {
+                                res.status(500).json({ "result": "err" });
+                            }
+                            // console.log("sql：" + err)
 
-                            res.status(200).json({ "result": "true" });
-                            return new Promise((resolve, reject) => {});
                         })
                     } else {
                         res.status(500).json({ "result": "format error" });
@@ -131,7 +141,7 @@ class UserController {
                                 res.status(404).json({ 'result': "Can't find member." });
                                 return new Promise((resolve, reject) => {});
                             }
-                            res.status(200).json({ 'result': 'true' });
+                            res.status(200).json({ 'result': true });
                             return new Promise((resolve, reject) => {});
                         });
                     } else {

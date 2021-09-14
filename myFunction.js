@@ -11,7 +11,13 @@ module.exports = {
     },
     check_permission: (req) => {
         return new Promise((resolve, reject) => {
-            req.session.permission ? resolve(req.session.permission) : reject(false)
+            if (req.session.permission !== undefined) {
+                resolve(req.session.permission)
+                console.log(req.session.permission)
+            } else {
+                reject(false)
+                console.log(false)
+            }
         });
     }
 }
