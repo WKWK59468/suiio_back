@@ -38,21 +38,14 @@ const mail = (pwd) => {
     mailTransport.sendMail(mailOptions, (error, info) => {
         if (error) {
             console.log(error);
-            // res.status(500).send(error);
-            // return new Promise((resolve, reject) => {});
         } else {
             console.log('Email sent: ' + info.response);
-            // res.status(200).json({
-            //     "result": true,
-            //     "content": 'Email sent: ' + info.response
-            // });
-            // return new Promise((resolve, reject) => {});
         }
     });
 }
 
 module.exports = {
-    sendMail: (pwd) => {
+    sendMail: (req, pwd) => {
         return new Promise((resolve, reject) => {
             myFunction.check_session(req).then(() => {
                 mail(pwd);

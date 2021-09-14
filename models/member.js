@@ -63,10 +63,13 @@ module.exports = {
 
             sql = mysql.format('INSERT INTO member(sID,password,name,nickname,sex,birth) VALUES(?,?,?,?,?,?)', [sID, password, name, nickname, sex, birth]);
             conn.query(sql, (err, res) => {
-                if (err == null) {
-                    reject(err);
+                if (err) {
+                    if (err.sqlState == "23000") {
+                        reject("Duplicate primary key");
+                    } else {
+                        reject(err);
+                    }
                 } else {
-                    console.log(err);
                     resolve(pwd);
                 }
             });

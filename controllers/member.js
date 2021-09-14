@@ -93,23 +93,12 @@ class UserController {
                     const sID = req.body.sID;
                     if (check_sID(sID)) {
                         models.add(req).then(function(pwd) {
-                            if (err) {
-                                if (err.sqlState == "23000") {
-                                    res.status(500).json({ "result": "Duplicate primary key" });
-                                }
-                                console.log("add：" + err)
-                                res.status(500).json({ "result": err });
-                            } else {
-                                console.log(pwd);
-                                mail.sendMail(pwd).then(() => {
-                                    res.status(200).json({ "result": true });
-                                    return new Promise((resolve, reject) => {});
-                                });
-                            }
+                            console.log(pwd);
+                            mail.sendMail(req, pwd).then(() => {
+                                res.status(200).json({ "result": true });
+                            });
                         }).catch(function(err) {
-                            if (err != null) {
-                                res.status(500).json({ "result": "err" });
-                            }
+                            res.status(500).json({ "result": err });
                             // console.log("sql：" + err)
 
                         })
