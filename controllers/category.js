@@ -28,7 +28,7 @@ class categoryController {
                 return;
             }
             results.forEach(element => {
-                if (element.ID != 1) {
+                if (element.ID != 1 && element.ID != 9) {
                     arr.push(element);
                 }
             });
