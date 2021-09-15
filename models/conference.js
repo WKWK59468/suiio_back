@@ -1,55 +1,94 @@
-const mysql = require('mysql');
-const conf = require('../conf');
+const mysql = require("mysql");
+const conf = require("../conf");
 
 const conn = mysql.createConnection(conf.db);
-let sql = '';
-
-const jsonObj = { "category": "3", "name": "聖誕晚會第二次會議", "date": "2021-07-25", "attatched_file": "christmas", "content": "表演獎金增加", "host": "活動長", "status": "0" };
+let sql = "";
 
 module.exports = {
     list: (req, callback) => {
-        sql = mysql.format('SELECT * FROM conference');
+        sql = mysql.format("SELECT conference.ID,category.name AS category,conference.name,conference.date,conference.attached_file,conference.content,conference.host,conference.recorder,conference.status FROM conference,category WHERE conference.category = category.ID ORDER BY date DESC");
         return conn.query(sql, callback);
     },
     fetchBycategory: (req, callback) => {
-        sql = mysql.format('SELECT conference.* FROM conference,category WHERE category.ID = ? AND conference.category = category.ID', [req.params.id]);
+        sql = mysql.format("SELECT conference.ID,category.name AS category,conference.name,conference.date,conference.attached_file,conference.content,conference.host,conference.recorder,conference.status FROM conference,category WHERE category = ? AND conference.category = category.ID ORDER BY date DESC", [req.params.id]);
         return conn.query(sql, callback);
     },
     fetchOne: (req, callback) => {
-        sql = mysql.format('SELECT * FROM conference WHERE conference.ID = ?', [req.params.id]);
+        sql = mysql.format('SELECT content FROM conference WHERE conference.ID = ?', [req.params.id]);
         return conn.query(sql, callback);
     },
-    upload: (req, callback) => {
-        let body = JSON.parse(req.body.params);
-        let category = body.category;
-        let name = body.name;
-        let date = body.date;
-        let attached_file;
-        let content = body.content;
-        let host = body.host;
-        let status = "0";
-
-        if (body.attached_file == null || body.attached_file == "") {
-            attached_file = null;
-        } else {
-            attached_file = body.attached_file;
-        }
-
-        sql = mysql.format('INSERT INTO conference(category,name,date,attached_file,content,host,status) VALUES(?,?,?,?,?,?,?)', [category, name, date, attached_file, content, host, status]);
+    fetchAbsentees: (req, callback) => {
+        sql = mysql.format('SELECT absentees FROM absentees WHERE conference = ?', [req.params.id]);
         return conn.query(sql, callback);
+    },
+    fetchAttendees: (req, callback) => {
+        sql = mysql.format('SELECT attendees FROM attendees WHERE conference = ?', [req.params.id]);
+        return conn.query(sql, callback);
+    },
+    getConferenceID: () => {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                sql = mysql.format("SELECT ID FROM conference ORDER BY ID DESC LIMIT 1");
+                conn.query(sql, (err, res) => {
+                    err ? reject(err) : resolve(res[0].ID);
+                });
+            }, 1000);
+        });
+    },
+    upload: (req) => {
+        return new Promise((resolve, reject) => {
+            const body = req.body;
+            const category = body.category;
+            const name = body.name;
+            const date = body.date;
+            let attached_file;
+            const content = body.content;
+            const host = body.host;
+            const recorder = body.recorder;
+            const status = "0";
+            if (body.attached_file == null || body.attached_file == "") {
+                attached_file = null;
+            } else {
+                attached_file = body.attached_file;
+            }
+            sql = mysql.format("INSERT INTO conference(category,name,date,attached_file,content,host,recorder,status) VALUES(?,?,?,?,?,?,?,?)", [category, name, date, attached_file, content, host, recorder, status]);
+            conn.query(sql, (err, res) => {
+                if (err) {
+                    reject(err);
+                } else if (!res.affectedRows) {
+                    reject(err);
+                } else {
+                    resolve(res);
+                }
+            });
+        });
+    },
+    addAbsentees: (id, absentees) => {
+        return new Promise((resolve, reject) => {
+            sql = mysql.format("INSERT INTO absentees(conference,absentees) VALUES(?,?)", [id, absentees]);
+            return conn.query(sql, (err, res) => {
+                err ? reject(err) : resolve(res);
+            });
+        });
+    },
+    addAttendees: (id, attendees) => {
+        return new Promise((resolve, reject) => {
+            sql = mysql.format("INSERT INTO attendees(conference,attendees) VALUES(?,?)", [id, attendees]);
+            return conn.query(sql, (err, res) => {
+                err ? reject(err) : resolve(res);
+            });
+        });
     },
     updateStatus: (req, callback) => {
-        let status = req.body.status;
-        let id = req.params.id;
-
-        sql = mysql.format('UPDATE conference SET status=? WHERE ID=?', [status, id]);
+        const status = req.body.status;
+        const id = req.body.id;
+        sql = mysql.format("UPDATE conference SET status=? WHERE ID=?", [status, id]);
         return conn.query(sql, callback);
     },
     updateContent: (req, callback) => {
-        let content = req.body.content;
-        let id = req.params.id;
-
-        sql = mysql.format('UPDATE conference SET content=? WHERE ID=?', [content, id]);
+        const content = req.body.content;
+        const id = req.body.id;
+        sql = mysql.format("UPDATE conference SET content=? WHERE ID=?", [content, id]);
         return conn.query(sql, callback);
-    }
-}
+    },
+};

@@ -1,17 +1,17 @@
-let mysql = require('mysql');
-let conf = require('../conf');
+const mysql = require('mysql');
+const conf = require('../conf');
 const bcrypt = require('bcrypt');
 
-let conn = mysql.createConnection(conf.db);
+const conn = mysql.createConnection(conf.db);
 let sql = '';
 
 function rand(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-let num = () => String.fromCharCode(rand(48, 57));
-let up = () => String.fromCharCode(rand(65, 90));
-let low = () => String.fromCharCode(rand(97, 122));
+const num = () => String.fromCharCode(rand(48, 57));
+const up = () => String.fromCharCode(rand(65, 90));
+const low = () => String.fromCharCode(rand(97, 122));
 
 //隨機碼
 function pwd_rand() {
@@ -33,25 +33,24 @@ function pwd_rand() {
 }
 module.exports = {
     find: (req, callback) => {
-        sql = mysql.format('SELECT ID,sID,name,sex,birth,phone FROM member WHERE sID=?', [req.body.sID]);
+        sql = mysql.format('SELECT ID,sID,name,sex,birth FROM member WHERE sID=?', [req.body.sID]);
         return conn.query(sql, callback);
     },
     list: (req, callback) => {
-        sql = mysql.format('SELECT sID,name,nickname,sex,birth,phone FROM member');
+        sql = mysql.format('SELECT sID,name,nickname,sex,birth FROM member');
         return conn.query(sql, callback);
     },
     add: async(req, callback) => {
-        let sID = req.body.sID;
-        let name = "姓名";
-        let nickname = "暱稱";
-        let sex = "男";
-        let birth = "2021-07-14";
-        let phone = "0912345678";
+        const sID = req.body.sID;
+        const name = "王小明";
+        const nickname = "小王";
+        const sex = "男";
+        const birth = "2021-07-14";
 
-        let salt = await bcrypt.genSalt(10);
-        let password = await bcrypt.hash("12345678", salt)
+        const salt = await bcrypt.genSalt(10);
+        const password = await bcrypt.hash("12345678", salt)
 
-        sql = mysql.format('INSERT INTO member(sID,password,name,nickname,sex,birth,phone) VALUES(?,?,?,?,?,?,?)', [sID, password, name, nickname, sex, birth, phone]);
+        sql = mysql.format('INSERT INTO member(sID,password,name,nickname,sex,birth) VALUES(?,?,?,?,?,?)', [sID, password, name, nickname, sex, birth]);
         return conn.query(sql, callback);
     },
     del: (req, callback) => {
@@ -59,7 +58,7 @@ module.exports = {
         return conn.query(sql, callback);
     },
     patch: (req, callback) => {
-        sql = mysql.format('UPDATE member SET name=?,sex=?,birth=?,phone=? WHERE sID = ?', [req.body.name, req.body.sex, req.body.birth, req.body.phone, req.body.sID]);
+        sql = mysql.format('UPDATE member SET name=?,sex=?,birth=? WHERE sID = ?', [req.body.name, req.body.sex, req.body.birth, req.body.sID]);
         return conn.query(sql, callback);
     },
     patchPwd: (req, callback) => {

@@ -1,7 +1,6 @@
 const models = require('../models/member');
-const bcrypt = require('bcrypt');
 
-let check_sID = (sID) => {
+const check_sID = (sID) => {
     if (sID.length == 10) {
         const sIDArray = sID.split("");
         if (sIDArray[0] == "1" || sIDArray[0] == "2" || sIDArray[0] == "3" || sIDArray[0] == "4") {
@@ -57,6 +56,16 @@ let check_sID = (sID) => {
     }
 }
 
+const dateFormat = (res) => {
+    res.forEach((element, index) => {
+        const Year = element.birth.getFullYear();
+        const Month = ((element.birth.getMonth() + 1) < 10) ? "0" + (element.birth.getMonth() + 1) : (element.birth.getMonth() + 1);
+        const Date = (element.birth.getDate() < 10) ? "0" + element.birth.getDate() : element.birth.getDate();
+        element.birth = Year + "-" + Month + "-" + Date;
+    });
+    return res;
+}
+
 class UserController {
     //取得單一user
     getUser = (req, res) => {
@@ -85,6 +94,7 @@ class UserController {
                     console.log(err);
                     return;
                 }
+                results = dateFormat(results);
                 res.json(results);
             })
         }

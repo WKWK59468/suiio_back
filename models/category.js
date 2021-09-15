@@ -1,7 +1,7 @@
 const mysql = require('mysql');
 const conf = require('../conf');
 
-let conn = mysql.createConnection(conf.db);
+const conn = mysql.createConnection(conf.db);
 let sql = '';
 
 module.exports = {
@@ -15,6 +15,10 @@ module.exports = {
     },
     list: (req, callback) => {
         sql = mysql.format('SELECT * FROM category');
+        return conn.query(sql, callback);
+    },
+    StatusOn: (req, callback) => {
+        sql = mysql.format(`SELECT * FROM category WHERE status = ${req.params.status}`);
         return conn.query(sql, callback);
     },
     del: (req, callback) => {

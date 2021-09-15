@@ -1,22 +1,28 @@
-const models = require('../models/conference');
+const models = require("../models/conference");
+const officerModels = require('../models/officer.model');
 
 const errMessage = (status, err) => {
     if (status == 500) {
-        return { "result": err }
+        return { result: err };
     }
     if (status == 404) {
-        return { "result": "Not Found" }
+        return { result: "Not Found" };
     }
-    if (status == 401) {
-        return { "result": "err" }
-    }
-    if (status == 403) {
-        return { "result": "UPDATE ERROR" }
-    }
+};
+
+const dateFormat = (res) => {
+    res.forEach((element, index) => {
+        const Year = element.date.getFullYear();
+        const Month = ((element.date.getMonth() + 1) < 10) ? "0" + (element.date.getMonth() + 1) : (element.date.getMonth() + 1);
+        const Date = (element.date.getDate() < 10) ? "0" + element.date.getDate() : element.date.getDate();
+        element.date = Year + "-" + Month + "-" + Date;
+    });
+    return res;
 }
+
 const successMessage = {
-    "result": "true"
-}
+    result: true,
+};
 
 class Conference {
     list = (req, res) => {
@@ -29,9 +35,11 @@ class Conference {
                 res.status(404).json(errMessage(404, err));
                 return console.error(err);
             }
+            results = dateFormat(results);
             res.status(200).json(results);
-        })
-    }
+        });
+    };
+
     fetchCategory = (req, res) => {
         models.fetchBycategory(req, (err, results) => {
             if (err) {
@@ -42,11 +50,14 @@ class Conference {
                 res.status(404).json(errMessage(404, err));
                 return console.error(err);
             }
+            results = dateFormat(results)
             res.status(200).json(results);
-        })
-    }
+        });
+    };
+
     fetchContent = (req, res) => {
-        models.fetchOne(req, (err, results) => {
+
+        models.fetchOne(req, async(err, results) => {
             if (err) {
                 res.status(500).json(errMessage(500, err));
                 return console.error(err);
@@ -55,35 +66,83 @@ class Conference {
                 res.status(404).json(errMessage(404, err));
                 return console.error(err);
             }
-            res.status(200).json(results);
-        })
-    }
+            await models.fetchAbsentees(req, (err, absentees) => {
+                let arr = [];
+                absentees.forEach((element) => {
+                    arr.push(element.absentees);
+                });
+                results[0]["absentees"] = arr;
+
+            });
+            await models.fetchAttendees(req, (err, attendees) => {
+                let arr2 = [];
+                attendees.forEach((element) => {
+                    arr2.push(element.attendees);
+                });
+                results[0]["attendees"] = arr2;
+                res.status(200).json(results);
+            });
+        });
+    };
+
     upload = (req, res) => {
-        models.upload(req, (err, results) => {
-            if (err) {
-                res.status(500).json(errMessage(500, err));
-                return console.error(err);
-            }
-            if (!results.affectedRows) {
-                res.status(404).json(errMessage(401, err));
-                return console.error(err);
-            }
-            res.status(200).json(successMessage);
+        let position = [];
+        const attendees = req.body.attendees;
+        models.upload(req).then(
+
+            officerModels.fetchAll(req, (err, positionArray) => {
+
+                positionArray.forEach(element => {
+                    position.push(element.position);
+                });
+
+                const absentees = position.concat(attendees).filter((element, index, arr) => {
+                    return arr.indexOf(element) === arr.lastIndexOf(element);
+                });
+
+                //GET ConferenceID
+                models.getConferenceID().then(ConferenceID => {
+                    //attendees
+                    const attendees = req.body.attendees;
+                    for (let k in attendees) {
+                        models.addAttendees(ConferenceID, attendees[k]).catch(err => {
+                            console.log(errMessage(500, err));
+                        });
+                    }
+                    //absentees
+                    for (let k in absentees) {
+                        models.addAbsentees(ConferenceID, absentees[k]).catch(err => {
+                            console.log(errMessage(500, err));
+                        });
+                    }
+                }).then(res.status(200).json(successMessage));
+            })
+
+        ).catch(err => {
+            res.status(500).json(errMessage(500, err));
         })
-    }
+
+    };
+
     updateStatus = (req, res) => {
-        models.updateStatus(req, (err, results) => {
-            if (err) {
-                res.status(500).json(errMessage(500, err));
-                return console.error(err);
-            }
-            if (!results.affectedRows) {
-                res.status(404).json(errMessage(403, err));
-                return console.error(err);
-            }
-            res.status(200).json(successMessage);
-        })
-    }
+        if (req.body.status == 0 || req.body.status == 1 || req.body.status == 2 || req.body.status == 3 || req.body.status == 4) {
+            models.updateStatus(req, (err, results) => {
+                if (err) {
+                    res.status(500).json(errMessage(500, err));
+                    return console.error(err);
+                }
+                if (!results.affectedRows) {
+                    res.status(404).json(errMessage(404, err));
+                    return console.error(err);
+                }
+                res.status(200).json(successMessage);
+            });
+        } else {
+            res.status(500).json({ "result": "Please Enter 0 ~ 4." });
+        }
+
+    };
+
     updateContent = (req, res) => {
         models.updateContent(req, (err, results) => {
             if (err) {
@@ -91,12 +150,12 @@ class Conference {
                 return console.error(err);
             }
             if (!results.affectedRows) {
-                res.status(404).json(errMessage(403, err));
+                res.status(404).json(errMessage(404, err));
                 return console.error(err);
             }
             res.status(200).json(successMessage);
-        })
-    }
+        });
+    };
 }
 
 module.exports = new Conference();
