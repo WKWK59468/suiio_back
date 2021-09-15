@@ -23,6 +23,11 @@ const getAuthByPos = (pos) => {
     return query(syntax, params, field);
 };
 module.exports = {
+    // check
+    check: (sID, callback) => {
+        const sql = mysql.format('SELECT COUNT(*) AS total FROM member WHERE sID = ?', sID);
+        return conn.query(sql, callback);
+    },
     // add officer
     add: (req, callback) => {
         const data = req.body;
@@ -76,7 +81,6 @@ module.exports = {
         const finance = req.body.finance;
         const conference = req.body.conference;
         const data = { organize, finance, conference };
-        console.log(data);
         if (organize.length == 0 || finance.length == 0 || conference.length == 0)
             throw new Error("Can't update. Each permission must be no less than 1 person.");
         if (organize.length > 2 || finance.length > 2 || conference.length > 2)
@@ -92,7 +96,6 @@ module.exports = {
                     return `${x}WHEN position='${pos}' THEN '${auth[key]}' `;
                 }, "")
             }, "") + `ELSE '一般幹部' END`;
-        console.log(sql);
         return conn.query(sql, callback);
 
     }
