@@ -19,13 +19,20 @@ const mailTransport = nodemailer.createTransport({
 
 
 
-const mail = (pwd) => {
-
+const mail = (sID, pwd) => {
+    const time = new Date();
+    const year = time.getFullYear()
+    const month = time.getMonth() + 1;
+    const day = time.getDate();
+    const h = time.getHours();
+    const m = time.getMinutes();
+    const s = time.getSeconds();
+    const date = year + "-" + month + "-" + day + " " + h + ":" + m + ":" + s;
     const mailOptions = {
         from: 's1110634025@gms.nutc.edu.tw',
         to: 'wkwk59468@gmail.com',
-        subject: '請接收訊息',
-        text: 'Password：' + pwd
+        subject: '【資管科科學會帳本資訊管理平台】- 帳號申請完成',
+        html: `<h2>同學您好</h2><p>您的帳號於 ${date} 註冊成功，請登入平台修改您的密碼。</p><br>帳號：${sID}<br>密碼：${pwd}<br><br>`
     }
 
     mailTransport.on('token', token => {
@@ -46,9 +53,10 @@ const mail = (pwd) => {
 
 module.exports = {
     sendMail: (req, pwd) => {
+        const sID = req.body.sID;
         return new Promise((resolve, reject) => {
             myFunction.check_session(req).then(() => {
-                mail(pwd);
+                mail(sID, pwd);
                 resolve(true);
             }).catch(() => {
                 reject(false);
