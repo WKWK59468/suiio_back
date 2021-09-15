@@ -200,6 +200,7 @@ exports.updatePermission = (req, res) => {
             }
         }
     }
+
     if (cnt > 0) {
         res.status(500).json({ "result": "Permission cannot be repeated" });
     } else {
