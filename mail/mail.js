@@ -32,7 +32,7 @@ const mail = (sID, pwd) => {
         from: 's1110634025@gms.nutc.edu.tw',
         to: 'wkwk59468@gmail.com',
         subject: '【資管科科學會帳本資訊管理平台】- 帳號申請完成',
-        html: `<h2>同學您好</h2><p>您的帳號於 ${date} 註冊成功，請登入平台修改您的密碼。</p><br>帳號：${sID}<br>密碼：${pwd}<br><br>`
+        html: `<h2>同學您好</h2><p>您的帳號於 ${date} 註冊成功，請登入平台修改您的密碼。</p><br>帳號：${sID}<br>密碼：${pwd}<br><br>網站：http://127.0.0.1:4000/login.html`
     }
 
     mailTransport.on('token', token => {
