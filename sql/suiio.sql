@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.1
+-- version 5.0.2
 -- https://www.phpmyadmin.net/
 --
--- 主機： 127.0.0.1
--- 產生時間： 2021-09-18 14:55:14
--- 伺服器版本： 10.4.21-MariaDB
--- PHP 版本： 7.4.23
+-- 主機： 127.0.0.1:3308
+-- 產生時間： 2021-09-18 22:29:41
+-- 伺服器版本： 5.7.31
+-- PHP 版本： 7.3.21
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- 資料庫: `suiio`
+-- 資料庫： `suiio`
 --
 CREATE DATABASE IF NOT EXISTS `suiio` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 USE `suiio`;
@@ -28,66 +28,63 @@ USE `suiio`;
 --
 -- 資料表結構 `absentees`
 --
+-- 建立時間： 2021-09-18 16:38:49
+-- 最後更新： 2021-09-18 16:38:49
+--
 
 DROP TABLE IF EXISTS `absentees`;
-CREATE TABLE `absentees` (
+CREATE TABLE IF NOT EXISTS `absentees` (
   `conference` int(11) NOT NULL,
-  `absentees` varchar(10) NOT NULL
+  `absentees` varchar(10) NOT NULL,
+  PRIMARY KEY (`conference`,`absentees`),
+  KEY `officer_position_absentees` (`absentees`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='缺席者';
-
---
--- 資料表的關聯 `absentees`:
---   `conference`
---       `conference` -> `ID`
---   `absentees`
---       `officer` -> `position`
---
 
 --
 -- 傾印資料表的資料 `absentees`
 --
 
 INSERT INTO `absentees` (`conference`, `absentees`) VALUES
-(1, '副會長'),
-(1, '會長'),
-(1, '活動長'),
-(1, '資訊長'),
-(2, '副會長'),
-(2, '會長'),
-(2, '活動長'),
-(2, '資訊長'),
-(3, '副會長'),
-(3, '會長'),
-(3, '活動長'),
-(3, '資訊長'),
-(4, '副會長'),
-(4, '會長'),
-(4, '活動長'),
-(4, '資訊長'),
-(5, '副會長'),
-(5, '會長'),
-(5, '活動長'),
-(5, '資訊長'),
-(6, '副會長'),
-(6, '會長'),
-(6, '活動長'),
-(6, '資訊長'),
-(7, '副會長'),
-(7, '會長'),
-(7, '活動長'),
-(7, '資訊長'),
-(8, '副會長'),
-(8, '會長'),
-(8, '活動長'),
-(8, '財務長'),
-(9, '副會長'),
-(9, '會長'),
-(9, '活動長'),
-(9, '財務長'),
 (16, '公關長'),
+(1, '副會長'),
+(2, '副會長'),
+(3, '副會長'),
+(4, '副會長'),
+(5, '副會長'),
+(6, '副會長'),
+(7, '副會長'),
+(8, '副會長'),
+(9, '副會長'),
+(1, '會長'),
+(2, '會長'),
+(3, '會長'),
+(4, '會長'),
+(5, '會長'),
+(6, '會長'),
+(7, '會長'),
+(8, '會長'),
+(9, '會長'),
+(1, '活動長'),
+(2, '活動長'),
+(3, '活動長'),
+(4, '活動長'),
+(5, '活動長'),
+(6, '活動長'),
+(7, '活動長'),
+(8, '活動長'),
+(9, '活動長'),
 (16, '生活長'),
 (16, '秘書長'),
 (16, '美宣長'),
+(8, '財務長'),
+(9, '財務長'),
+(1, '資訊長'),
+(2, '資訊長'),
+(3, '資訊長'),
+(4, '資訊長'),
+(5, '資訊長'),
+(6, '資訊長'),
+(7, '資訊長'),
 (16, '資訊長');
 
 -- --------------------------------------------------------
@@ -95,10 +92,13 @@ INSERT INTO `absentees` (`conference`, `absentees`) VALUES
 --
 -- 資料表結構 `account`
 --
+-- 建立時間： 2021-09-18 16:38:49
+-- 最後更新： 2021-09-18 16:38:49
+--
 
 DROP TABLE IF EXISTS `account`;
-CREATE TABLE `account` (
-  `ID` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `account` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
   `date` datetime NOT NULL,
   `category` int(11) NOT NULL,
   `name` varchar(20) NOT NULL,
@@ -106,16 +106,11 @@ CREATE TABLE `account` (
   `content` varchar(200) DEFAULT NULL,
   `receipt` varchar(50) NOT NULL,
   `status` char(1) NOT NULL,
-  `uploadBy` varchar(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='收支紀錄';
-
---
--- 資料表的關聯 `account`:
---   `category`
---       `category` -> `ID`
---   `uploadBy`
---       `officer` -> `position`
---
+  `uploadBy` varchar(10) NOT NULL,
+  PRIMARY KEY (`ID`,`category`) USING BTREE,
+  KEY `category_ID_account` (`category`),
+  KEY `officer_position_account` (`uploadBy`)
+) ENGINE=InnoDB AUTO_INCREMENT=97 DEFAULT CHARSET=utf8 COMMENT='收支紀錄';
 
 --
 -- 傾印資料表的資料 `account`
@@ -215,38 +210,44 @@ INSERT INTO `account` (`ID`, `date`, `category`, `name`, `amount`, `content`, `r
 --
 -- 資料表結構 `account_comment`
 --
+-- 建立時間： 2021-09-18 17:16:55
+-- 最後更新： 2021-09-18 22:17:57
+--
 
 DROP TABLE IF EXISTS `account_comment`;
-CREATE TABLE `account_comment` (
-  `ID` int(11) NOT NULL,
-  `commentID` int(11) NOT NULL
+CREATE TABLE IF NOT EXISTS `account_comment` (
+  `accountID` int(11) NOT NULL,
+  `commentID` int(11) NOT NULL,
+  PRIMARY KEY (`accountID`,`commentID`),
+  KEY `commentID_account` (`commentID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- 資料表的關聯 `account_comment`:
---   `commentID`
---       `comment` -> `ID`
+-- 傾印資料表的資料 `account_comment`
 --
+
+INSERT INTO `account_comment` (`accountID`, `commentID`) VALUES
+(7, 1),
+(29, 2),
+(32, 3),
+(38, 4);
 
 -- --------------------------------------------------------
 
 --
 -- 資料表結構 `attendees`
 --
+-- 建立時間： 2021-09-18 16:38:49
+-- 最後更新： 2021-09-18 16:38:49
+--
 
 DROP TABLE IF EXISTS `attendees`;
-CREATE TABLE `attendees` (
+CREATE TABLE IF NOT EXISTS `attendees` (
   `conference` int(11) NOT NULL,
-  `attendees` varchar(10) NOT NULL
+  `attendees` varchar(10) NOT NULL,
+  PRIMARY KEY (`conference`,`attendees`),
+  KEY `officer_position_attendees` (`attendees`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='出席者';
-
---
--- 資料表的關聯 `attendees`:
---   `conference`
---       `conference` -> `ID`
---   `attendees`
---       `officer` -> `position`
---
 
 --
 -- 傾印資料表的資料 `attendees`
@@ -254,42 +255,42 @@ CREATE TABLE `attendees` (
 
 INSERT INTO `attendees` (`conference`, `attendees`) VALUES
 (1, '公關長'),
-(1, '器材長'),
-(1, '秘書長'),
-(1, '體育長'),
 (2, '公關長'),
-(2, '器材長'),
-(2, '秘書長'),
-(2, '體育長'),
 (3, '公關長'),
-(3, '器材長'),
-(3, '秘書長'),
-(3, '體育長'),
 (4, '公關長'),
-(4, '器材長'),
-(4, '秘書長'),
-(4, '體育長'),
 (5, '公關長'),
-(5, '器材長'),
-(5, '秘書長'),
-(5, '體育長'),
 (6, '公關長'),
-(6, '器材長'),
-(6, '秘書長'),
-(6, '體育長'),
 (7, '公關長'),
-(7, '器材長'),
-(7, '秘書長'),
-(7, '體育長'),
-(8, '器材長'),
-(8, '體育長'),
-(9, '器材長'),
-(9, '體育長'),
 (16, '副會長'),
+(1, '器材長'),
+(2, '器材長'),
+(3, '器材長'),
+(4, '器材長'),
+(5, '器材長'),
+(6, '器材長'),
+(7, '器材長'),
+(8, '器材長'),
+(9, '器材長'),
 (16, '器材長'),
 (16, '會長'),
 (16, '活動長'),
+(1, '秘書長'),
+(2, '秘書長'),
+(3, '秘書長'),
+(4, '秘書長'),
+(5, '秘書長'),
+(6, '秘書長'),
+(7, '秘書長'),
 (16, '財務長'),
+(1, '體育長'),
+(2, '體育長'),
+(3, '體育長'),
+(4, '體育長'),
+(5, '體育長'),
+(6, '體育長'),
+(7, '體育長'),
+(8, '體育長'),
+(9, '體育長'),
 (16, '體育長');
 
 -- --------------------------------------------------------
@@ -297,53 +298,52 @@ INSERT INTO `attendees` (`conference`, `attendees`) VALUES
 --
 -- 資料表結構 `budget`
 --
+-- 建立時間： 2021-09-18 16:38:48
+--
 
 DROP TABLE IF EXISTS `budget`;
-CREATE TABLE `budget` (
-  `ID` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `budget` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
   `cID` int(11) NOT NULL,
   `name` varchar(20) NOT NULL,
   `cost` int(11) NOT NULL,
   `date` date NOT NULL,
-  `review` varchar(10) NOT NULL
+  `review` varchar(10) NOT NULL,
+  PRIMARY KEY (`ID`,`cID`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='預算';
-
---
--- 資料表的關聯 `budget`:
---
 
 -- --------------------------------------------------------
 
 --
 -- 資料表結構 `budgetcategory`
 --
+-- 建立時間： 2021-09-18 16:38:48
+--
 
 DROP TABLE IF EXISTS `budgetcategory`;
-CREATE TABLE `budgetcategory` (
+CREATE TABLE IF NOT EXISTS `budgetcategory` (
   `bID` int(11) NOT NULL,
-  `category` varchar(10) NOT NULL
+  `category` varchar(10) NOT NULL,
+  PRIMARY KEY (`bID`,`category`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='預算分類';
-
---
--- 資料表的關聯 `budgetcategory`:
---
 
 -- --------------------------------------------------------
 
 --
 -- 資料表結構 `category`
 --
+-- 建立時間： 2021-09-18 16:38:48
+-- 最後更新： 2021-09-18 16:38:48
+--
 
 DROP TABLE IF EXISTS `category`;
-CREATE TABLE `category` (
-  `ID` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `category` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(10) NOT NULL,
-  `status` int(1) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='活動類別';
-
---
--- 資料表的關聯 `category`:
---
+  `status` int(1) NOT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8 COMMENT='活動類別';
 
 --
 -- 傾印資料表的資料 `category`
@@ -366,32 +366,52 @@ INSERT INTO `category` (`ID`, `name`, `status`) VALUES
 --
 -- 資料表結構 `comment`
 --
+-- 建立時間： 2021-09-18 22:14:26
+-- 最後更新： 2021-09-18 22:28:24
+--
 
 DROP TABLE IF EXISTS `comment`;
-CREATE TABLE `comment` (
-  `ID` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `comment` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
   `date` datetime NOT NULL,
   `content` varchar(500) NOT NULL,
   `status` char(1) NOT NULL,
   `isHide` tinyint(1) NOT NULL,
-  `sID` char(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='留言';
+  `sID` char(10) NOT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `sID_comment` (`sID`)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 COMMENT='留言';
 
 --
--- 資料表的關聯 `comment`:
---   `sID`
---       `member` -> `sID`
+-- 傾印資料表的資料 `comment`
 --
+
+INSERT INTO `comment` (`ID`, `date`, `content`, `status`, `isHide`, `sID`) VALUES
+(1, '2021-09-19 06:16:03', '膠帶是買了幾捲..也太貴了?', '0', 0, '1110634025'),
+(2, '2021-09-19 06:17:06', '小冊子是什麼怎麼那麼貴?', '0', 0, '1110634025'),
+(3, '2021-09-19 06:17:28', '這膠帶哪裡買的...?', '0', 0, '1110634025'),
+(4, '2021-09-19 06:17:56', '水是買了幾箱...?', '0', 0, '1110634025'),
+(5, '2021-09-19 06:19:04', '十月支出好多...', '0', 0, '1110634025'),
+(6, '2021-09-19 06:19:28', '原來是大迎新', '0', 0, '1110634025'),
+(8, '2021-09-19 06:24:12', '這報表內容也太混了...開會內容就只打內容?', '0', 0, '1110634025'),
+(9, '2021-09-19 06:24:38', '怎麼突然增加表演獎金?', '0', 0, '1110634025'),
+(10, '2021-09-19 06:25:46', '怎麼突然增加場地費用?', '0', 0, '1110634025'),
+(11, '2021-09-19 06:27:02', '獎金金額也太高了!', '0', 0, '1110634025'),
+(12, '2021-09-19 06:27:32', '所以人員怎麼配置?', '0', 0, '1110634025'),
+(13, '2021-09-19 06:28:24', '這花費也太兇了', '0', 0, '1110634025');
 
 -- --------------------------------------------------------
 
 --
 -- 資料表結構 `conference`
 --
+-- 建立時間： 2021-09-18 16:38:49
+-- 最後更新： 2021-09-18 16:38:49
+--
 
 DROP TABLE IF EXISTS `conference`;
-CREATE TABLE `conference` (
-  `ID` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `conference` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
   `category` int(11) NOT NULL,
   `name` varchar(20) NOT NULL,
   `date` date NOT NULL,
@@ -399,18 +419,12 @@ CREATE TABLE `conference` (
   `content` varchar(500) NOT NULL,
   `host` varchar(10) NOT NULL,
   `recorder` varchar(10) NOT NULL,
-  `status` char(1) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='會議紀錄';
-
---
--- 資料表的關聯 `conference`:
---   `category`
---       `category` -> `ID`
---   `host`
---       `officer` -> `position`
---   `recorder`
---       `officer` -> `position`
---
+  `status` char(1) NOT NULL,
+  PRIMARY KEY (`ID`,`category`) USING BTREE,
+  KEY `category_ID_conference` (`category`),
+  KEY `recorder` (`recorder`),
+  KEY `host` (`host`)
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8 COMMENT='會議紀錄';
 
 --
 -- 傾印資料表的資料 `conference`
@@ -433,38 +447,45 @@ INSERT INTO `conference` (`ID`, `category`, `name`, `date`, `attached_file`, `co
 --
 -- 資料表結構 `conference_comment`
 --
+-- 建立時間： 2021-09-18 17:12:18
+-- 最後更新： 2021-09-18 22:27:33
+--
 
 DROP TABLE IF EXISTS `conference_comment`;
-CREATE TABLE `conference_comment` (
-  `ID` int(11) NOT NULL,
-  `commentID` int(11) NOT NULL
+CREATE TABLE IF NOT EXISTS `conference_comment` (
+  `conferenceID` int(11) NOT NULL,
+  `commentID` int(11) NOT NULL,
+  PRIMARY KEY (`conferenceID`,`commentID`),
+  KEY `commentID_conference` (`commentID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- 資料表的關聯 `conference_comment`:
---   `commentID`
---       `comment` -> `ID`
+-- 傾印資料表的資料 `conference_comment`
 --
+
+INSERT INTO `conference_comment` (`conferenceID`, `commentID`) VALUES
+(1, 8),
+(6, 9),
+(8, 10),
+(9, 11),
+(3, 12);
 
 -- --------------------------------------------------------
 
 --
 -- 資料表結構 `content`
 --
+-- 建立時間： 2021-09-18 16:38:49
+-- 最後更新： 2021-09-18 16:38:49
+--
 
 DROP TABLE IF EXISTS `content`;
-CREATE TABLE `content` (
+CREATE TABLE IF NOT EXISTS `content` (
   `statement` int(11) NOT NULL,
-  `account` int(11) NOT NULL
+  `account` int(11) NOT NULL,
+  PRIMARY KEY (`statement`,`account`),
+  KEY `account_ID` (`account`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- 資料表的關聯 `content`:
---   `account`
---       `account` -> `ID`
---   `statement`
---       `statement` -> `ID`
---
 
 --
 -- 傾印資料表的資料 `content`
@@ -472,118 +493,117 @@ CREATE TABLE `content` (
 
 INSERT INTO `content` (`statement`, `account`) VALUES
 (2, 7),
+(3, 7),
 (2, 8),
+(3, 8),
 (2, 9),
+(3, 9),
 (2, 10),
 (2, 11),
 (2, 12),
 (2, 13),
+(3, 13),
 (2, 14),
+(3, 14),
 (2, 15),
 (2, 16),
 (2, 17),
 (2, 18),
+(5, 18),
 (2, 19),
+(5, 19),
 (2, 20),
+(3, 20),
 (2, 21),
 (2, 22),
+(3, 22),
 (2, 23),
 (2, 24),
 (2, 25),
 (2, 26),
+(3, 26),
 (2, 27),
 (2, 28),
 (2, 29),
+(3, 29),
 (2, 30),
+(3, 30),
 (2, 31),
+(3, 31),
 (2, 32),
 (2, 33),
+(3, 33),
 (2, 34),
+(3, 34),
 (2, 35),
+(3, 35),
 (2, 36),
+(3, 36),
 (2, 37),
+(3, 37),
 (2, 38),
+(3, 38),
 (2, 39),
+(3, 39),
 (2, 40),
 (2, 41),
+(3, 41),
 (2, 42),
 (2, 43),
+(3, 43),
 (2, 44),
 (2, 45),
 (2, 46),
-(2, 47),
-(2, 48),
-(2, 49),
-(2, 50),
-(2, 51),
-(2, 52),
-(2, 53),
-(2, 54),
-(2, 55),
-(2, 56),
-(2, 57),
-(2, 58),
-(2, 59),
-(2, 60),
-(2, 61),
-(2, 62),
-(2, 63),
-(3, 7),
-(3, 8),
-(3, 9),
-(3, 13),
-(3, 14),
-(3, 20),
-(3, 22),
-(3, 26),
-(3, 29),
-(3, 30),
-(3, 31),
-(3, 33),
-(3, 34),
-(3, 35),
-(3, 36),
-(3, 37),
-(3, 38),
-(3, 39),
-(3, 41),
-(3, 43),
 (3, 46),
+(2, 47),
 (3, 47),
+(2, 48),
 (3, 48),
+(2, 49),
 (3, 49),
+(2, 50),
 (3, 50),
+(2, 51),
 (3, 51),
+(2, 52),
 (3, 52),
+(2, 53),
 (3, 53),
+(2, 54),
 (3, 54),
+(2, 55),
 (3, 55),
+(2, 56),
 (3, 56),
+(2, 57),
 (3, 57),
+(2, 58),
 (3, 58),
+(2, 59),
 (3, 59),
+(2, 60),
 (3, 60),
+(2, 61),
 (3, 61),
+(2, 62),
 (3, 62),
+(2, 63),
 (4, 64),
 (4, 65),
 (4, 66),
+(5, 66),
 (4, 67),
+(5, 67),
 (4, 68),
 (4, 69),
 (4, 70),
 (4, 71),
-(5, 18),
-(5, 19),
-(5, 66),
-(5, 67),
-(5, 91),
-(5, 92),
 (6, 72),
 (6, 73),
 (6, 74),
 (6, 75),
 (6, 76),
+(7, 76),
 (6, 77),
 (6, 78),
 (6, 79),
@@ -593,40 +613,40 @@ INSERT INTO `content` (`statement`, `account`) VALUES
 (6, 83),
 (6, 84),
 (6, 85),
-(6, 86),
-(6, 87),
-(6, 88),
-(6, 89),
-(6, 90),
-(6, 91),
-(6, 92),
-(6, 93),
-(7, 76),
 (7, 85),
+(6, 86),
 (7, 86),
+(6, 87),
 (7, 87),
+(6, 88),
 (7, 88),
-(7, 89);
+(6, 89),
+(7, 89),
+(6, 90),
+(5, 91),
+(6, 91),
+(5, 92),
+(6, 92),
+(6, 93);
 
 -- --------------------------------------------------------
 
 --
 -- 資料表結構 `member`
 --
+-- 建立時間： 2021-09-18 16:38:48
+--
 
 DROP TABLE IF EXISTS `member`;
-CREATE TABLE `member` (
+CREATE TABLE IF NOT EXISTS `member` (
   `sID` char(10) NOT NULL,
   `password` char(60) NOT NULL,
   `name` varchar(10) NOT NULL,
   `nickname` varchar(10) NOT NULL,
   `sex` char(1) NOT NULL,
-  `birth` date NOT NULL
+  `birth` date NOT NULL,
+  PRIMARY KEY (`sID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='成員';
-
---
--- 資料表的關聯 `member`:
---
 
 --
 -- 傾印資料表的資料 `member`
@@ -652,19 +672,19 @@ INSERT INTO `member` (`sID`, `password`, `name`, `nickname`, `sex`, `birth`) VAL
 --
 -- 資料表結構 `officer`
 --
+-- 建立時間： 2021-09-18 16:38:49
+-- 最後更新： 2021-09-18 16:38:49
+--
 
 DROP TABLE IF EXISTS `officer`;
-CREATE TABLE `officer` (
+CREATE TABLE IF NOT EXISTS `officer` (
   `permission` varchar(10) NOT NULL DEFAULT '一般幹部',
   `position` varchar(10) NOT NULL,
-  `sID` char(10) NOT NULL
+  `sID` char(10) NOT NULL,
+  PRIMARY KEY (`position`,`sID`),
+  UNIQUE KEY `position` (`position`),
+  KEY `user_sID_officer` (`sID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='幹部';
-
---
--- 資料表的關聯 `officer`:
---   `sID`
---       `member` -> `sID`
---
 
 --
 -- 傾印資料表的資料 `officer`
@@ -688,25 +708,23 @@ INSERT INTO `officer` (`permission`, `position`, `sID`) VALUES
 --
 -- 資料表結構 `statement`
 --
+-- 建立時間： 2021-09-18 16:38:49
+-- 最後更新： 2021-09-18 16:38:49
+--
 
 DROP TABLE IF EXISTS `statement`;
-CREATE TABLE `statement` (
-  `ID` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `statement` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
   `category` int(11) NOT NULL,
   `name` varchar(20) NOT NULL,
   `date` datetime NOT NULL,
   `status` char(1) NOT NULL,
   `uploadBy` varchar(10) NOT NULL,
-  `balance` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='財務報表';
-
---
--- 資料表的關聯 `statement`:
---   `category`
---       `category` -> `ID`
---   `uploadBy`
---       `officer` -> `position`
---
+  `balance` int(11) NOT NULL,
+  PRIMARY KEY (`ID`,`category`) USING BTREE,
+  KEY `officer_position_statement` (`uploadBy`),
+  KEY `category_ID_statement` (`category`)
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8 COMMENT='財務報表';
 
 --
 -- 傾印資料表的資料 `statement`
@@ -726,187 +744,26 @@ INSERT INTO `statement` (`ID`, `category`, `name`, `date`, `status`, `uploadBy`,
 --
 -- 資料表結構 `statement_comment`
 --
+-- 建立時間： 2021-09-18 17:09:58
+-- 最後更新： 2021-09-18 22:28:25
+--
 
 DROP TABLE IF EXISTS `statement_comment`;
-CREATE TABLE `statement_comment` (
-  `ID` int(11) NOT NULL,
-  `commentID` int(11) NOT NULL
+CREATE TABLE IF NOT EXISTS `statement_comment` (
+  `statementID` int(11) NOT NULL,
+  `commentID` int(11) NOT NULL,
+  PRIMARY KEY (`statementID`,`commentID`),
+  KEY `commentID_statement` (`commentID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- 資料表的關聯 `statement_comment`:
---   `commentID`
---       `comment` -> `ID`
+-- 傾印資料表的資料 `statement_comment`
 --
 
---
--- 已傾印資料表的索引
---
-
---
--- 資料表索引 `absentees`
---
-ALTER TABLE `absentees`
-  ADD PRIMARY KEY (`conference`,`absentees`),
-  ADD KEY `officer_position_absentees` (`absentees`);
-
---
--- 資料表索引 `account`
---
-ALTER TABLE `account`
-  ADD PRIMARY KEY (`ID`,`category`) USING BTREE,
-  ADD KEY `category_ID_account` (`category`),
-  ADD KEY `officer_position_account` (`uploadBy`);
-
---
--- 資料表索引 `account_comment`
---
-ALTER TABLE `account_comment`
-  ADD PRIMARY KEY (`ID`),
-  ADD KEY `commentID_account` (`commentID`);
-
---
--- 資料表索引 `attendees`
---
-ALTER TABLE `attendees`
-  ADD PRIMARY KEY (`conference`,`attendees`),
-  ADD KEY `officer_position_attendees` (`attendees`);
-
---
--- 資料表索引 `budget`
---
-ALTER TABLE `budget`
-  ADD PRIMARY KEY (`ID`,`cID`) USING BTREE;
-
---
--- 資料表索引 `budgetcategory`
---
-ALTER TABLE `budgetcategory`
-  ADD PRIMARY KEY (`bID`,`category`);
-
---
--- 資料表索引 `category`
---
-ALTER TABLE `category`
-  ADD PRIMARY KEY (`ID`),
-  ADD UNIQUE KEY `name` (`name`);
-
---
--- 資料表索引 `comment`
---
-ALTER TABLE `comment`
-  ADD PRIMARY KEY (`ID`),
-  ADD KEY `sID_comment` (`sID`);
-
---
--- 資料表索引 `conference`
---
-ALTER TABLE `conference`
-  ADD PRIMARY KEY (`ID`,`category`) USING BTREE,
-  ADD KEY `category_ID_conference` (`category`),
-  ADD KEY `recorder` (`recorder`),
-  ADD KEY `host` (`host`);
-
---
--- 資料表索引 `conference_comment`
---
-ALTER TABLE `conference_comment`
-  ADD PRIMARY KEY (`ID`),
-  ADD KEY `commentID_conference` (`commentID`);
-
---
--- 資料表索引 `content`
---
-ALTER TABLE `content`
-  ADD PRIMARY KEY (`statement`,`account`),
-  ADD KEY `account_ID` (`account`);
-
---
--- 資料表索引 `member`
---
-ALTER TABLE `member`
-  ADD PRIMARY KEY (`sID`);
-
---
--- 資料表索引 `officer`
---
-ALTER TABLE `officer`
-  ADD PRIMARY KEY (`position`,`sID`),
-  ADD UNIQUE KEY `position` (`position`),
-  ADD KEY `user_sID_officer` (`sID`);
-
---
--- 資料表索引 `statement`
---
-ALTER TABLE `statement`
-  ADD PRIMARY KEY (`ID`,`category`) USING BTREE,
-  ADD KEY `officer_position_statement` (`uploadBy`),
-  ADD KEY `category_ID_statement` (`category`);
-
---
--- 資料表索引 `statement_comment`
---
-ALTER TABLE `statement_comment`
-  ADD PRIMARY KEY (`ID`),
-  ADD KEY `commentID_statement` (`commentID`);
-
---
--- 在傾印的資料表使用自動遞增(AUTO_INCREMENT)
---
-
---
--- 使用資料表自動遞增(AUTO_INCREMENT) `account`
---
-ALTER TABLE `account`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=97;
-
---
--- 使用資料表自動遞增(AUTO_INCREMENT) `account_comment`
---
-ALTER TABLE `account_comment`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- 使用資料表自動遞增(AUTO_INCREMENT) `budget`
---
-ALTER TABLE `budget`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- 使用資料表自動遞增(AUTO_INCREMENT) `category`
---
-ALTER TABLE `category`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
-
---
--- 使用資料表自動遞增(AUTO_INCREMENT) `comment`
---
-ALTER TABLE `comment`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- 使用資料表自動遞增(AUTO_INCREMENT) `conference`
---
-ALTER TABLE `conference`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
-
---
--- 使用資料表自動遞增(AUTO_INCREMENT) `conference_comment`
---
-ALTER TABLE `conference_comment`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- 使用資料表自動遞增(AUTO_INCREMENT) `statement`
---
-ALTER TABLE `statement`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
-
---
--- 使用資料表自動遞增(AUTO_INCREMENT) `statement_comment`
---
-ALTER TABLE `statement_comment`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+INSERT INTO `statement_comment` (`statementID`, `commentID`) VALUES
+(2, 5),
+(2, 6),
+(2, 13);
 
 --
 -- 已傾印資料表的限制式
@@ -930,6 +787,7 @@ ALTER TABLE `account`
 -- 資料表的限制式 `account_comment`
 --
 ALTER TABLE `account_comment`
+  ADD CONSTRAINT `account` FOREIGN KEY (`accountID`) REFERENCES `account` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `commentID_account` FOREIGN KEY (`commentID`) REFERENCES `comment` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
@@ -957,7 +815,8 @@ ALTER TABLE `conference`
 -- 資料表的限制式 `conference_comment`
 --
 ALTER TABLE `conference_comment`
-  ADD CONSTRAINT `commentID_conference` FOREIGN KEY (`commentID`) REFERENCES `comment` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `commentID_conference` FOREIGN KEY (`commentID`) REFERENCES `comment` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `conference` FOREIGN KEY (`conferenceID`) REFERENCES `conference` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- 資料表的限制式 `content`
@@ -983,7 +842,8 @@ ALTER TABLE `statement`
 -- 資料表的限制式 `statement_comment`
 --
 ALTER TABLE `statement_comment`
-  ADD CONSTRAINT `commentID_statement` FOREIGN KEY (`commentID`) REFERENCES `comment` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `commentID_statement` FOREIGN KEY (`commentID`) REFERENCES `comment` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `statement` FOREIGN KEY (`statementID`) REFERENCES `statement` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
