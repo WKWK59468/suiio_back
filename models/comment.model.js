@@ -20,6 +20,14 @@ const fetchComment = (commentID) => {
 }
 
 module.exports = {
+    searchSID: (commentID) => {
+        return new Promise((resolve, reject) => {
+            sql = `SELECT sID FROM comment WHERE ID = ${commentID}`;
+            conn.query(sql, (err, res) => {
+                err ? reject(err) : resolve(res[0].sID);
+            })
+        });
+    },
     searchID: () => {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
@@ -97,9 +105,22 @@ module.exports = {
             })
         });
     },
-    patch: () => {
+    update: (comment) => {
+        const commentID = comment.commentID;
+        const date = comment.date;
+        const content = comment.content;
+        const status = comment.status;
+
         return new Promise((resolve, reject) => {
-            sql = ``;
+            sql = `UPDATE comment SET date = '${date}', content = '${content}', status = ${status} WHERE ID = ${commentID}`;
+            conn.query(sql, (err, res) => {
+                err ? reject(err) : resolve(res);
+            })
+        });
+    },
+    delete: (commentID, isHide) => {
+        return new Promise((resolve, reject) => {
+            sql = `UPDATE comment SET isHide = ${isHide} WHERE ID = ${commentID}`;
             conn.query(sql, (err, res) => {
                 err ? reject(err) : resolve(res);
             })

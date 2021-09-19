@@ -1,3 +1,4 @@
+const session = require('express-session');
 const commentModels = require('../models/comment.model');
 const myFunction = require('../myFunction');
 
@@ -26,12 +27,16 @@ class Comment {
         }
 
         myFunction.check_session(req).then(() => {
-
-            commentModels.addComment(comment).then(() => {
-                commentModels.searchID().then((commentID) => {
-                    commentModels.addTables(tables, tableID, commentID).then(() => {
-                        res.status(200).json({ "result": true });
-                        return new Promise((resolve, reject) => {});
+            if (req.session.permission !== '組織成員') {
+                commentModels.addComment(comment).then(() => {
+                    commentModels.searchID().then((commentID) => {
+                        commentModels.addTables(tables, tableID, commentID).then(() => {
+                            res.status(200).json({ "result": true });
+                            return new Promise((resolve, reject) => {});
+                        }).catch((err) => {
+                            res.status(500).json({ "result": err });
+                            return new Promise((resolve, reject) => {});
+                        });
                     }).catch((err) => {
                         res.status(500).json({ "result": err });
                         return new Promise((resolve, reject) => {});
@@ -40,11 +45,10 @@ class Comment {
                     res.status(500).json({ "result": err });
                     return new Promise((resolve, reject) => {});
                 });
-            }).catch((err) => {
-                res.status(500).json({ "result": err });
+            } else {
+                res.status(500).json({ "result": "Permission denied." });
                 return new Promise((resolve, reject) => {});
-            });
-
+            }
         }).catch(() => {
             res.status(404).json({ 'result': 'Not Login' });
         });
@@ -85,13 +89,12 @@ class Comment {
                             tableID = element2.statementID;
                         }
                         if (Object.keys(element2) == "conferenceID") {
-                            tableID = element2.conferenceID; //ID
+                            tableID = element2.conferenceID;
                         }
 
                         commentModels.fetchByID(element, tableID).then((result) => {
                             arr.push(result);
                             json[element] = arr;
-                            // json[element].push(result);
                             if (index == array.length - 1) {
                                 if (index2 == array2.length - 1) {
                                     res.status(200).json(json);
@@ -113,20 +116,67 @@ class Comment {
         });
     }
     update = (req, res) => {
+        const time = new Date();
+        const year = time.getFullYear()
+        const month = time.getMonth() + 1;
+        const day = time.getDate();
+        const h = time.getHours();
+        const m = time.getMinutes();
+        const s = time.getSeconds();
+
+        const body = req.body;
+        const commentID = body.commentID;
+        const content = body.content;
+        const comment = {
+            "commentID": commentID,
+            "date": year + "-" + month + "-" + day + " " + h + ":" + m + ":" + s,
+            "content": content,
+            "status": 1,
+        }
         myFunction.check_session(req).then(() => {
-            commentModels.update().then(() => {
-                res.status(200).json({ "result": true });
-            }).catch(() => {
+            commentModels.searchSID(commentID).then((ID) => {
+                if (ID == req.session.sID) {
+
+                    commentModels.update(comment).then(() => {
+                        res.status(200).json({ "result": true });
+                        return new Promise((resolve, reject) => {});
+                    }).catch((err) => {
+                        res.status(500).json({ "result": err });
+                        return new Promise((resolve, reject) => {});
+                    });
+
+                } else {
+                    res.status(500).json({ "result": "Permission denied." });
+                    return new Promise((resolve, reject) => {});
+                }
+            }).catch((err) => {
                 res.status(500).json({ "result": err });
-            });
-            commentModels.update().then(() => {
-                res.status(200).json({ "result": true });
-            }).catch(() => {
-                res.status(500).json({ "result": err });
-            });
+                return new Promise((resolve, reject) => {});
+            })
         }).catch(() => {
             res.status(404).json({ 'result': 'Not Login' });
         });
+    }
+    delete = (req, res) => {
+        const body = req.body;
+        const commentID = body.commentID;
+
+        myFunction.check_permission(req).then(() => {
+            if (req.session.permission !== '組織成員') {
+                commentModels.delete(commentID, 1).then(() => {
+                    res.status(200).json({ "result": true });
+                    return new Promise((resolve, reject) => {});
+                }).catch((err) => {
+                    res.status(500).json({ "result": err });
+                    return new Promise((resolve, reject) => {});
+                })
+            } else {
+                res.status(500).json({ "result": "Permission denied." });
+                return new Promise((resolve, reject) => {});
+            }
+        }).catch(() => {
+            res.status(404).json({ 'result': 'Not Login' });
+        })
     }
 }
 

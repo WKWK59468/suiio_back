@@ -4,7 +4,8 @@ const commentController = require('../controllers/comment.controller');
 
 //POST
 router.route('/add/:tables').post(commentController.add);
-router.route('/update/:tables').post(commentController.update);
+router.route('/update').post(commentController.update);
+router.route('/delete').post(commentController.delete);
 
 //GET
 router.route('/fetch/:tables/:tableID').get(commentController.fetchByID);
