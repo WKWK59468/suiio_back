@@ -4,17 +4,32 @@ const conf = require("../conf");
 const conn = mysql.createConnection(conf.db);
 let sql = "";
 
-const fetchComment = (commentID) => {
+const fetchComment = (commentID, nick) => {
     return new Promise((resolve, reject) => {
-        sql = `SELECT * FROM comment WHERE ID = ${commentID}`;
+        sql = `SELECT member.${nick} FROM comment,member WHERE comment.ID = ${commentID} AND comment.sID = member.sID`;
         conn.query(sql, (err, res) => {
             if (err) {
                 reject(err);
             } else if (!res.length) {
-                reject("Comment does not exist.")
+                reject("Comment does not exist.");
             } else {
-                resolve(res);
+                const sID = res[0].sID;
+                nick_OR_true(sID).then((nickORtrue) => {
+                    //nickname or name
+                    resolve(res);
+                }).catch((error) => {
+                    reject(error);
+                });
             }
+        })
+    });
+}
+const nick_OR_true = (sID) => {
+    return new Promise((resolve, reject) => {
+        sql = `SELECT nickORtrue FROM member WHERE sID = ${sID}`;
+        conn.query(sql, (err, res) => {
+            err ? reject(err) : resolve(res);
+
         })
     });
 }
