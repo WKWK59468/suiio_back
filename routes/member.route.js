@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const UserController = require('../controllers/member');
+const UserController = require('../controllers/member.controller');
 
 router.route('/delete').post(UserController.delMember);
 router.route('/add').post(UserController.addMember);

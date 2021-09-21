@@ -1,4 +1,4 @@
-const models = require('../models/member');
+const models = require('../models/member.model');
 const bcrypt = require('bcrypt');
 const myFunction = require('../myFunction');
 const mail = require('../mail/mail');

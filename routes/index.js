@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
 
-const member = require('./member');
-const account = require('./account');
-const category = require('./category');
+const member = require('./member.route');
+const account = require('./account.route');
+const category = require('./category.route');
 const officer = require('./officer.route');
-const conference = require('./conference');
+const conference = require('./conference.route');
 const statement = require('./statement.route');
 const fileupload = require('./fileupload.route');
 const mail = require('./mail');
