@@ -1,3 +1,4 @@
+const e = require("express");
 const mysql = require("mysql");
 const conf = require("../conf");
 
@@ -136,6 +137,35 @@ module.exports = {
                         })
                     });
 
+                }
+            })
+        });
+    },
+    fetchByMember: (sID) => {
+        return new Promise((resolve, reject) => {
+            sql = `SELECT * FROM comment WHERE sID = ${sID}`;
+            conn.query(sql, (err, res) => {
+                if (err) {
+                    reject(err);
+                } else if (!res.length) {
+                    reject("There is nothing to show.");
+                } else {
+                    let cnt = 0;
+                    res.forEach((element, index, array) => {
+                        isAnonymous(element.sID).then((anonymous) => {
+                            searchName(anonymous, sID).then((name) => {
+                                cnt += 1;
+                                element["name"] = name;
+                                if (cnt == array.length) {
+                                    resolve(res);
+                                }
+                            }).catch((anonymousERROR) => {
+                                reject(anonymousERROR);
+                            });
+                        }).catch((error) => {
+                            reject(error);
+                        });
+                    })
                 }
             })
         });
