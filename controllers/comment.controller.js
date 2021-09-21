@@ -2,6 +2,16 @@ const session = require('express-session');
 const commentModels = require('../models/comment.model');
 const myFunction = require('../myFunction');
 
+const dateFormat = (res) => {
+    res.forEach((element, index) => {
+        const Year = element.date.getFullYear();
+        const Month = ((element.date.getMonth() + 1) < 10) ? "0" + (element.date.getMonth() + 1) : (element.date.getMonth() + 1);
+        const Date = (element.date.getDate() < 10) ? "0" + element.date.getDate() : element.date.getDate();
+        element.date = Year + "-" + Month + "-" + Date;
+    });
+    return res;
+}
+
 class Comment {
     add = (req, res) => {
         const params = req.params;
@@ -28,11 +38,16 @@ class Comment {
 
         myFunction.check_session(req).then(() => {
             if (req.session.permission !== '組織成員') {
-                commentModels.addComment(comment).then(() => {
-                    commentModels.searchID().then((commentID) => {
-                        commentModels.addTables(tables, tableID, commentID).then(() => {
-                            res.status(200).json({ "result": true });
-                            return new Promise((resolve, reject) => {});
+                if (tables == "account" || tables == "statement" || tables == "conference") {
+                    commentModels.addComment(comment).then(() => {
+                        commentModels.searchID().then((commentID) => {
+                            commentModels.addTables(tables, tableID, commentID).then(() => {
+                                res.status(200).json({ "result": true });
+                                return new Promise((resolve, reject) => {});
+                            }).catch((err) => {
+                                res.status(500).json({ "result": err });
+                                return new Promise((resolve, reject) => {});
+                            });
                         }).catch((err) => {
                             res.status(500).json({ "result": err });
                             return new Promise((resolve, reject) => {});
@@ -41,10 +56,10 @@ class Comment {
                         res.status(500).json({ "result": err });
                         return new Promise((resolve, reject) => {});
                     });
-                }).catch((err) => {
-                    res.status(500).json({ "result": err });
+                } else {
+                    res.status(500).json({ "result": "No this table." });
                     return new Promise((resolve, reject) => {});
-                });
+                }
             } else {
                 res.status(500).json({ "result": "Permission denied." });
                 return new Promise((resolve, reject) => {});
@@ -59,15 +74,18 @@ class Comment {
         const tableID = params.tableID;
 
         myFunction.check_session(req).then(() => {
-
-            commentModels.fetchByID(tables, tableID).then((result) => {
-                res.status(200).json(result);
+            if (tables == "account" || tables == "statement" || tables == "conference") {
+                commentModels.fetchByID(tables, tableID).then((result) => {
+                    res.status(200).json(result);
+                    return new Promise((resolve, reject) => {});
+                }).catch((err) => {
+                    res.status(500).json({ "result": err });
+                    return new Promise((resolve, reject) => {});
+                });
+            } else {
+                res.status(500).json({ "result": "No this table." });
                 return new Promise((resolve, reject) => {});
-            }).catch((err) => {
-                res.status(500).json({ "result": err });
-                return new Promise((resolve, reject) => {});
-            });
-
+            }
         }).catch(() => {
             res.status(404).json({ 'result': 'Not Login' });
         });
@@ -76,8 +94,8 @@ class Comment {
         const sID = req.session.sID;
 
         myFunction.check_session(req).then(() => {
-
             commentModels.fetchByMember(sID).then((result) => {
+                result = dateFormat(result);
                 res.status(200).json(result);
                 return new Promise((resolve, reject) => {});
             }).catch((err) => {
@@ -95,7 +113,7 @@ class Comment {
             let json = {};
             let tableID;
 
-            tables.forEach(async(element, index, array) => {
+            tables.forEach((element, index, array) => {
                 let arr = [];
                 commentModels.fetch(element).then((table) => {
                     table.forEach((element2, index2, array2) => {

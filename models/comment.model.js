@@ -40,30 +40,45 @@ const isAnonymous = (sID) => {
     });
 }
 const searchName = (anonymous, sID) => {
-    return new Promise((resolve, reject) => {
-        let name = '';
-        if (anonymous == "1") {
-            name = 'nickname';
-        } else {
-            name = 'name';
-        }
-        sql = `SELECT ${name} FROM member WHERE sID = ${sID}`;
-        conn.query(sql, (err, res) => {
-            if (err) {
-                reject(err);
+        return new Promise((resolve, reject) => {
+            let name = '';
+            if (anonymous == "1") {
+                name = 'nickname';
             } else {
-                if (anonymous == "1") {
-                    resolve(res[0].nickname);
-                } else {
-                    resolve(res[0].name);
-                }
+                name = 'name';
             }
+            sql = `SELECT ${name} FROM member WHERE sID = ${sID}`;
+            conn.query(sql, (err, res) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    if (anonymous == "1") {
+                        resolve(res[0].nickname);
+                    } else {
+                        resolve(res[0].name);
+                    }
+                }
 
-        })
-    });
-}
+            })
+        });
+    }
+    // const searchTables = (any, commentID) => {
+    //     return new Promise((resolve, reject) => {
+    //         sql = `SELECT * FROM ${any}_comment WHERE commentID = ${commentID}`;
+    //         conn.query(sql, (err, res) => {
+    //             if (err) {
+    //                 reject(err);
+    //             } else if (!res.length) {
+    //                 reject("nothing");
+    //             } else {
+    //                 resolve(res);
+    //             }
+    //         })
+    //     });
+    // }
 
 module.exports = {
+
     searchSID: (commentID) => {
         return new Promise((resolve, reject) => {
             sql = `SELECT sID FROM comment WHERE ID = ${commentID}`;
@@ -127,6 +142,11 @@ module.exports = {
                     res.forEach((element, index, array) => {
                         fetchComment(element.commentID).then((comment) => {
                             cnt += 1;
+                            // 修改回傳日期
+                            const Year = comment[0].date.getFullYear();
+                            const Month = ((comment[0].date.getMonth() + 1) < 10) ? "0" + (comment[0].date.getMonth() + 1) : (comment[0].date.getMonth() + 1);
+                            const Date = (comment[0].date.getDate() < 10) ? "0" + comment[0].date.getDate() : comment[0].date.getDate();
+                            comment[0].date = Year + "-" + Month + "-" + Date;
                             arr.push(comment[0]);
                             json[tableID] = arr;
                             if (cnt == array.length) {
