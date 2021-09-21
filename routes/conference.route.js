@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const conferenceController = require('../controllers/conference');
+const conferenceController = require('../controllers/conference.controller');
 
 router.route('/add').post(conferenceController.upload);
 router.route('/fetch/all').get(conferenceController.list);

@@ -1,4 +1,4 @@
-const models = require("../models/conference");
+const models = require("../models/conference.model");
 const officerModels = require('../models/officer.model');
 const myFunction = require('../myFunction');
 

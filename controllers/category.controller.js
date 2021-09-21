@@ -1,4 +1,4 @@
-const models = require('../models/category');
+const models = require('../models/category.model');
 const myFunction = require('../myFunction');
 
 class categoryController {

@@ -1,4 +1,4 @@
-const models = require('../models/account');
+const models = require('../models/account.model');
 const myFunction = require('../myFunction');
 
 const dateFormat = (res) => {

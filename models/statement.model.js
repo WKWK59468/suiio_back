@@ -1,6 +1,6 @@
 const mysql = require('mysql');
 const conf = require('../conf');
-const account = require('./account');
+const account = require('./account.model');
 
 const conn = mysql.createConnection(conf.db);
 let sql = '';
