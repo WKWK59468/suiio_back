@@ -80,6 +80,14 @@ module.exports = {
         sql = mysql.format('DELETE FROM member WHERE sID = ?', [req.body.sID]);
         return conn.query(sql, callback);
     },
+    updateAnonymous: (anonymous, sID) => {
+        return new Promise((resolve, reject) => {
+            sql = `UPDATE member SET anonymous = '${anonymous}' WHERE sID = ${sID}`;
+            conn.query(sql, (err, res) => {
+                err ? reject(err) : resolve(res);
+            })
+        });
+    },
     patch: (req, callback) => {
         sql = mysql.format('UPDATE member SET name=?,sex=?,birth=? WHERE sID = ?', [req.body.name, req.body.sex, req.body.birth, req.body.sID]);
         return conn.query(sql, callback);

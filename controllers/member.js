@@ -2,7 +2,6 @@ const models = require('../models/member');
 const bcrypt = require('bcrypt');
 const myFunction = require('../myFunction');
 const mail = require('../mail/mail');
-const { Server } = require('http');
 
 const check_sID = (sID) => {
     if (sID.length == 10) {
@@ -262,6 +261,22 @@ class UserController {
         }).catch(() => {
             res.status(404).json({ 'result': 'Not Login' });
         });
+    }
+    updateAnonymous = (req, res) => {
+        const anonymous = req.body.anonymous;
+        myFunction.check_session(req).then(() => {
+
+            models.updateAnonymous(anonymous, req.session.sID).then(() => {
+                res.status(200).json({ 'result': true });
+                return new Promise((resolve, reject) => {});
+            }).catch((err) => {
+                res.status(500).json({ 'result': err });
+                return new Promise((resolve, reject) => {});
+            })
+
+        }).then(() => {
+            res.status(404).json({ 'result': 'Not Login' });
+        })
     }
 }
 module.exports = new UserController();
