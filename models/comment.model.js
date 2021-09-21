@@ -4,9 +4,9 @@ const conf = require("../conf");
 const conn = mysql.createConnection(conf.db);
 let sql = "";
 
-const fetchComment = (commentID, nick) => {
+const fetchComment = (commentID) => {
     return new Promise((resolve, reject) => {
-        sql = `SELECT member.${nick} FROM comment,member WHERE comment.ID = ${commentID} AND comment.sID = member.sID`;
+        sql = `SELECT * FROM comment WHERE ID = ${commentID}`;
         conn.query(sql, (err, res) => {
             if (err) {
                 reject(err);
@@ -14,9 +14,14 @@ const fetchComment = (commentID, nick) => {
                 reject("Comment does not exist.");
             } else {
                 const sID = res[0].sID;
-                nick_OR_true(sID).then((nickORtrue) => {
-                    //nickname or name
-                    resolve(res);
+                isAnonymous(sID).then((anonymous) => {
+                    searchName(anonymous, sID).then((name) => {
+                        // console.log(name);
+                        res[0]["name"] = name;
+                        resolve(res);
+                    }).catch((anonymousERROR) => {
+                        reject(anonymousERROR);
+                    });
                 }).catch((error) => {
                     reject(error);
                 });
@@ -24,11 +29,34 @@ const fetchComment = (commentID, nick) => {
         })
     });
 }
-const nick_OR_true = (sID) => {
+const isAnonymous = (sID) => {
     return new Promise((resolve, reject) => {
-        sql = `SELECT nickORtrue FROM member WHERE sID = ${sID}`;
+        sql = `SELECT anonymous FROM member WHERE sID = ${sID}`;
         conn.query(sql, (err, res) => {
-            err ? reject(err) : resolve(res);
+            err ? reject(err) : resolve(res[0].anonymous);
+
+        })
+    });
+}
+const searchName = (anonymous, sID) => {
+    return new Promise((resolve, reject) => {
+        let name = '';
+        if (anonymous == "1") {
+            name = 'nickname';
+        } else {
+            name = 'name';
+        }
+        sql = `SELECT ${name} FROM member WHERE sID = ${sID}`;
+        conn.query(sql, (err, res) => {
+            if (err) {
+                reject(err);
+            } else {
+                if (anonymous == "1") {
+                    resolve(res[0].nickname);
+                } else {
+                    resolve(res[0].name);
+                }
+            }
 
         })
     });
