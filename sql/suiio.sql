@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主機： 127.0.0.1:3308
--- 產生時間： 2021-09-21 12:02:34
+-- 產生時間： 2021-09-22 16:21:01
 -- 伺服器版本： 5.7.31
 -- PHP 版本： 7.3.21
 
@@ -358,26 +358,27 @@ CREATE TABLE IF NOT EXISTS `comment` (
   `sID` char(10) NOT NULL,
   PRIMARY KEY (`ID`),
   KEY `sID_comment` (`sID`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8 COMMENT='留言';
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 COMMENT='留言';
 
 --
 -- 傾印資料表的資料 `comment`
 --
 
 INSERT INTO `comment` (`ID`, `date`, `content`, `status`, `isHide`, `sID`) VALUES
-(1, '2021-09-19 14:32:23', '這膠帶也太貴了...', '0', 0, '1110634025'),
-(2, '2021-09-19 06:17:06', '小冊子是什麼怎麼那麼貴?', '0', 0, '1110634025'),
-(3, '2021-09-19 06:17:28', '這膠帶哪裡買的...?', '0', 0, '1110634025'),
+(1, '2021-09-22 00:06:00', '這膠帶也太貴了...', '1', 1, '1110634025'),
+(2, '2021-09-19 06:17:06', '小冊子是什麼怎麼那麼貴?', '0', 1, '1110634025'),
+(3, '2021-09-19 06:17:28', '這膠帶哪裡買的...?', '0', 1, '1110634025'),
 (4, '2021-09-19 06:17:56', '水是買了幾箱...?', '0', 0, '1110634025'),
-(5, '2021-09-19 06:19:04', '十月支出好多...', '0', 0, '1110634025'),
-(6, '2021-09-19 06:19:28', '原來是大迎新', '0', 0, '1110634025'),
-(8, '2021-09-19 06:24:12', '這報表內容也太混了...開會內容就只打內容?', '0', 0, '1110634025'),
+(5, '2021-09-19 06:19:04', '十月支出好多...', '2', 1, '1110634025'),
+(6, '2021-09-19 06:19:28', '原來是大迎新', '0', 1, '1110634025'),
+(8, '2021-09-19 06:24:12', '這報表內容也太混了...開會內容就只打內容?', '0', 1, '1110634025'),
 (9, '2021-09-19 06:24:38', '怎麼突然增加表演獎金?', '0', 0, '1110634025'),
-(10, '2021-09-19 06:25:46', '怎麼突然增加場地費用?', '0', 0, '1110634025'),
-(11, '2021-09-19 06:27:02', '獎金金額也太高了!', '0', 0, '1110634025'),
-(12, '2021-09-19 06:27:32', '所以人員怎麼配置?', '0', 0, '1110634025'),
+(10, '2021-09-19 06:25:46', '怎麼突然增加場地費用?', '0', 1, '1110634025'),
+(11, '2021-09-19 06:27:02', '獎金金額也太高了!', '0', 1, '1110634025'),
+(12, '2021-09-19 06:27:32', '所以人員怎麼配置?', '0', 1, '1110634025'),
 (13, '2021-09-19 06:28:24', '這花費也太兇了', '0', 0, '1110634025'),
-(14, '2021-09-21 19:56:17', '這花費也太兇了', '0', 0, '1110634029');
+(14, '2021-09-21 19:56:17', '這花費也太兇了', '0', 1, '1110634029'),
+(15, '2021-09-23 00:08:58', '這花費也太兇了', '0', 1, '1110634025');
 
 -- --------------------------------------------------------
 
@@ -613,7 +614,6 @@ CREATE TABLE IF NOT EXISTS `member` (
   `nickname` varchar(10) NOT NULL,
   `sex` char(1) NOT NULL,
   `birth` date NOT NULL,
-  `anonymous` char(1) NOT NULL,
   PRIMARY KEY (`sID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='成員';
 
@@ -621,20 +621,21 @@ CREATE TABLE IF NOT EXISTS `member` (
 -- 傾印資料表的資料 `member`
 --
 
-INSERT INTO `member` (`sID`, `password`, `name`, `nickname`, `sex`, `birth`, `anonymous`) VALUES
-('1110634000', '$2b$10$uOjQlRbgS4XSds1UC72nmuHOW8t2ada141aUa3El3wyGcWFVfnK76', '王小明', '小王', '男', '2021-07-14', '1'),
-('1110634001', '$2b$10$mlCH6.r9WdQLPMsErOYaTuyYfeQocTGWgV/aElT4MxykNMIWGLYnK', '何宛珊', '小何', '女', '2002-05-01', '1'),
-('1110634002', '$2b$10$eZQ9Mo1Goo.x8f/TNOhGXuDyRtIsk9KWnvRfoG8SPb2jCkiCRKmCC', '李品萱', '小李', '女', '2002-06-23', '1'),
-('1110634003', '$2b$10$Pcq2oBufpcQetFOOjollferCTUFwX1sDzEcYFN4Ij2s8j1mROo15e', '施羽珊', '小施', '女', '2002-02-02', '1'),
-('1110634004', '$2b$10$ZsI6RiiOJD.tJAOfeufuGu.qryKCWcnXm6YgOqd/vPuIYNiFIKT22', '張芸菱', '小張', '女', '2002-02-08', '1'),
-('1110634006', '$2b$10$3mgQHwb3hw6N5iSggoKn4umiifi/tkRj.bQDsuDwUkPaZ6CkgZp/C', '黃子瑜', '小黃', '女', '2001-10-07', '1'),
-('1110634007', '$2b$10$Z3WqwGAU3JgI5tKY3bVFy.xQiqwLVQUWfFwC6BzP3JEMDkbqbJ1ci', '王小明', '小王', '男', '2021-07-14', '1'),
-('1110634015', '$2b$10$X4UkvXoMVY2VWFGjrcZvWuCLBHOUnV0Yqya0PjSY.13w9/mKeo6CW', '林均蓉', '小林', '女', '2001-09-10', '1'),
-('1110634025', '$2b$10$3SpXuHeaRuS3zGArGYpHEuwG/qHOZbOcxAUIcDnQh/NcIq3zFF8.6', '廖建榕', '小廖', '男', '2001-09-13', '1'),
-('1110634029', '$2b$10$ohzC5BtDJKoe.FMMiHKA9Ol5TxSuCvMn8PZ44eXs/dPZHqeCApXAe', '蔣明諭', '小蔣', '男', '2002-02-01', '0'),
-('1110634034', '$2b$10$teUq4d2xRjKzfmhhJDfF4uxkR17aHqOeBT/DEmEn3khQ930HHgTKW', '洪柚喆', '小洪', '男', '2021-07-14', '1'),
-('1110634039', '$2b$10$n1OQpYXkpqZM6PNedfr9gOJLBdOfJMjdznVjPb5uGfE.e/F582lki', '陳言睿', '小陳', '男', '2001-11-21', '1'),
-('1110634041', '$2b$10$FmhLWguxE.5ItiXNdILVLOsZrkdgywbHJtn/bTAZw2kyg/f8sN/Uu', '詹翔壹', '小詹', '男', '2002-02-28', '1');
+INSERT INTO `member` (`sID`, `password`, `name`, `nickname`, `sex`, `birth`) VALUES
+('1110634000', '$2b$10$uOjQlRbgS4XSds1UC72nmuHOW8t2ada141aUa3El3wyGcWFVfnK76', '王小明', '小王', '男', '2021-07-14'),
+('1110634001', '$2b$10$mlCH6.r9WdQLPMsErOYaTuyYfeQocTGWgV/aElT4MxykNMIWGLYnK', '何宛珊', '小何', '女', '2002-05-01'),
+('1110634002', '$2b$10$eZQ9Mo1Goo.x8f/TNOhGXuDyRtIsk9KWnvRfoG8SPb2jCkiCRKmCC', '李品萱', '小李', '女', '2002-06-23'),
+('1110634003', '$2b$10$Pcq2oBufpcQetFOOjollferCTUFwX1sDzEcYFN4Ij2s8j1mROo15e', '施羽珊', '小施', '女', '2002-02-02'),
+('1110634004', '$2b$10$ZsI6RiiOJD.tJAOfeufuGu.qryKCWcnXm6YgOqd/vPuIYNiFIKT22', '張芸菱', '小張', '女', '2002-02-08'),
+('1110634006', '$2b$10$3mgQHwb3hw6N5iSggoKn4umiifi/tkRj.bQDsuDwUkPaZ6CkgZp/C', '黃子瑜', '小黃', '女', '2001-10-07'),
+('1110634007', '$2b$10$Z3WqwGAU3JgI5tKY3bVFy.xQiqwLVQUWfFwC6BzP3JEMDkbqbJ1ci', '王小明', '小王', '男', '2021-07-14'),
+('1110634015', '$2b$10$X4UkvXoMVY2VWFGjrcZvWuCLBHOUnV0Yqya0PjSY.13w9/mKeo6CW', '林均蓉', '小林', '女', '2001-09-10'),
+('1110634025', '$2b$10$3SpXuHeaRuS3zGArGYpHEuwG/qHOZbOcxAUIcDnQh/NcIq3zFF8.6', '廖建榕', '小廖', '男', '2001-09-13'),
+('1110634029', '$2b$10$ohzC5BtDJKoe.FMMiHKA9Ol5TxSuCvMn8PZ44eXs/dPZHqeCApXAe', '蔣明諭', '小蔣', '男', '2002-02-01'),
+('1110634034', '$2b$10$teUq4d2xRjKzfmhhJDfF4uxkR17aHqOeBT/DEmEn3khQ930HHgTKW', '洪柚喆', '小洪', '男', '2021-07-14'),
+('1110634039', '$2b$10$n1OQpYXkpqZM6PNedfr9gOJLBdOfJMjdznVjPb5uGfE.e/F582lki', '陳言睿', '小陳', '男', '2001-11-21'),
+('1110634041', '$2b$10$FmhLWguxE.5ItiXNdILVLOsZrkdgywbHJtn/bTAZw2kyg/f8sN/Uu', '詹翔壹', '小詹', '男', '2002-02-28'),
+('1110634042', '$2b$10$ZhRlHOI00XR4AiKkAfWQQOM3h39WZkwsCvQ90xMDG4pRWM4rO7s/.', '王小明', '小王', '男', '2021-07-14');
 
 -- --------------------------------------------------------
 
@@ -724,7 +725,8 @@ INSERT INTO `statement_comment` (`statementID`, `commentID`) VALUES
 (2, 5),
 (2, 6),
 (2, 13),
-(2, 14);
+(2, 14),
+(2, 15);
 
 --
 -- 已傾印資料表的限制式

@@ -19,6 +19,13 @@ class Comment {
         const body = req.body;
         const content = body.content;
         const tableID = body.tableID;
+        let isHide;
+        if (body.isHide == true || body.isHide == false) {
+            isHide = body.isHide;
+        } else {
+            res.status(500).json({ "result": "isHide Error." });
+            return new Promise((resolve, reject) => {});
+        }
 
         const time = new Date();
         const year = time.getFullYear()
@@ -32,7 +39,7 @@ class Comment {
             "date": year + "-" + month + "-" + day + " " + h + ":" + m + ":" + s,
             "content": content,
             "status": 0,
-            "isHide": false,
+            "isHide": isHide,
             "sID": req.session.sID
         }
 
@@ -197,18 +204,23 @@ class Comment {
         const commentID = body.commentID;
 
         myFunction.check_permission(req).then(() => {
-            if (req.session.permission !== '組織成員') {
-                commentModels.delete(commentID, 1).then(() => {
-                    res.status(200).json({ "result": true });
+            commentModels.searchSID(commentID).then((sID) => {
+                if (req.session.permission !== '組織成員' || req.session.sID == sID) {
+                    commentModels.delete(commentID).then(() => {
+                        res.status(200).json({ "result": true });
+                        return new Promise((resolve, reject) => {});
+                    }).catch((err) => {
+                        res.status(500).json({ "result": err });
+                        return new Promise((resolve, reject) => {});
+                    })
+                } else {
+                    res.status(500).json({ "result": "Permission denied." });
                     return new Promise((resolve, reject) => {});
-                }).catch((err) => {
-                    res.status(500).json({ "result": err });
-                    return new Promise((resolve, reject) => {});
-                })
-            } else {
-                res.status(500).json({ "result": "Permission denied." });
+                }
+            }).catch((error) => {
+                res.status(500).json({ "result": error });
                 return new Promise((resolve, reject) => {});
-            }
+            })
         }).catch(() => {
             res.status(404).json({ 'result': 'Not Login' });
         })

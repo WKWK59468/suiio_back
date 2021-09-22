@@ -7,7 +7,6 @@ router.route('/add').post(UserController.addMember);
 router.route('/fetch/all').get(UserController.listMember);
 router.route('/login').post(UserController.login);
 router.route('/logout').post(UserController.logout);
-router.route('/update/anonymous').post(UserController.updateAnonymous);
 
 router.route('/check').get(UserController.check);
 router.route('/patch').post(UserController.patchUser);

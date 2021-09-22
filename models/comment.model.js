@@ -15,67 +15,42 @@ const fetchComment = (commentID) => {
                 reject("Comment does not exist.");
             } else {
                 const sID = res[0].sID;
-                isAnonymous(sID).then((anonymous) => {
-                    searchName(anonymous, sID).then((name) => {
-                        // console.log(name);
-                        res[0]["name"] = name;
-                        resolve(res);
-                    }).catch((anonymousERROR) => {
-                        reject(anonymousERROR);
-                    });
-                }).catch((error) => {
-                    reject(error);
+                const isHide = res[0].isHide
+                searchName(isHide, sID).then((name) => {
+                    // console.log(name);
+                    res[0]["name"] = name;
+                    resolve(res);
+                }).catch((anonymousERROR) => {
+                    reject(anonymousERROR);
                 });
+
             }
         })
     });
 }
-const isAnonymous = (sID) => {
+const searchName = (isHide, sID) => {
     return new Promise((resolve, reject) => {
-        sql = `SELECT anonymous FROM member WHERE sID = ${sID}`;
+        let name = '';
+        if (isHide == 1) {
+            name = 'nickname';
+        } else {
+            name = 'name';
+        }
+        sql = `SELECT ${name} FROM member WHERE sID = ${sID}`;
         conn.query(sql, (err, res) => {
-            err ? reject(err) : resolve(res[0].anonymous);
+            if (err) {
+                reject(err);
+            } else {
+                if (isHide == 1) {
+                    resolve(res[0].nickname);
+                } else {
+                    resolve(res[0].name);
+                }
+            }
 
         })
     });
 }
-const searchName = (anonymous, sID) => {
-        return new Promise((resolve, reject) => {
-            let name = '';
-            if (anonymous == "1") {
-                name = 'nickname';
-            } else {
-                name = 'name';
-            }
-            sql = `SELECT ${name} FROM member WHERE sID = ${sID}`;
-            conn.query(sql, (err, res) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    if (anonymous == "1") {
-                        resolve(res[0].nickname);
-                    } else {
-                        resolve(res[0].name);
-                    }
-                }
-
-            })
-        });
-    }
-    // const searchTables = (any, commentID) => {
-    //     return new Promise((resolve, reject) => {
-    //         sql = `SELECT * FROM ${any}_comment WHERE commentID = ${commentID}`;
-    //         conn.query(sql, (err, res) => {
-    //             if (err) {
-    //                 reject(err);
-    //             } else if (!res.length) {
-    //                 reject("nothing");
-    //             } else {
-    //                 resolve(res);
-    //             }
-    //         })
-    //     });
-    // }
 
 module.exports = {
 
@@ -172,18 +147,15 @@ module.exports = {
                 } else {
                     let cnt = 0;
                     res.forEach((element, index, array) => {
-                        isAnonymous(element.sID).then((anonymous) => {
-                            searchName(anonymous, sID).then((name) => {
-                                cnt += 1;
-                                element["name"] = name;
-                                if (cnt == array.length) {
-                                    resolve(res);
-                                }
-                            }).catch((anonymousERROR) => {
-                                reject(anonymousERROR);
-                            });
-                        }).catch((error) => {
-                            reject(error);
+                        const isHide = element.isHide;
+                        searchName(isHide, sID).then((name) => {
+                            cnt += 1;
+                            element["name"] = name;
+                            if (cnt == array.length) {
+                                resolve(res);
+                            }
+                        }).catch((anonymousERROR) => {
+                            reject(anonymousERROR);
                         });
                     })
                 }
@@ -211,9 +183,9 @@ module.exports = {
             })
         });
     },
-    delete: (commentID, isHide) => {
+    delete: (commentID) => {
         return new Promise((resolve, reject) => {
-            sql = `UPDATE comment SET isHide = ${isHide} WHERE ID = ${commentID}`;
+            sql = `UPDATE comment SET status = 2 WHERE ID = ${commentID}`;
             conn.query(sql, (err, res) => {
                 err ? reject(err) : resolve(res);
             })
