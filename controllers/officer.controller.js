@@ -140,54 +140,35 @@ exports.delete = (req, res) => {
 
 // fetch all officer
 exports.fetchAll = (req, res) => {
-    myFunction.check_session(req).then(() => {
-        Officer.fetchAll(req, (error, results) => {
-            if (error)
-                return sendErrorMsg(res, 500, error);
-            if (!results.length)
-                return sendErrorMsg(res, 404, "There is nothing to show.");
-            res.send(results);
-            return new Promise((resolve, reject) => {});
-        });
-    }).catch(() => {
-        res.status(404).json({ 'result': 'Not Login' })
+
+    Officer.fetchAll(req, (error, results) => {
+        if (error)
+            return sendErrorMsg(res, 500, error);
+        if (!results.length)
+            return sendErrorMsg(res, 404, "There is nothing to show.");
+        res.send(results);
         return new Promise((resolve, reject) => {});
-    })
+    });
 
 };
 
 // fetch by position
 exports.fetchByPosition = (req, res) => {
-    myFunction.check_session(req).then(() => {
-        Officer.fetchByPosition(req, (error, results) => {
-            if (error)
-                return sendErrorMsg(res, 500, error);
-            if (!results.length)
-                return sendErrorMsg(res, 404, "There is nothing to show.");
-            res.send(results);
-            return new Promise((resolve, reject) => {});
-        });
-    }).catch(() => {
-        res.status(404).json({ 'result': 'Not Login' })
+
+    Officer.fetchByPosition(req, (error, results) => {
+        if (error)
+            return sendErrorMsg(res, 500, error);
+        if (!results.length)
+            return sendErrorMsg(res, 404, "There is nothing to show.");
+        res.send(results);
         return new Promise((resolve, reject) => {});
-    })
+    });
+
 };
 
 // fetch by authority
 exports.fetchByPermission = (req, res) => {
-    myFunction.check_session(req).then(() => {
-        Officer.fetchByPermission(req, (error, results) => {
-            if (error)
-                return sendErrorMsg(res, 500, error);
-            if (!results.length)
-                return sendErrorMsg(res, 404, "There is nothing to show.");
-            res.send(results);
-            return new Promise((resolve, reject) => {});
-        });
-    }).catch(() => {
-        res.status(404).json({ 'result': 'Not Login' })
-        return new Promise((resolve, reject) => {});
-    })
+
     Officer.fetchByPermission(req, (error, results) => {
         if (error)
             return sendErrorMsg(res, 500, error);
@@ -196,6 +177,7 @@ exports.fetchByPermission = (req, res) => {
         res.send(results);
         return new Promise((resolve, reject) => {});
     });
+
 };
 
 /****************

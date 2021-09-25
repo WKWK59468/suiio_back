@@ -28,9 +28,33 @@ class categoryController {
         })
     }
     listCategory = (req, res) => {
-        myFunction.check_session(req).then(() => {
-            let arr = [];
-            models.list(req, (err, results) => {
+
+        let arr = [];
+        models.list(req, (err, results) => {
+            if (err) {
+                res.status(500).json({ "result": err })
+                return new Promise((resolve, reject) => {});
+            }
+            if (!results.length) {
+                res.status(404).json({ "result": "There is nothing to show." });
+                return new Promise((resolve, reject) => {});
+            }
+            results.forEach(element => {
+                if (element.ID != 1 && element.ID != 9) {
+                    arr.push(element);
+                }
+            });
+            res.status(200).json(arr);
+            return new Promise((resolve, reject) => {});
+        });
+
+    }
+    fetchStatusOn = (req, res) => {
+
+        const body = req.params;
+        const status = body.status;
+        if (status == "0" || status == "1") {
+            models.StatusOn(req, (err, results) => {
                 if (err) {
                     res.status(500).json({ "result": err })
                     return new Promise((resolve, reject) => {});
@@ -39,44 +63,14 @@ class categoryController {
                     res.status(404).json({ "result": "There is nothing to show." });
                     return new Promise((resolve, reject) => {});
                 }
-                results.forEach(element => {
-                    if (element.ID != 1 && element.ID != 9) {
-                        arr.push(element);
-                    }
-                });
-                res.status(200).json(arr);
+                res.status(200).json(results);
                 return new Promise((resolve, reject) => {});
             });
-        }).catch(() => {
-            res.status(404).json({ 'result': 'Not Login' })
+        } else {
+            res.status(500).json({ "result": "Please Enter 0 or 1." });
             return new Promise((resolve, reject) => {});
-        })
-    }
-    fetchStatusOn = (req, res) => {
-        myFunction.check_session(req).then(() => {
-            const body = req.params;
-            const status = body.status;
-            if (status == "0" || status == "1") {
-                models.StatusOn(req, (err, results) => {
-                    if (err) {
-                        res.status(500).json({ "result": err })
-                        return new Promise((resolve, reject) => {});
-                    }
-                    if (!results.length) {
-                        res.status(404).json({ "result": "There is nothing to show." });
-                        return new Promise((resolve, reject) => {});
-                    }
-                    res.status(200).json(results);
-                    return new Promise((resolve, reject) => {});
-                });
-            } else {
-                res.status(500).json({ "result": "Please Enter 0 or 1." });
-                return new Promise((resolve, reject) => {});
-            }
-        }).catch(() => {
-            res.status(404).json({ 'result': 'Not Login' })
-            return new Promise((resolve, reject) => {});
-        })
+        }
+
     }
     delCategory = (req, res) => {
         myFunction.check_permission(req).then((permission) => {
