@@ -199,130 +199,111 @@ class StatementController {
 
     }
     fetchAll = (req, res) => {
-        myFunction.check_session(req).then(() => {
-            models.fetchAll(req, (err, results) => {
-                if (err) {
-                    res.status(500).json({ 'result': err });
-                    return new Promise((resolve, reject) => {});
-                }
-                if (!results.length) {
-                    res.status(404).json({ 'result': "There is nothing to show." });
-                    return new Promise((resolve, reject) => {});
-                }
-                results = dateFormat(results);
-                res.status(200).json(results);
+
+        models.fetchAll(req, (err, results) => {
+            if (err) {
+                res.status(500).json({ 'result': err });
                 return new Promise((resolve, reject) => {});
-            });
-        }).catch(() => {
-            res.status(404).json({ 'result': 'Not Login' })
+            }
+            if (!results.length) {
+                res.status(404).json({ 'result': "There is nothing to show." });
+                return new Promise((resolve, reject) => {});
+            }
+            results = dateFormat(results);
+            res.status(200).json(results);
             return new Promise((resolve, reject) => {});
-        })
+        });
+
     }
     fetchByName = (req, res) => {
-        myFunction.check_session(req).then(() => {
-            models.fetchByName(req, (err, results) => {
-                if (err) {
-                    res.status(500).json({ 'result': err });
-                    return new Promise((resolve, reject) => {});
-                }
-                if (!results.length) {
-                    res.status(404).json({ 'result': "There is nothing to show." });
-                    return new Promise((resolve, reject) => {});
-                }
-                results = dateFormat(results);
-                res.status(200).json(results);
+
+        models.fetchByName(req, (err, results) => {
+            if (err) {
+                res.status(500).json({ 'result': err });
                 return new Promise((resolve, reject) => {});
-            })
-        }).catch(() => {
-            res.status(404).json({ 'result': 'Not Login' })
+            }
+            if (!results.length) {
+                res.status(404).json({ 'result': "There is nothing to show." });
+                return new Promise((resolve, reject) => {});
+            }
+            results = dateFormat(results);
+            res.status(200).json(results);
             return new Promise((resolve, reject) => {});
         })
+
     }
     fetchByStatus = (req, res) => {
-        myFunction.check_session(req).then(() => {
-            models.fetchByStatus(req, (err, results) => {
-                if (err) {
-                    res.status(500).json({ 'result': err });
-                    return new Promise((resolve, reject) => {});
-                }
-                if (!results.length) {
-                    res.status(404).json({ 'result': "There is nothing to show." });
-                    return new Promise((resolve, reject) => {});
-                }
-                results = dateFormat(results);
-                res.status(200).json(results);
+
+        models.fetchByStatus(req, (err, results) => {
+            if (err) {
+                res.status(500).json({ 'result': err });
                 return new Promise((resolve, reject) => {});
-            })
-        }).catch(() => {
-            res.status(404).json({ 'result': 'Not Login' })
+            }
+            if (!results.length) {
+                res.status(404).json({ 'result': "There is nothing to show." });
+                return new Promise((resolve, reject) => {});
+            }
+            results = dateFormat(results);
+            res.status(200).json(results);
             return new Promise((resolve, reject) => {});
         })
+
     }
     fetchByWhom = (req, res) => {
-        myFunction.check_session(req).then(() => {
-            models.fetchByWhom(req, (err, results) => {
-                if (err) {
-                    res.status(500).json({ 'result': err });
-                    return new Promise((resolve, reject) => {});
-                }
-                if (!results.length) {
-                    res.status(404).json({ 'result': "There is nothing to show." });
-                    return new Promise((resolve, reject) => {});
-                }
-                results = dateFormat(results);
-                res.status(200).json(results);
+
+        models.fetchByWhom(req, (err, results) => {
+            if (err) {
+                res.status(500).json({ 'result': err });
                 return new Promise((resolve, reject) => {});
-            })
-        }).catch(() => {
-            res.status(404).json({ 'result': 'Not Login' })
+            }
+            if (!results.length) {
+                res.status(404).json({ 'result': "There is nothing to show." });
+                return new Promise((resolve, reject) => {});
+            }
+            results = dateFormat(results);
+            res.status(200).json(results);
             return new Promise((resolve, reject) => {});
         })
+
     }
     fetchByID = (req, res) => {
-        myFunction.check_session(req).then(() => {
-            const body = req.params;
-            const StatementID = body.ID
-            models.fetchByID(req, (err, results) => {
-                if (err) {
-                    res.status(500).json({ 'result': err });
-                    return new Promise((resolve, reject) => {});
-                }
-                if (!results.length) {
-                    res.status(404).json({ 'result': "There is nothing to show." });
-                    return new Promise((resolve, reject) => {});
-                }
-                results = dateFormat(results);
-                models.fetchAccountByStatement(StatementID).then((accounts) => {
-                    results[0].accounts = accounts;
-                    res.status(200).json(results[0]);
-                    return new Promise((resolve, reject) => {});
-                }).catch((err) => {
-                    res.status(500).json({ "result": err });
-                    return new Promise((resolve, reject) => {});
-                });
-            })
-        }).catch(() => {
-            res.status(404).json({ 'result': 'Not Login' })
-            return new Promise((resolve, reject) => {});
-        })
-    }
-    fetchByDate = (req, res) => {
-        myFunction.check_session(req).then(() => {
-            models.fetchByDate(req, (err, results) => {
-                if (err) {
-                    res.status(500).json({ 'result': err });
-                    return new Promise((resolve, reject) => {});
-                }
-                if (!results.length) {
-                    res.status(404).json({ 'result': "There is nothing to show." });
-                    return new Promise((resolve, reject) => {});
-                }
-                results = dateFormat(results);
-                res.status(200).json(results);
+
+        const body = req.params;
+        const StatementID = body.ID
+        models.fetchByID(req, (err, results) => {
+            if (err) {
+                res.status(500).json({ 'result': err });
+                return new Promise((resolve, reject) => {});
+            }
+            if (!results.length) {
+                res.status(404).json({ 'result': "There is nothing to show." });
+                return new Promise((resolve, reject) => {});
+            }
+            results = dateFormat(results);
+            models.fetchAccountByStatement(StatementID).then((accounts) => {
+                results[0].accounts = accounts;
+                res.status(200).json(results[0]);
+                return new Promise((resolve, reject) => {});
+            }).catch((err) => {
+                res.status(500).json({ "result": err });
                 return new Promise((resolve, reject) => {});
             });
-        }).catch(() => {
-            res.status(404).json({ 'result': 'Not Login' })
+        })
+
+    }
+    fetchByDate = (req, res) => {
+
+        models.fetchByDate(req, (err, results) => {
+            if (err) {
+                res.status(500).json({ 'result': err });
+                return new Promise((resolve, reject) => {});
+            }
+            if (!results.length) {
+                res.status(404).json({ 'result': "There is nothing to show." });
+                return new Promise((resolve, reject) => {});
+            }
+            results = dateFormat(results);
+            res.status(200).json(results);
             return new Promise((resolve, reject) => {});
         });
 

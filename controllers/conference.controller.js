@@ -27,79 +27,70 @@ const successMessage = {
 
 class Conference {
     list = (req, res) => {
-        myFunction.check_session(req).then(() => {
-            models.list(req, (err, results) => {
-                if (err) {
-                    res.status(500).json(errMessage(500, err));
-                    return new Promise((resolve, reject) => {});
-                }
-                if (!results.length) {
-                    res.status(404).json(errMessage(404, err));
-                    return new Promise((resolve, reject) => {});
-                }
-                results = dateFormat(results);
-                res.status(200).json(results);
+
+        models.list(req, (err, results) => {
+            if (err) {
+                res.status(500).json(errMessage(500, err));
                 return new Promise((resolve, reject) => {});
-            });
-        }).catch(() => {
-            res.status(404).json({ 'result': 'Not Login' })
+            }
+            if (!results.length) {
+                res.status(404).json(errMessage(404, err));
+                return new Promise((resolve, reject) => {});
+            }
+            results = dateFormat(results);
+            res.status(200).json(results);
             return new Promise((resolve, reject) => {});
-        })
+        });
+
     };
 
     fetchCategory = (req, res) => {
-        myFunction.check_session(req).then(() => {
-            models.fetchBycategory(req, (err, results) => {
-                if (err) {
-                    res.status(500).json(errMessage(500, err));
-                    return new Promise((resolve, reject) => {});
-                }
-                if (!results.length) {
-                    res.status(404).json(errMessage(404, err));
-                    return new Promise((resolve, reject) => {});
-                }
-                results = dateFormat(results)
-                res.status(200).json(results);
+
+        models.fetchBycategory(req, (err, results) => {
+            if (err) {
+                res.status(500).json(errMessage(500, err));
                 return new Promise((resolve, reject) => {});
-            });
-        }).catch(() => {
-            res.status(404).json({ 'result': 'Not Login' })
+            }
+            if (!results.length) {
+                res.status(404).json(errMessage(404, err));
+                return new Promise((resolve, reject) => {});
+            }
+            results = dateFormat(results)
+            res.status(200).json(results);
             return new Promise((resolve, reject) => {});
-        })
+        });
+
     };
 
     fetchContent = (req, res) => {
-        myFunction.check_session(req).then(() => {
-            models.fetchOne(req, async(err, results) => {
-                if (err) {
-                    res.status(500).json(errMessage(500, err));
-                    return new Promise((resolve, reject) => {});
-                }
-                if (!results.length) {
-                    res.status(404).json(errMessage(404, err));
-                    return new Promise((resolve, reject) => {});
-                }
-                await models.fetchAbsentees(req, (err, absentees) => {
-                    let arr = [];
-                    absentees.forEach((element) => {
-                        arr.push(element.absentees);
-                    });
-                    results[0]["absentees"] = arr;
+
+        models.fetchOne(req, async(err, results) => {
+            if (err) {
+                res.status(500).json(errMessage(500, err));
+                return new Promise((resolve, reject) => {});
+            }
+            if (!results.length) {
+                res.status(404).json(errMessage(404, err));
+                return new Promise((resolve, reject) => {});
+            }
+            await models.fetchAbsentees(req, (err, absentees) => {
+                let arr = [];
+                absentees.forEach((element) => {
+                    arr.push(element.absentees);
                 });
-                await models.fetchAttendees(req, (err, attendees) => {
-                    let arr2 = [];
-                    attendees.forEach((element) => {
-                        arr2.push(element.attendees);
-                    });
-                    results[0]["attendees"] = arr2;
-                    res.status(200).json(results);
-                    return new Promise((resolve, reject) => {});
-                });
+                results[0]["absentees"] = arr;
             });
-        }).catch(() => {
-            res.status(404).json({ 'result': 'Not Login' })
-            return new Promise((resolve, reject) => {});
-        })
+            await models.fetchAttendees(req, (err, attendees) => {
+                let arr2 = [];
+                attendees.forEach((element) => {
+                    arr2.push(element.attendees);
+                });
+                results[0]["attendees"] = arr2;
+                res.status(200).json(results);
+                return new Promise((resolve, reject) => {});
+            });
+        });
+
     };
 
     upload = (req, res) => {
