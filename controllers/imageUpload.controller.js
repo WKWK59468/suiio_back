@@ -1,5 +1,5 @@
 const upload = require('../upload/imageUpload');
-
+const myFunction = require('../myFunction');
 const URL = "/files/image/";
 const fs = require('fs');
 
