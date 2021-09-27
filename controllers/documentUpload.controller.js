@@ -35,57 +35,41 @@ const uploadFile = (req, res) => {
 }
 
 const getFilesList = (req, res) => {
-    myFunction.check_permission(req).then((permission) => {
-        if (permission !== '組織成員') {
-            const path = __basedir + '/files/document/';
 
-            fs.readdir(path, (err, files) => {
-                if (err) {
-                    res.status(500).json({ 'result': 'Files not found.' });
-                    return new Promise((resolve, reject) => {});
-                }
-                const filesList = [];
+    const path = __basedir + '/files/document/';
 
-                files.forEach((file) => {
-                    filesList.push({
-                        name: file,
-                        url: __basedir + URL + file
-                    });
-                });
-
-                res.status(200).json({ 'result': filesList });
-                return new Promise((resolve, reject) => {});
-            });
-        } else {
-            res.status(403).json({ 'result': 'Permission denied.' })
+    fs.readdir(path, (err, files) => {
+        if (err) {
+            res.status(500).json({ 'result': 'Files not found.' });
             return new Promise((resolve, reject) => {});
         }
-    }).catch(() => {
-        res.status(404).json({ 'result': 'Not Login' })
+        const filesList = [];
+
+        files.forEach((file) => {
+            filesList.push({
+                name: file,
+                url: __basedir + URL + file
+            });
+        });
+
+        res.status(200).json({ 'result': filesList });
         return new Promise((resolve, reject) => {});
-    })
+    });
+
 }
 
 const downloadFiles = (req, res) => {
-    myFunction.check_permission(req).then((permission) => {
-        if (permission !== '組織成員') {
-            const fileName = req.params.name;
-            const path = __basedir + "/files/document/";
 
-            res.download(path + fileName, (err) => {
-                if (err) {
-                    res.status(500).json({ message: "File can not be downloaded: " + err });
-                    return new Promise((resolve, reject) => {});
-                }
-            });
-        } else {
-            res.status(403).json({ 'result': 'Permission denied.' })
+    const fileName = req.params.name;
+    const path = __basedir + "/files/document/";
+
+    res.download(path + fileName, (err) => {
+        if (err) {
+            res.status(500).json({ message: "File can not be downloaded: " + err });
             return new Promise((resolve, reject) => {});
         }
-    }).catch(() => {
-        res.status(404).json({ 'result': 'Not Login' })
-        return new Promise((resolve, reject) => {});
-    })
+    });
+
 };
 
 module.exports = { uploadFile, downloadFiles, getFilesList };
