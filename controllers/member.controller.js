@@ -2,7 +2,6 @@ const models = require('../models/member.model');
 const bcrypt = require('bcrypt');
 const myFunction = require('../myFunction');
 const mail = require('../mail/mail');
-const { Server } = require('http');
 
 const check_sID = (sID) => {
     if (sID.length == 10) {
@@ -66,127 +65,168 @@ const dateFormat = (res) => {
 }
 
 class UserController {
-    //列出所有user
-    listMember = (req, res) => {
-            myFunction.check_session(req).then(() => {
-                models.list(req, (err, results) => {
-                    if (err) {
-                        res.status(500).json({ "result": "false" })
-                        return console.error(err);
-                    }
-                    if (!results.length) {
-                        res.sendStatus(404);
-                        console.log(err);
-                        return;
-                    }
-                    results = dateFormat(results);
-                    res.json(results);
-                })
-            }).catch(() => {
-                res.status(404).json({ 'result': 'Not Login' })
-            })
-        }
-        //新增
-    addMember = (req, res) => {
-            myFunction.check_permission(req).then((permission) => {
-                if (permission == "組織負責人") {
-                    const sID = req.body.sID;
-                    if (check_sID(sID)) {
-                        models.add(req).then(function(pwd) {
-                            console.log(pwd);
-                            mail.sendMail(req, pwd).then(() => {
-                                res.status(200).json({ "result": true });
-                            });
-                        }).catch(function(err) {
-                            res.status(500).json({ "result": err });
-                            // console.log("sql：" + err)
 
-                        })
-                    } else {
-                        res.status(500).json({ "result": "format error" });
-                        return new Promise((resolve, reject) => {});
-                    }
+    listMember = (req, res) => {
+        myFunction.check_session(req).then(() => {
+            models.list(req, (err, results) => {
+                if (err) {
+                    res.status(500).json({ "result": "false" })
+                    return console.error(err);
+                }
+                if (!results.length) {
+                    res.sendStatus(404);
+                    console.log(err);
+                    return;
+                }
+                results = dateFormat(results);
+                res.json(results);
+            })
+        }).catch(() => {
+            res.status(404).json({ 'result': 'Not Login' })
+        })
+    }
+
+    addMember = (req, res) => {
+        myFunction.check_permission(req).then((permission) => {
+            if (permission == "組織負責人") {
+                const sID = req.body.sID;
+                if (check_sID(sID)) {
+                    models.add(req).then(function(pwd) {
+                        console.log(pwd);
+                        mail.sendMail(req, pwd).then(() => {
+                            res.status(200).json({ "result": true });
+                        });
+                    }).catch(function(err) {
+                        res.status(500).json({ "result": err });
+                        // console.log("sql：" + err)
+
+                    })
                 } else {
-                    res.status(403).json({ 'result': 'Permission denied.' })
+                    res.status(500).json({ "result": "format error" });
                     return new Promise((resolve, reject) => {});
                 }
-            }).catch(() => {
-                res.status(404).json({ 'result': 'Not Login' })
+            } else {
+                res.status(403).json({ 'result': 'Permission denied.' })
                 return new Promise((resolve, reject) => {});
-            });
-        }
-        //刪除user
+            }
+        }).catch(() => {
+            res.status(404).json({ 'result': 'Not Login' })
+            return new Promise((resolve, reject) => {});
+        });
+    }
+
     delMember = (req, res) => {
-            myFunction.check_permission(req).then((permission) => {
-                if (permission == "組織負責人") {
-                    const sID = req.body.sID;
-                    if (check_sID(sID)) {
-                        models.del(req, (err, results) => {
-                            if (err) {
-                                res.status(500).json({ 'result': err });
-                                return new Promise((resolve, reject) => {});
-                            }
-                            if (!results.affectedRows) {
-                                res.status(404).json({ 'result': "Can't find member." });
-                                return new Promise((resolve, reject) => {});
-                            }
+        myFunction.check_permission(req).then((permission) => {
+            if (permission == "組織負責人") {
+                const sID = req.body.sID;
+                if (check_sID(sID)) {
+                    models.del(req, (err, results) => {
+                        if (err) {
+                            res.status(500).json({ 'result': err });
+                            return new Promise((resolve, reject) => {});
+                        }
+                        if (!results.affectedRows) {
+                            res.status(404).json({ 'result': "Can't find member." });
+                            return new Promise((resolve, reject) => {});
+                        }
+                        res.status(200).json({ 'result': true });
+                        return new Promise((resolve, reject) => {});
+                    });
+                } else {
+                    res.status(500).json({ "result": "format error" });
+                    return new Promise((resolve, reject) => {});
+                }
+            } else {
+                res.status(403).json({ 'result': 'Permission denied.' })
+                return new Promise((resolve, reject) => {});
+            }
+        }).catch(() => {
+            res.status(404).json({ "result": "Not Login" });
+            return new Promise((resolve, reject) => {});
+        });
+    }
+
+    patchUser = (req, res) => {
+        const body = req.body;
+        const oldPassword = body.oldpassword;
+        //session
+        myFunction.check_session(req).then(() => {
+            //DBpassword
+            models.login(req.session.sID).then((dbPWD) => {
+                //verify
+                bcrypt.compare(oldPassword, dbPWD).then((checkpwd) => {
+                    if (checkpwd) {
+                        //patch
+                        models.patch(req).then(() => {
                             res.status(200).json({ 'result': true });
                             return new Promise((resolve, reject) => {});
-                        });
+                        }).catch((patcherr) => {
+                            if (patcherr == "sex err") {
+                                res.status(400).json({ "result": patcherr });
+                                return new Promise((resolve, reject) => {});
+                            } else if (err == "update err") {
+                                res.status(400).json({ "result": patcherr });
+                                return new Promise((resolve, reject) => {});
+                            } else {
+                                res.status(400).json({ "result": patcherr });
+                                return new Promise((resolve, reject) => {});
+                            }
+                        })
                     } else {
-                        res.status(500).json({ "result": "format error" });
+                        res.status(400).json({ "result": "Password Error." });
                         return new Promise((resolve, reject) => {});
                     }
-                } else {
-                    res.status(403).json({ 'result': 'Permission denied.' })
-                    return new Promise((resolve, reject) => {});
-                }
-            }).catch(() => {
-                res.status(404).json({ "result": "Not Login" });
-                return new Promise((resolve, reject) => {});
-            });
-        }
-        //修改user資訊
-    patchUser = (req, res) => {
-            myFunction.check_session(req).then(() => {
-                models.patch(req, (err, results) => {
-                    if (err) {
-                        res.sendStatus(500).json({ "result": err });
-                        return new Promise((resolve, reject) => {});
-                    }
-
-                    if (!results.affectedRows) {
-                        res.sendStatus(410).json({ "result": err });
-                        return new Promise((resolve, reject) => {});
-                    }
-                    res.status(200).json({ 'result': true });
+                }).catch((err) => {
+                    res.status(400).json({ "result": err });
                     return new Promise((resolve, reject) => {});
                 })
-            }).catch(() => {
-                res.status(404).json({ 'result': 'Not Login' })
-            })
-
-        }
-        //修改密碼
-    patchPassword = (req, res) => {
-        myFunction.check_session(req).then(() => {
-            models.patchPwd(req, (err, results) => {
-                if (err) {
-                    res.sendStatus(500).json({ "result": err });
-                    return new Promise((resolve, reject) => {});
-                }
-                if (!results.affectedRows) {
-                    res.sendStatus(410).json({ "result": err });
-                    return new Promise((resolve, reject) => {});
-                }
-                res.status(200).json({ 'result': true });
+            }).catch((error) => {
+                res.status(400).json({ "result": error });
                 return new Promise((resolve, reject) => {});
             })
         }).catch(() => {
             res.status(404).json({ 'result': 'Not Login' })
         })
-
     }
+
+    patchPassword = (req, res) => {
+        const body = req.body;
+        const oldPassword = body.oldpassword;
+        //session
+        myFunction.check_session(req).then(() => {
+            models.login(req.session.sID).then((dbPWD) => {
+                bcrypt.compare(oldPassword, dbPWD).then((checkpwd) => {
+                    if (checkpwd) {
+                        models.patchPwd(req).then(() => {
+                            res.status(200).json({ 'result': true });
+                            return new Promise((resolve, reject) => {});
+                        }).catch((patcherr) => {
+                            if (err == "update err") {
+                                res.status(400).json({ "result": patcherr });
+                                return new Promise((resolve, reject) => {});
+                            } else {
+                                res.status(400).json({ "result": patcherr });
+                                return new Promise((resolve, reject) => {});
+                            }
+                        })
+                    } else {
+                        res.status(400).json({ "result": "Password Error." });
+                        return new Promise((resolve, reject) => {});
+                    }
+                }).catch(err => {
+                    res.status(400).json({ "result": err });
+                    return new Promise((resolve, reject) => {});
+                })
+            }).catch((error) => {
+                res.status(400).json({ "result": error });
+                return new Promise((resolve, reject) => {});
+            })
+
+        }).catch(() => {
+            res.status(404).json({ 'result': 'Not Login' })
+        })
+    }
+
     login = (req, res) => {
         myFunction.check_session(req).then(() => {
             res.status(404).json({ 'result': 'isLogin' })
@@ -196,7 +236,7 @@ class UserController {
             const sID = body.sID;
             const userPWD = body.password;
 
-            models.login(body).then((dbPWD) => {
+            models.login(sID).then((dbPWD) => {
 
                 bcrypt.compare(userPWD, dbPWD).then((checkpwd) => {
                     if (checkpwd) {
@@ -253,14 +293,9 @@ class UserController {
     }
     check = (req, res) => {
         myFunction.check_session(req).then(() => {
-            res.status(200).json({
-                'result': true,
-                "sID": req.session.sID,
-                "position": req.session.position,
-                "permission": req.session.permission
-            });
+            res.status(200).json({ 'result': true });
         }).catch(() => {
-            res.status(404).json({ 'result': 'Not Login' });
+            res.status(200).json({ 'result': false });
         });
     }
 }

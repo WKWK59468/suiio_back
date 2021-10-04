@@ -1,6 +1,7 @@
 const mysql = require('mysql');
 const conf = require('../conf');
 const bcrypt = require('bcrypt');
+const session = require('express-session');
 
 const conn = mysql.createConnection(conf.db);
 let sql = '';
@@ -79,16 +80,52 @@ module.exports = {
         sql = mysql.format('DELETE FROM member WHERE sID = ?', [req.body.sID]);
         return conn.query(sql, callback);
     },
-    patch: (req, callback) => {
-        sql = mysql.format('UPDATE member SET name=?,sex=?,birth=? WHERE sID = ?', [req.body.name, req.body.sex, req.body.birth, req.body.sID]);
-        return conn.query(sql, callback);
+    patch: (req) => {
+        const body = req.body;
+        const sID = req.session.sID;
+        const nickname = body.nickname;
+        const sex = body.sex;
+        const birth = body.birth;
+        console.log(sID)
+        return new Promise((resolve, reject) => {
+            if (sex == "男" || sex == "女") {
+                sql = `UPDATE member SET nickname='${nickname}',sex='${sex}',birth='${birth}' WHERE sID = '${sID}'`;
+                conn.query(sql, (err, res) => {
+                    if (err) {
+                        reject(err);
+                    } else if (!res.affectedRows) {
+                        reject("update err")
+                    } else {
+                        resolve(res);
+                    }
+                });
+            } else {
+                reject("sex err");
+            }
+        })
     },
-    patchPwd: (req, callback) => {
-        sql = mysql.format('UPDATE member SET password=? WHERE sID = ?', [req.body.password, req.body.sID]);
-        return conn.query(sql, callback);
+    patchPwd: async(req) => {
+        const body = req.body;
+        const sID = req.session.sID;
+        const password = body.password;
+        const salt = await bcrypt.genSalt(10);
+        const dbpassword = await bcrypt.hash(password, salt)
+        console.log(sID)
+        return new Promise((resolve, reject) => {
+            sql = `UPDATE member SET password='${dbpassword}' WHERE sID = '${sID}'`;
+            conn.query(sql, (err, res) => {
+                if (err) {
+                    reject(err);
+                } else if (!res.affectedRows) {
+                    reject("update err")
+                } else {
+                    resolve(res);
+                }
+            });
+        })
+
     },
-    login: (body) => {
-        const sID = body.sID;
+    login: (sID) => {
         return new Promise((resolve, reject) => {
             sql = `SELECT password FROM member WHERE sID = '${sID}'`;
             conn.query(sql, (err, res) => {
