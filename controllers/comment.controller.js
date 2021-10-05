@@ -23,7 +23,7 @@ class Comment {
         if (body.isHide == true || body.isHide == false) {
             isHide = body.isHide;
         } else {
-            res.status(500).json({ "result": "isHide Error." });
+            res.status(401).json({ "result": "isHide Error." });
             return new Promise((resolve, reject) => {});
         }
 
@@ -49,7 +49,7 @@ class Comment {
                     commentModels.addComment(comment).then(() => {
                         commentModels.searchID().then((commentID) => {
                             commentModels.addTables(tables, tableID, commentID).then(() => {
-                                res.status(200).json({ "result": true });
+                                res.status(201).json({ "result": true });
                                 return new Promise((resolve, reject) => {});
                             }).catch((err) => {
                                 res.status(500).json({ "result": err });
@@ -64,15 +64,15 @@ class Comment {
                         return new Promise((resolve, reject) => {});
                     });
                 } else {
-                    res.status(500).json({ "result": "No this table." });
+                    res.status(401).json({ "result": "No this table." });
                     return new Promise((resolve, reject) => {});
                 }
             } else {
-                res.status(500).json({ "result": "Permission denied." });
+                res.status(400).json({ "result": "Permission denied." });
                 return new Promise((resolve, reject) => {});
             }
         }).catch(() => {
-            res.status(404).json({ 'result': 'Not Login' });
+            res.status(403).json({ 'result': 'Not Login' });
         });
     }
     fetchByID = (req, res) => {
@@ -90,11 +90,11 @@ class Comment {
                     return new Promise((resolve, reject) => {});
                 });
             } else {
-                res.status(500).json({ "result": "No this table." });
+                res.status(401).json({ "result": "No this table." });
                 return new Promise((resolve, reject) => {});
             }
         }).catch(() => {
-            res.status(404).json({ 'result': 'Not Login' });
+            res.status(403).json({ 'result': 'Not Login' });
         });
     }
     fetchByMember = (req, res) => {
@@ -111,7 +111,7 @@ class Comment {
             })
 
         }).catch(() => {
-            res.status(404).json({ 'result': 'Not Login' });
+            res.status(403).json({ 'result': 'Not Login' });
         })
     }
     fetchAll = (req, res) => {
@@ -154,7 +154,7 @@ class Comment {
                 });
             })
         }).catch(() => {
-            res.status(404).json({ 'result': 'Not Login' });
+            res.status(403).json({ 'result': 'Not Login' });
         });
     }
     update = (req, res) => {
@@ -188,7 +188,7 @@ class Comment {
                     });
 
                 } else {
-                    res.status(500).json({ "result": "Permission denied." });
+                    res.status(400).json({ "result": "Permission denied." });
                     return new Promise((resolve, reject) => {});
                 }
             }).catch((err) => {
@@ -196,7 +196,7 @@ class Comment {
                 return new Promise((resolve, reject) => {});
             })
         }).catch(() => {
-            res.status(404).json({ 'result': 'Not Login' });
+            res.status(403).json({ 'result': 'Not Login' });
         });
     }
     delete = (req, res) => {
@@ -214,7 +214,7 @@ class Comment {
                         return new Promise((resolve, reject) => {});
                     })
                 } else {
-                    res.status(500).json({ "result": "Permission denied." });
+                    res.status(400).json({ "result": "Permission denied." });
                     return new Promise((resolve, reject) => {});
                 }
             }).catch((error) => {
@@ -222,7 +222,7 @@ class Comment {
                 return new Promise((resolve, reject) => {});
             })
         }).catch(() => {
-            res.status(404).json({ 'result': 'Not Login' });
+            res.status(403).json({ 'result': 'Not Login' });
         })
     }
 }
