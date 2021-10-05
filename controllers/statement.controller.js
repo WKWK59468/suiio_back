@@ -29,7 +29,7 @@ class StatementController {
                         return new Promise((resolve, reject) => {});
                     })
                 ).then(() => {
-                    res.status(200).json({ "result": true });
+                    res.status(201).json({ "result": true });
                     return new Promise((resolve, reject) => {});
                 }).catch(err => {
                     if (err) {
@@ -38,11 +38,11 @@ class StatementController {
                     }
                 });
             } else {
-                res.status(403).json({ 'result': 'Permission denied.' })
+                res.status(400).json({ 'result': 'Permission denied.' })
                 return new Promise((resolve, reject) => {});
             }
         }).catch(() => {
-            res.status(404).json({ 'result': 'Not Login' })
+            res.status(403).json({ 'result': 'Not Login' })
             return new Promise((resolve, reject) => {});
         })
     }
@@ -64,7 +64,7 @@ class StatementController {
                             res.status(500).json({ "result": err })
                             return new Promise((resolve, reject) => {})
                         }).then(accountArray => {
-                            res.status(200).json({ "result": true })
+                            res.status(201).json({ "result": true })
                             return new Promise((resolve, reject) => {})
                         });
 
@@ -77,11 +77,11 @@ class StatementController {
                     return new Promise((resolve, reject) => {});
                 });
             } else {
-                res.status(403).json({ 'result': 'Permission denied.' })
+                res.status(400).json({ 'result': 'Permission denied.' })
                 return new Promise((resolve, reject) => {});
             }
         }).catch(() => {
-            res.status(404).json({ 'result': 'Not Login' })
+            res.status(403).json({ 'result': 'Not Login' })
             return new Promise((resolve, reject) => {});
         })
     }
@@ -103,7 +103,7 @@ class StatementController {
                             res.status(500).json({ "result": err });
                             return new Promise((resolve, reject) => {});
                         }).then(accountArray => {
-                            res.status(200).json({ "result": true })
+                            res.status(201).json({ "result": true })
                             return new Promise((resolve, reject) => {});
                         });
 
@@ -116,11 +116,11 @@ class StatementController {
                     return new Promise((resolve, reject) => {});
                 });
             } else {
-                res.status(403).json({ 'result': 'Permission denied.' })
+                res.status(400).json({ 'result': 'Permission denied.' })
                 return new Promise((resolve, reject) => {});
             }
         }).catch(() => {
-            res.status(404).json({ 'result': 'Not Login' })
+            res.status(403).json({ 'result': 'Not Login' })
             return new Promise((resolve, reject) => {});
         })
 
@@ -141,11 +141,11 @@ class StatementController {
                     return new Promise((resolve, reject) => {});
                 })
             } else {
-                res.status(403).json({ 'result': 'Permission denied.' })
+                res.status(400).json({ 'result': 'Permission denied.' })
                 return new Promise((resolve, reject) => {});
             }
         }).catch(() => {
-            res.status(404).json({ 'result': 'Not Login' })
+            res.status(403).json({ 'result': 'Not Login' })
             return new Promise((resolve, reject) => {});
         })
     }
@@ -165,11 +165,11 @@ class StatementController {
                     return new Promise((resolve, reject) => {});
                 })
             } else {
-                res.status(403).json({ 'result': 'Permission denied.' })
+                res.status(400).json({ 'result': 'Permission denied.' })
                 return new Promise((resolve, reject) => {});
             }
         }).catch(() => {
-            res.status(404).json({ 'result': 'Not Login' })
+            res.status(403).json({ 'result': 'Not Login' })
             return new Promise((resolve, reject) => {});
         })
     }
@@ -189,11 +189,11 @@ class StatementController {
                     return new Promise((resolve, reject) => {});
                 })
             } else {
-                res.status(403).json({ 'result': 'Permission denied.' })
+                res.status(400).json({ 'result': 'Permission denied.' })
                 return new Promise((resolve, reject) => {});
             }
         }).catch(() => {
-            res.status(404).json({ 'result': 'Not Login' })
+            res.status(403).json({ 'result': 'Not Login' })
             return new Promise((resolve, reject) => {});
         })
 

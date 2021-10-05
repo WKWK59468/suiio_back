@@ -7,7 +7,7 @@ const errMessage = (status, err) => {
         return { result: err };
     }
     if (status == 404) {
-        return { result: "Not Found" };
+        return { result: "There is nothing to show." };
     }
 };
 
@@ -131,11 +131,11 @@ class Conference {
                     return new Promise((resolve, reject) => {});
                 })
             } else {
-                res.status(403).json({ 'result': 'Permission denied.' })
+                res.status(400).json({ 'result': 'Permission denied.' })
                 return new Promise((resolve, reject) => {});
             }
         }).catch(() => {
-            res.status(404).json({ 'result': 'Not Login' })
+            res.status(403).json({ 'result': 'Not Login' })
             return new Promise((resolve, reject) => {});
         })
     };
@@ -150,22 +150,22 @@ class Conference {
                             return new Promise((resolve, reject) => {});
                         }
                         if (!results.affectedRows) {
-                            res.status(404).json(errMessage(404, err));
+                            res.status(500).json(errMessage(500, err));
                             return new Promise((resolve, reject) => {});
                         }
                         res.status(200).json(successMessage);
                         return new Promise((resolve, reject) => {});
                     });
                 } else {
-                    res.status(500).json({ "result": "Please Enter 0 ~ 4." });
+                    res.status(401).json({ "result": "Please Enter 0 ~ 4." });
                     return new Promise((resolve, reject) => {});
                 }
             } else {
-                res.status(403).json({ 'result': 'Permission denied.' })
+                res.status(400).json({ 'result': 'Permission denied.' })
                 return new Promise((resolve, reject) => {});
             }
         }).catch(() => {
-            res.status(404).json({ 'result': 'Not Login' })
+            res.status(403).json({ 'result': 'Not Login' })
             return new Promise((resolve, reject) => {});
         })
     };
@@ -179,18 +179,18 @@ class Conference {
                         return new Promise((resolve, reject) => {});
                     }
                     if (!results.affectedRows) {
-                        res.status(404).json(errMessage(404, err));
+                        res.status(500).json(errMessage(500, err));
                         return new Promise((resolve, reject) => {});
                     }
                     res.status(200).json(successMessage);
                     return new Promise((resolve, reject) => {});
                 });
             } else {
-                res.status(403).json({ 'result': 'Permission denied.' })
+                res.status(400).json({ 'result': 'Permission denied.' })
                 return new Promise((resolve, reject) => {});
             }
         }).catch(() => {
-            res.status(404).json({ 'result': 'Not Login' })
+            res.status(403).json({ 'result': 'Not Login' })
             return new Promise((resolve, reject) => {});
         })
     };
