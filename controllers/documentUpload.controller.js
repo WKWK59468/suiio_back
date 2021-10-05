@@ -10,7 +10,7 @@ const uploadFile = (req, res) => {
             try {
                 await upload(req, res);
                 if (req.file == undefined) {
-                    res.status(400).json({ 'result': 'Choose a file to upload' });
+                    res.status(401).json({ 'result': 'Choose a file to upload' });
                     return new Promise((resolve, reject) => {});
                 }
                 res.status(200).json({ 'result': 'File uploaded successfully: ' + req.file.originalname });
@@ -18,18 +18,18 @@ const uploadFile = (req, res) => {
             } catch (error) {
                 console.log(error);
                 if (error.code == 'LIMIT_FILE_SIZE') {
-                    res.status(500).json({ 'result': 'File size should be less than 100MB.' });
+                    res.status(401).json({ 'result': 'File size should be less than 100MB.' });
                     return new Promise((resolve, reject) => {});
                 }
                 res.status(500).json({ 'result': `Error occured: ${error}` });
                 return new Promise((resolve, reject) => {});
             }
         } else {
-            res.status(403).json({ 'result': 'Permission denied.' })
+            res.status(400).json({ 'result': 'Permission denied.' })
             return new Promise((resolve, reject) => {});
         }
     }).catch(() => {
-        res.status(404).json({ 'result': 'Not Login' })
+        res.status(403).json({ 'result': 'Not Login' })
         return new Promise((resolve, reject) => {});
     })
 }
@@ -40,7 +40,7 @@ const getFilesList = (req, res) => {
 
     fs.readdir(path, (err, files) => {
         if (err) {
-            res.status(500).json({ 'result': 'Files not found.' });
+            res.status(404).json({ 'result': 'Files not found.' });
             return new Promise((resolve, reject) => {});
         }
         const filesList = [];

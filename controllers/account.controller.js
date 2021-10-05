@@ -28,11 +28,11 @@ class AccountController {
                                 res.status(404).json({ "result": "The account is not add." });
                                 return new Promise((resolve, reject) => {});
                             }
-                            res.status(200).json({ "result": true });
+                            res.status(201).json({ "result": true });
                             return new Promise((resolve, reject) => {});
                         })
                     } else {
-                        res.status(500).json({ "result": "Position does not exist." });
+                        res.status(404).json({ "result": "Position does not exist." });
                         return new Promise((resolve, reject) => {});
                     }
                 }).catch(err => {
@@ -40,11 +40,11 @@ class AccountController {
                     return new Promise((resolve, reject) => {});
                 });
             } else {
-                res.status(403).json({ 'result': 'Permission denied.' })
+                res.status(400).json({ 'result': 'Permission denied.' })
                 return new Promise((resolve, reject) => {});
             }
         }).catch(() => {
-            res.status(404).json({ 'result': 'Not Login' })
+            res.status(403).json({ 'result': 'Not Login' })
             return new Promise((resolve, reject) => {});
         })
     }
@@ -64,11 +64,11 @@ class AccountController {
                     return new Promise((resolve, reject) => {});
                 })
             } else {
-                res.status(403).json({ 'result': 'Permission denied.' })
+                res.status(400).json({ 'result': 'Permission denied.' })
                 return new Promise((resolve, reject) => {});
             }
         }).catch(() => {
-            res.status(404).json({ 'result': 'Not Login' })
+            res.status(403).json({ 'result': 'Not Login' })
             return new Promise((resolve, reject) => {});
         })
     }
@@ -88,11 +88,11 @@ class AccountController {
                     return new Promise((resolve, reject) => {});
                 })
             } else {
-                res.status(403).json({ 'result': 'Permission denied.' })
+                res.status(400).json({ 'result': 'Permission denied.' })
                 return new Promise((resolve, reject) => {});
             }
         }).catch(() => {
-            res.status(404).json({ 'result': 'Not Login' })
+            res.status(403).json({ 'result': 'Not Login' })
             return new Promise((resolve, reject) => {});
         })
     }
@@ -114,15 +114,15 @@ class AccountController {
                         return new Promise((resolve, reject) => {});
                     })
                 } else {
-                    res.status(500).json({ "result": "Please Enter 0 ~ 4." });
+                    res.status(401).json({ "result": "Please Enter 0 ~ 4." });
                     return new Promise((resolve, reject) => {});
                 }
             } else {
-                res.status(403).json({ 'result': 'Permission denied.' })
+                res.status(400).json({ 'result': 'Permission denied.' })
                 return new Promise((resolve, reject) => {});
             }
         }).catch(() => {
-            res.status(404).json({ 'result': 'Not Login' })
+            res.status(403).json({ 'result': 'Not Login' })
             return new Promise((resolve, reject) => {});
         })
     }
@@ -134,7 +134,7 @@ class AccountController {
                 return new Promise((resolve, reject) => {});
             }
             if (!results.length) {
-                res.status(404).json({ "result": err });
+                res.status(404).json({ "result": "There is nothing to show." });
                 return new Promise((resolve, reject) => {});
             }
             results = dateFormat(results);
@@ -161,11 +161,11 @@ class AccountController {
                     return new Promise((resolve, reject) => {});
                 })
             } else {
-                res.status(500).json({ "result": "Please Enter 0 ~ 4." });
+                res.status(401).json({ "result": "Please Enter 0 ~ 4." });
                 return new Promise((resolve, reject) => {});
             }
         }).catch(() => {
-            res.status(404).json({ 'result': 'Not Login' })
+            res.status(403).json({ 'result': 'Not Login' })
             return new Promise((resolve, reject) => {});
         })
     }

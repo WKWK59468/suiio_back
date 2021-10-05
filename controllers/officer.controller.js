@@ -85,21 +85,21 @@ exports.add = (req, res) => {
                         Officer.add(req, (error, results) => {
                             if (error || !results.affectedRows)
                                 return sendErrorMsg(res, 500, error);
-                            res.send("Add Officer Successfully.");
+                            res.status(201).send("Add Officer Successfully.");
                             return new Promise((resolve, reject) => {});
                         });
                     }
                 });
             } else {
-                res.status(500).json({ "result": "sID format error" });
+                res.status(401).json({ "result": "sID format error" });
                 return new Promise((resolve, reject) => {});
             }
         } else {
-            res.status(403).json({ 'result': 'Permission denied.' })
+            res.status(400).json({ 'result': 'Permission denied.' })
             return new Promise((resolve, reject) => {});
         }
     }).catch(() => {
-        res.status(404).json({ 'result': 'Not Login' })
+        res.status(403).json({ 'result': 'Not Login' })
         return new Promise((resolve, reject) => {});
     })
 
@@ -116,18 +116,18 @@ exports.delete = (req, res) => {
                         return sendErrorMsg(res, 500, error);
                     if (!results.affectedRows)
                         return sendErrorMsg(res, 404, "The condition is not exist.");
-                    res.send("Delete Officer Successfully.");
+                    res.status(200).send("Delete Officer Successfully.");
                 }).catch(error => sendErrorMsg(res, 500, error));
             } else {
-                res.status(500).json({ "result": "sID format error" });
+                res.status(401).json({ "result": "sID format error" });
                 return new Promise((resolve, reject) => {});
             }
         } else {
-            res.status(403).json({ 'result': 'Permission denied.' })
+            res.status(400).json({ 'result': 'Permission denied.' })
             return new Promise((resolve, reject) => {});
         }
     }).catch(() => {
-        res.status(404).json({ 'result': 'Not Login' })
+        res.status(403).json({ 'result': 'Not Login' })
         return new Promise((resolve, reject) => {});
     })
 
@@ -146,7 +146,7 @@ exports.fetchAll = (req, res) => {
             return sendErrorMsg(res, 500, error);
         if (!results.length)
             return sendErrorMsg(res, 404, "There is nothing to show.");
-        res.send(results);
+        res.status(200).send(results);
         return new Promise((resolve, reject) => {});
     });
 
@@ -160,7 +160,7 @@ exports.fetchByPosition = (req, res) => {
             return sendErrorMsg(res, 500, error);
         if (!results.length)
             return sendErrorMsg(res, 404, "There is nothing to show.");
-        res.send(results);
+        res.status(200).send(results);
         return new Promise((resolve, reject) => {});
     });
 
@@ -174,7 +174,7 @@ exports.fetchByPermission = (req, res) => {
             return sendErrorMsg(res, 500, error);
         if (!results.length)
             return sendErrorMsg(res, 404, "There is nothing to show.");
-        res.send(results);
+        res.status(200).send(results);
         return new Promise((resolve, reject) => {});
     });
 
@@ -205,21 +205,21 @@ exports.updateOfficer = (req, res) => {
                                 return sendErrorMsg(res, 500, error);
                             if (!results.affectedRows)
                                 return sendErrorMsg(res, 404, "The condition is not exist.");
-                            res.json({ "result": true });
+                            res.status(200).json({ "result": true });
                             return new Promise((resolve, reject) => {});
                         });
                     }
                 });
             } else {
-                res.status(500).json({ "result": "sID format error" });
+                res.status(401).json({ "result": "sID format error" });
                 return new Promise((resolve, reject) => {});
             }
         } else {
-            res.status(403).json({ 'result': 'Permission denied.' })
+            res.status(400).json({ 'result': 'Permission denied.' })
             return new Promise((resolve, reject) => {});
         }
     }).catch(() => {
-        res.status(404).json({ 'result': 'Not Login' })
+        res.status(403).json({ 'result': 'Not Login' })
         return new Promise((resolve, reject) => {});
     })
 };
@@ -264,11 +264,11 @@ exports.updatePermission = (req, res) => {
                 });
             }
         } else {
-            res.status(403).json({ 'result': 'Permission denied.' })
+            res.status(400).json({ 'result': 'Permission denied.' })
             return new Promise((resolve, reject) => {});
         }
     }).catch(() => {
-        res.status(404).json({ 'result': 'Not Login' })
+        res.status(403).json({ 'result': 'Not Login' })
         return new Promise((resolve, reject) => {});
     })
 

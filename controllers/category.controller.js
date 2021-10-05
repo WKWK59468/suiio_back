@@ -15,15 +15,15 @@ class categoryController {
                         res.status(500).json({ "result": err });
                         return new Promise((resolve, reject) => {});
                     }
-                    res.json({ "result": true });
+                    res.status(201).json({ "result": true });
                     return new Promise((resolve, reject) => {});
                 })
             } else {
-                res.status(403).json({ 'result': 'Permission denied.' })
+                res.status(400).json({ 'result': 'Permission denied.' })
                 return new Promise((resolve, reject) => {});
             }
         }).catch(() => {
-            res.status(404).json({ 'result': 'Not Login' })
+            res.status(403).json({ 'result': 'Not Login' })
             return new Promise((resolve, reject) => {});
         })
     }
@@ -67,7 +67,7 @@ class categoryController {
                 return new Promise((resolve, reject) => {});
             });
         } else {
-            res.status(500).json({ "result": "Please Enter 0 or 1." });
+            res.status(401).json({ "result": "Please Enter 0 or 1." });
             return new Promise((resolve, reject) => {});
         }
 
@@ -88,11 +88,11 @@ class categoryController {
                     return new Promise((resolve, reject) => {});
                 })
             } else {
-                res.status(403).json({ 'result': 'Permission denied.' })
+                res.status(400).json({ 'result': 'Permission denied.' })
                 return new Promise((resolve, reject) => {});
             }
         }).catch(() => {
-            res.status(404).json({ 'result': 'Not Login' })
+            res.status(403).json({ 'result': 'Not Login' })
             return new Promise((resolve, reject) => {});
         })
 
@@ -115,15 +115,15 @@ class categoryController {
                         return new Promise((resolve, reject) => {});
                     });
                 } else {
-                    res.status(500).json({ "result": "Please Enter 0 or 1." });
+                    res.status(401).json({ "result": "Please Enter 0 or 1." });
                     return new Promise((resolve, reject) => {});
                 }
             } else {
-                res.status(403).json({ 'result': 'Permission denied.' })
+                res.status(400).json({ 'result': 'Permission denied.' })
                 return new Promise((resolve, reject) => {});
             }
         }).catch(() => {
-            res.status(404).json({ 'result': 'Not Login' })
+            res.status(403).json({ 'result': 'Not Login' })
             return new Promise((resolve, reject) => {});
         })
     }
