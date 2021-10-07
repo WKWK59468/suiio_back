@@ -80,22 +80,20 @@ class Comment {
         const tables = params.tables;
         const tableID = params.tableID;
 
-        myFunction.check_session(req).then(() => {
-            if (tables == "account" || tables == "statement" || tables == "conference") {
-                commentModels.fetchByID(tables, tableID).then((result) => {
-                    res.status(200).json(result);
-                    return new Promise((resolve, reject) => {});
-                }).catch((err) => {
-                    res.status(500).json({ "result": err });
-                    return new Promise((resolve, reject) => {});
-                });
-            } else {
-                res.status(401).json({ "result": "No this table." });
+
+        if (tables == "account" || tables == "statement" || tables == "conference") {
+            commentModels.fetchByID(tables, tableID).then((result) => {
+                res.status(200).json(result);
                 return new Promise((resolve, reject) => {});
-            }
-        }).catch(() => {
-            res.status(403).json({ 'result': 'Not Login' });
-        });
+            }).catch((err) => {
+                res.status(500).json({ "result": err });
+                return new Promise((resolve, reject) => {});
+            });
+        } else {
+            res.status(401).json({ "result": "No this table." });
+            return new Promise((resolve, reject) => {});
+        }
+
     }
     fetchByMember = (req, res) => {
         const sID = req.session.sID;
@@ -115,47 +113,45 @@ class Comment {
         })
     }
     fetchAll = (req, res) => {
-        myFunction.check_session(req).then(() => {
-            const tables = ["account", "statement", "conference"];
-            let json = {};
-            let tableID;
 
-            tables.forEach((element, index, array) => {
-                let arr = [];
-                commentModels.fetch(element).then((table) => {
-                    table.forEach((element2, index2, array2) => {
-                        if (Object.keys(element2) == "accountID") {
-                            tableID = element2.accountID;
-                        }
-                        if (Object.keys(element2) == "statementID") {
-                            tableID = element2.statementID;
-                        }
-                        if (Object.keys(element2) == "conferenceID") {
-                            tableID = element2.conferenceID;
-                        }
+        const tables = ["account", "statement", "conference"];
+        let json = {};
+        let tableID;
 
-                        commentModels.fetchByID(element, tableID).then((result) => {
-                            arr.push(result);
-                            json[element] = arr;
-                            if (index == array.length - 1) {
-                                if (index2 == array2.length - 1) {
-                                    res.status(200).json(json);
-                                    return new Promise((resolve, reject) => {});
-                                }
+        tables.forEach((element, index, array) => {
+            let arr = [];
+            commentModels.fetch(element).then((table) => {
+                table.forEach((element2, index2, array2) => {
+                    if (Object.keys(element2) == "accountID") {
+                        tableID = element2.accountID;
+                    }
+                    if (Object.keys(element2) == "statementID") {
+                        tableID = element2.statementID;
+                    }
+                    if (Object.keys(element2) == "conferenceID") {
+                        tableID = element2.conferenceID;
+                    }
+
+                    commentModels.fetchByID(element, tableID).then((result) => {
+                        arr.push(result);
+                        json[element] = arr;
+                        if (index == array.length - 1) {
+                            if (index2 == array2.length - 1) {
+                                res.status(200).json(json);
+                                return new Promise((resolve, reject) => {});
                             }
-                        }).catch((err) => {
-                            res.status(500).json({ "result": err });
-                            return new Promise((resolve, reject) => {});
-                        });
+                        }
+                    }).catch((err) => {
+                        res.status(500).json({ "result": err });
+                        return new Promise((resolve, reject) => {});
                     });
-                }).catch((err) => {
-                    res.status(500).json({ "result": err });
-                    return new Promise((resolve, reject) => {});
                 });
-            })
-        }).catch(() => {
-            res.status(403).json({ 'result': 'Not Login' });
-        });
+            }).catch((err) => {
+                res.status(500).json({ "result": err });
+                return new Promise((resolve, reject) => {});
+            });
+        })
+
     }
     update = (req, res) => {
         const time = new Date();
