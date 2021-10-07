@@ -7,6 +7,7 @@ const cors = require('cors');
 const session = require('express-session');
 
 const index = require('./routes/index');
+const { Socket } = require('socket.io');
 
 const app = express();
 
@@ -33,9 +34,20 @@ app.use('/api', index);
 
 const server = http.createServer(app);
 //server Port
-server.listen(4000);
-
-server.on('listening', () => {
+server.listen(4000, () => {
     const addr = server.address();
     console.log(`Server is on ${addr.port}`);
+});
+
+const io = require('socket.io')(server, {
+    cors: {
+        origin: "http://localhost:3000"
+    }
+})
+
+io.on('connection', (socket) => {
+    app.set('socketio', socket)
+    socket.on('getMessage', message => {
+        socket.emit('getMessage', message)
+    })
 })
