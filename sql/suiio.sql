@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主機： 127.0.0.1:3308
--- 產生時間： 2021-09-18 22:29:41
+-- 產生時間： 2021-10-09 05:08:58
 -- 伺服器版本： 5.7.31
 -- PHP 版本： 7.3.21
 
@@ -27,9 +27,6 @@ USE `suiio`;
 
 --
 -- 資料表結構 `absentees`
---
--- 建立時間： 2021-09-18 16:38:49
--- 最後更新： 2021-09-18 16:38:49
 --
 
 DROP TABLE IF EXISTS `absentees`;
@@ -92,9 +89,6 @@ INSERT INTO `absentees` (`conference`, `absentees`) VALUES
 --
 -- 資料表結構 `account`
 --
--- 建立時間： 2021-09-18 16:38:49
--- 最後更新： 2021-09-18 16:38:49
---
 
 DROP TABLE IF EXISTS `account`;
 CREATE TABLE IF NOT EXISTS `account` (
@@ -110,7 +104,7 @@ CREATE TABLE IF NOT EXISTS `account` (
   PRIMARY KEY (`ID`,`category`) USING BTREE,
   KEY `category_ID_account` (`category`),
   KEY `officer_position_account` (`uploadBy`)
-) ENGINE=InnoDB AUTO_INCREMENT=97 DEFAULT CHARSET=utf8 COMMENT='收支紀錄';
+) ENGINE=InnoDB AUTO_INCREMENT=95 DEFAULT CHARSET=utf8 COMMENT='收支紀錄';
 
 --
 -- 傾印資料表的資料 `account`
@@ -205,13 +199,46 @@ INSERT INTO `account` (`ID`, `date`, `category`, `name`, `amount`, `content`, `r
 (92, '2019-12-27 12:38:01', 5, '球衣補助', -1500, '女籃', '球衣補助收據.jpg', '0', '體育長'),
 (93, '2019-12-20 16:39:20', 11, '冬至湯圓', -750, '湯圓、薑', '湯圓收據.jpg', '0', '生活長');
 
+--
+-- 觸發器 `account`
+--
+DROP TRIGGER IF EXISTS `account_DELETE`;
+DELIMITER $$
+CREATE TRIGGER `account_DELETE` AFTER DELETE ON `account` FOR EACH ROW BEGIN
+
+INSERT INTO events (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=OLD.uploadBy),"刪除","收支","account",OLD.ID);
+
+END
+$$
+DELIMITER ;
+DROP TRIGGER IF EXISTS `account_INSERT`;
+DELIMITER $$
+CREATE TRIGGER `account_INSERT` AFTER INSERT ON `account` FOR EACH ROW BEGIN
+
+INSERT INTO events (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=NEW.uploadBy),"新增","收支","account",NEW.ID);
+
+END
+$$
+DELIMITER ;
+DROP TRIGGER IF EXISTS `account_UPDATE_CONTENT`;
+DELIMITER $$
+CREATE TRIGGER `account_UPDATE_CONTENT` AFTER UPDATE ON `account` FOR EACH ROW IF OLD.status = NEW.status THEN
+INSERT INTO events (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=NEW.uploadBy),"修改","收支","account",OLD.ID);
+END IF
+$$
+DELIMITER ;
+DROP TRIGGER IF EXISTS `account_UPDATE_STATUS`;
+DELIMITER $$
+CREATE TRIGGER `account_UPDATE_STATUS` AFTER UPDATE ON `account` FOR EACH ROW IF OLD.status <> NEW.status THEN
+INSERT INTO events (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=NEW.uploadBy),"修改","狀態","account",OLD.ID);
+END IF
+$$
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
 -- 資料表結構 `account_comment`
---
--- 建立時間： 2021-09-18 17:16:55
--- 最後更新： 2021-09-18 22:17:57
 --
 
 DROP TABLE IF EXISTS `account_comment`;
@@ -236,9 +263,6 @@ INSERT INTO `account_comment` (`accountID`, `commentID`) VALUES
 
 --
 -- 資料表結構 `attendees`
---
--- 建立時間： 2021-09-18 16:38:49
--- 最後更新： 2021-09-18 16:38:49
 --
 
 DROP TABLE IF EXISTS `attendees`;
@@ -298,8 +322,6 @@ INSERT INTO `attendees` (`conference`, `attendees`) VALUES
 --
 -- 資料表結構 `budget`
 --
--- 建立時間： 2021-09-18 16:38:48
---
 
 DROP TABLE IF EXISTS `budget`;
 CREATE TABLE IF NOT EXISTS `budget` (
@@ -317,8 +339,6 @@ CREATE TABLE IF NOT EXISTS `budget` (
 --
 -- 資料表結構 `budgetcategory`
 --
--- 建立時間： 2021-09-18 16:38:48
---
 
 DROP TABLE IF EXISTS `budgetcategory`;
 CREATE TABLE IF NOT EXISTS `budgetcategory` (
@@ -331,9 +351,6 @@ CREATE TABLE IF NOT EXISTS `budgetcategory` (
 
 --
 -- 資料表結構 `category`
---
--- 建立時間： 2021-09-18 16:38:48
--- 最後更新： 2021-09-18 16:38:48
 --
 
 DROP TABLE IF EXISTS `category`;
@@ -366,9 +383,6 @@ INSERT INTO `category` (`ID`, `name`, `status`) VALUES
 --
 -- 資料表結構 `comment`
 --
--- 建立時間： 2021-09-18 22:14:26
--- 最後更新： 2021-09-18 22:28:24
---
 
 DROP TABLE IF EXISTS `comment`;
 CREATE TABLE IF NOT EXISTS `comment` (
@@ -380,33 +394,73 @@ CREATE TABLE IF NOT EXISTS `comment` (
   `sID` char(10) NOT NULL,
   PRIMARY KEY (`ID`),
   KEY `sID_comment` (`sID`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 COMMENT='留言';
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8 COMMENT='留言';
 
 --
 -- 傾印資料表的資料 `comment`
 --
 
 INSERT INTO `comment` (`ID`, `date`, `content`, `status`, `isHide`, `sID`) VALUES
-(1, '2021-09-19 06:16:03', '膠帶是買了幾捲..也太貴了?', '0', 0, '1110634025'),
-(2, '2021-09-19 06:17:06', '小冊子是什麼怎麼那麼貴?', '0', 0, '1110634025'),
-(3, '2021-09-19 06:17:28', '這膠帶哪裡買的...?', '0', 0, '1110634025'),
+(1, '2021-09-22 00:06:00', '這膠帶也太貴了...', '1', 1, '1110634025'),
+(2, '2021-09-19 06:17:06', '小冊子是什麼怎麼那麼貴?', '0', 1, '1110634025'),
+(3, '2021-09-19 06:17:28', '這膠帶哪裡買的...?', '0', 1, '1110634025'),
 (4, '2021-09-19 06:17:56', '水是買了幾箱...?', '0', 0, '1110634025'),
-(5, '2021-09-19 06:19:04', '十月支出好多...', '0', 0, '1110634025'),
-(6, '2021-09-19 06:19:28', '原來是大迎新', '0', 0, '1110634025'),
-(8, '2021-09-19 06:24:12', '這報表內容也太混了...開會內容就只打內容?', '0', 0, '1110634025'),
+(5, '2021-09-19 06:19:04', '十月支出好多...', '2', 1, '1110634025'),
+(6, '2021-09-19 06:19:28', '原來是大迎新', '0', 1, '1110634025'),
+(8, '2021-09-19 06:24:12', '這報表內容也太混了...開會內容就只打內容?', '0', 1, '1110634025'),
 (9, '2021-09-19 06:24:38', '怎麼突然增加表演獎金?', '0', 0, '1110634025'),
-(10, '2021-09-19 06:25:46', '怎麼突然增加場地費用?', '0', 0, '1110634025'),
-(11, '2021-09-19 06:27:02', '獎金金額也太高了!', '0', 0, '1110634025'),
-(12, '2021-09-19 06:27:32', '所以人員怎麼配置?', '0', 0, '1110634025'),
-(13, '2021-09-19 06:28:24', '這花費也太兇了', '0', 0, '1110634025');
+(10, '2021-09-19 06:25:46', '怎麼突然增加場地費用?', '0', 1, '1110634025'),
+(11, '2021-09-19 06:27:02', '獎金金額也太高了!', '0', 1, '1110634025'),
+(12, '2021-09-19 06:27:32', '所以人員怎麼配置?', '0', 1, '1110634025'),
+(13, '2021-09-19 06:28:24', '這花費也太兇了', '0', 0, '1110634025'),
+(14, '2021-09-21 19:56:17', '這花費也太兇了', '0', 1, '1110634029'),
+(15, '2021-09-23 00:08:58', '這花費也太兇了', '0', 1, '1110634025'),
+(16, '2021-10-09 13:02:52', '這膠帶也太貴了...', '1', 1, '1110634039');
+
+--
+-- 觸發器 `comment`
+--
+DROP TRIGGER IF EXISTS `comment_DELETE`;
+DELIMITER $$
+CREATE TRIGGER `comment_DELETE` AFTER UPDATE ON `comment` FOR EACH ROW IF NEW.isHide = 1 THEN
+
+INSERT INTO events (who,action,content,type,objectID) VALUES (NEW.sID,"刪除","留言","comment",NEW.ID);
+
+END IF
+$$
+DELIMITER ;
+DROP TRIGGER IF EXISTS `comment_INSERT`;
+DELIMITER $$
+CREATE TRIGGER `comment_INSERT` AFTER INSERT ON `comment` FOR EACH ROW BEGIN
+
+INSERT INTO events (who,action,content,type,objectID) VALUES (NEW.sID,"新增","留言","comment",NEW.ID);
+
+END
+$$
+DELIMITER ;
+DROP TRIGGER IF EXISTS `comment_UPDATE_CONTENT`;
+DELIMITER $$
+CREATE TRIGGER `comment_UPDATE_CONTENT` AFTER UPDATE ON `comment` FOR EACH ROW IF (OLD.status = NEW.status && NEW.isHide <> 1)THEN
+
+INSERT INTO events (who,action,content,type,objectID) VALUES (NEW.sID,"修改","留言","comment",NEW.ID);
+
+END IF
+$$
+DELIMITER ;
+DROP TRIGGER IF EXISTS `comment_UPDATE_STATUS`;
+DELIMITER $$
+CREATE TRIGGER `comment_UPDATE_STATUS` AFTER UPDATE ON `comment` FOR EACH ROW IF OLD.status <> NEW.status THEN
+
+INSERT INTO events (who,action,content,type,objectID) VALUES (NEW.sID,"修改","狀態","comment",NEW.ID);
+
+END IF
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
 --
 -- 資料表結構 `conference`
---
--- 建立時間： 2021-09-18 16:38:49
--- 最後更新： 2021-09-18 16:38:49
 --
 
 DROP TABLE IF EXISTS `conference`;
@@ -424,7 +478,7 @@ CREATE TABLE IF NOT EXISTS `conference` (
   KEY `category_ID_conference` (`category`),
   KEY `recorder` (`recorder`),
   KEY `host` (`host`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8 COMMENT='會議紀錄';
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COMMENT='會議紀錄';
 
 --
 -- 傾印資料表的資料 `conference`
@@ -442,13 +496,50 @@ INSERT INTO `conference` (`ID`, `category`, `name`, `date`, `attached_file`, `co
 (9, 6, '躲避球比賽會議', '2019-10-15', 'new.doc', '獎金總金額10000', '會長', '副會長', '0'),
 (16, 8, '卡K會議', '2020-03-18', '卡K.doc', '獎金總金額10000', '活動長', '副會長', '0');
 
+--
+-- 觸發器 `conference`
+--
+DROP TRIGGER IF EXISTS `conference_DELETE`;
+DELIMITER $$
+CREATE TRIGGER `conference_DELETE` AFTER DELETE ON `conference` FOR EACH ROW BEGIN
+
+INSERT INTO events (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=OLD.recorder),"刪除","會議記錄","conference",OLD.ID);
+
+END
+$$
+DELIMITER ;
+DROP TRIGGER IF EXISTS `conference_INSERT`;
+DELIMITER $$
+CREATE TRIGGER `conference_INSERT` AFTER INSERT ON `conference` FOR EACH ROW BEGIN
+
+INSERT INTO events (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=NEW.recorder),"新增","會議記錄","conference",NEW.ID);
+
+END
+$$
+DELIMITER ;
+DROP TRIGGER IF EXISTS `conference_UPDATE_CONTENT`;
+DELIMITER $$
+CREATE TRIGGER `conference_UPDATE_CONTENT` AFTER UPDATE ON `conference` FOR EACH ROW IF OLD.status = NEW.status THEN
+
+INSERT INTO events (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=OLD.recorder),"修改","會議記錄","conference",OLD.ID);
+
+END IF
+$$
+DELIMITER ;
+DROP TRIGGER IF EXISTS `conference_UPDATE_STATUS`;
+DELIMITER $$
+CREATE TRIGGER `conference_UPDATE_STATUS` AFTER UPDATE ON `conference` FOR EACH ROW IF OLD.status <> NEW.status THEN
+
+INSERT INTO events (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=OLD.recorder),"修改","狀態","conference",OLD.ID);
+
+END IF
+$$
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
 -- 資料表結構 `conference_comment`
---
--- 建立時間： 2021-09-18 17:12:18
--- 最後更新： 2021-09-18 22:27:33
 --
 
 DROP TABLE IF EXISTS `conference_comment`;
@@ -474,9 +565,6 @@ INSERT INTO `conference_comment` (`conferenceID`, `commentID`) VALUES
 
 --
 -- 資料表結構 `content`
---
--- 建立時間： 2021-09-18 16:38:49
--- 最後更新： 2021-09-18 16:38:49
 --
 
 DROP TABLE IF EXISTS `content`;
@@ -632,9 +720,74 @@ INSERT INTO `content` (`statement`, `account`) VALUES
 -- --------------------------------------------------------
 
 --
--- 資料表結構 `member`
+-- 資料表結構 `events`
 --
--- 建立時間： 2021-09-18 16:38:48
+
+DROP TABLE IF EXISTS `events`;
+CREATE TABLE IF NOT EXISTS `events` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `who` char(10) NOT NULL,
+  `action` varchar(20) NOT NULL,
+  `content` varchar(20) NOT NULL,
+  `type` varchar(20) NOT NULL,
+  `objectID` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `who` (`who`)
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8 COMMENT='通知';
+
+--
+-- 傾印資料表的資料 `events`
+--
+
+INSERT INTO `events` (`id`, `timestamp`, `who`, `action`, `content`, `type`, `objectID`) VALUES
+(1, '2021-10-09 02:38:39', '1110634004', '新增', '收支', 'account', 94),
+(2, '2021-10-09 03:41:16', '1110634004', '修改', '收支', 'account', 94),
+(3, '2021-10-09 03:41:32', '1110634004', '修改', '狀態', 'account', 94),
+(4, '2021-10-09 03:41:43', '1110634004', '修改', '狀態', 'account', 94),
+(5, '2021-10-09 03:44:42', '1110634004', '刪除', '收支', 'account', 94),
+(6, '2021-10-09 04:18:33', '1110634029', '新增', '會議記錄', 'conference', 17),
+(7, '2021-10-09 04:19:08', '1110634029', '修改', '會議記錄', 'conference', 17),
+(8, '2021-10-09 04:19:25', '1110634029', '修改', '會議記錄', 'conference', 17),
+(9, '2021-10-09 04:20:14', '1110634029', '修改', '狀態', 'conference', 17),
+(10, '2021-10-09 04:20:22', '1110634029', '修改', '會議記錄', 'conference', 17),
+(11, '2021-10-09 04:21:43', '1110634025', '新增', '財務報表', 'statement', 8),
+(12, '2021-10-09 04:27:30', '1110634025', '修改', '狀態', 'statement', 8),
+(13, '2021-10-09 04:27:49', '1110634025', '修改', '狀態', 'statement', 2),
+(14, '2021-10-09 04:27:56', '1110634025', '修改', '狀態', 'statement', 8),
+(15, '2021-10-09 04:28:51', '1110634025', '修改', '財務報表', 'statement', 8),
+(16, '2021-10-09 04:28:57', '1110634025', '修改', '財務報表', 'statement', 2),
+(17, '2021-10-09 04:29:07', '1110634025', '修改', '狀態', 'statement', 2),
+(18, '2021-10-09 04:29:13', '1110634025', '修改', '狀態', 'statement', 2),
+(19, '2021-10-09 04:29:34', '1110634025', '刪除', '財務報表', 'statement', 8),
+(20, '2021-10-09 04:29:53', '1110634029', '刪除', '會議記錄', 'conference', 17),
+(21, '2021-10-09 04:48:40', '1110634039', '新增', '留言', 'comment', 16),
+(22, '2021-10-09 04:50:47', '1110634039', '修改', '狀態', 'comment', 16),
+(24, '2021-10-09 04:53:18', '1110634039', '修改', '留言', 'comment', 16),
+(25, '2021-10-09 04:53:48', '1110634039', '修改', '留言', 'comment', 16),
+(26, '2021-10-09 04:53:48', '1110634039', '刪除', '留言', 'comment', 16),
+(27, '2021-10-09 04:56:01', '1110634039', '修改', '留言', 'comment', 16),
+(28, '2021-10-09 04:56:01', '1110634039', '刪除', '留言', 'comment', 16),
+(29, '2021-10-09 04:57:21', '1110634039', '修改', '留言', 'comment', 16),
+(30, '2021-10-09 04:57:21', '1110634039', '刪除', '留言', 'comment', 16),
+(31, '2021-10-09 04:57:48', '1110634039', '修改', '留言', 'comment', 16),
+(32, '2021-10-09 04:57:48', '1110634039', '刪除', '留言', 'comment', 16),
+(33, '2021-10-09 04:58:25', '1110634039', '修改', '留言', 'comment', 16),
+(34, '2021-10-09 04:58:58', '1110634039', '修改', '留言', 'comment', 16),
+(35, '2021-10-09 04:59:07', '1110634039', '修改', '留言', 'comment', 16),
+(36, '2021-10-09 04:59:07', '1110634039', '刪除', '留言', 'comment', 16),
+(37, '2021-10-09 05:00:47', '1110634039', '刪除', '留言', 'comment', 16),
+(38, '2021-10-09 05:00:47', '1110634039', '修改', '留言', 'comment', 16),
+(39, '2021-10-09 05:01:56', '1110634039', '修改', '留言', 'comment', 16),
+(40, '2021-10-09 05:02:05', '1110634039', '刪除', '留言', 'comment', 16),
+(41, '2021-10-09 05:02:30', '1110634039', '修改', '留言', 'comment', 16),
+(42, '2021-10-09 05:02:38', '1110634039', '刪除', '留言', 'comment', 16),
+(43, '2021-10-09 05:02:52', '1110634039', '刪除', '留言', 'comment', 16);
+
+-- --------------------------------------------------------
+
+--
+-- 資料表結構 `member`
 --
 
 DROP TABLE IF EXISTS `member`;
@@ -661,19 +814,17 @@ INSERT INTO `member` (`sID`, `password`, `name`, `nickname`, `sex`, `birth`) VAL
 ('1110634006', '$2b$10$3mgQHwb3hw6N5iSggoKn4umiifi/tkRj.bQDsuDwUkPaZ6CkgZp/C', '黃子瑜', '小黃', '女', '2001-10-07'),
 ('1110634007', '$2b$10$Z3WqwGAU3JgI5tKY3bVFy.xQiqwLVQUWfFwC6BzP3JEMDkbqbJ1ci', '王小明', '小王', '男', '2021-07-14'),
 ('1110634015', '$2b$10$X4UkvXoMVY2VWFGjrcZvWuCLBHOUnV0Yqya0PjSY.13w9/mKeo6CW', '林均蓉', '小林', '女', '2001-09-10'),
-('1110634025', '$2b$10$3SpXuHeaRuS3zGArGYpHEuwG/qHOZbOcxAUIcDnQh/NcIq3zFF8.6', '廖建榕', '小廖', '男', '2001-09-13'),
+('1110634025', '$2b$10$MSASNfqCaMFfEyNaLI8PQuyXg5q385CSW2vH2BFtEAnOQQ2pVENo6', '廖建榕', 'Jrong', '男', '2001-09-13'),
 ('1110634029', '$2b$10$ohzC5BtDJKoe.FMMiHKA9Ol5TxSuCvMn8PZ44eXs/dPZHqeCApXAe', '蔣明諭', '小蔣', '男', '2002-02-01'),
 ('1110634034', '$2b$10$teUq4d2xRjKzfmhhJDfF4uxkR17aHqOeBT/DEmEn3khQ930HHgTKW', '洪柚喆', '小洪', '男', '2021-07-14'),
 ('1110634039', '$2b$10$n1OQpYXkpqZM6PNedfr9gOJLBdOfJMjdznVjPb5uGfE.e/F582lki', '陳言睿', '小陳', '男', '2001-11-21'),
-('1110634041', '$2b$10$FmhLWguxE.5ItiXNdILVLOsZrkdgywbHJtn/bTAZw2kyg/f8sN/Uu', '詹翔壹', '小詹', '男', '2002-02-28');
+('1110634041', '$2b$10$FmhLWguxE.5ItiXNdILVLOsZrkdgywbHJtn/bTAZw2kyg/f8sN/Uu', '詹翔壹', '小詹', '男', '2002-02-28'),
+('1110634042', '$2b$10$ZhRlHOI00XR4AiKkAfWQQOM3h39WZkwsCvQ90xMDG4pRWM4rO7s/.', '王小明', '小王', '男', '2021-07-14');
 
 -- --------------------------------------------------------
 
 --
 -- 資料表結構 `officer`
---
--- 建立時間： 2021-09-18 16:38:49
--- 最後更新： 2021-09-18 16:38:49
 --
 
 DROP TABLE IF EXISTS `officer`;
@@ -708,9 +859,6 @@ INSERT INTO `officer` (`permission`, `position`, `sID`) VALUES
 --
 -- 資料表結構 `statement`
 --
--- 建立時間： 2021-09-18 16:38:49
--- 最後更新： 2021-09-18 16:38:49
---
 
 DROP TABLE IF EXISTS `statement`;
 CREATE TABLE IF NOT EXISTS `statement` (
@@ -724,7 +872,7 @@ CREATE TABLE IF NOT EXISTS `statement` (
   PRIMARY KEY (`ID`,`category`) USING BTREE,
   KEY `officer_position_statement` (`uploadBy`),
   KEY `category_ID_statement` (`category`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8 COMMENT='財務報表';
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COMMENT='財務報表';
 
 --
 -- 傾印資料表的資料 `statement`
@@ -739,13 +887,50 @@ INSERT INTO `statement` (`ID`, `category`, `name`, `date`, `status`, `uploadBy`,
 (6, 0, '資管科十二月份財務報表', '2020-01-02 00:00:00', '0', '財務長', 117119),
 (7, 4, '聖誕晚會財務報表', '2020-01-02 00:00:00', '0', '財務長', 0);
 
+--
+-- 觸發器 `statement`
+--
+DROP TRIGGER IF EXISTS `statement_DELETE`;
+DELIMITER $$
+CREATE TRIGGER `statement_DELETE` AFTER DELETE ON `statement` FOR EACH ROW BEGIN
+
+INSERT INTO events (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=OLD.uploadBy),"刪除","財務報表","statement",OLD.ID);
+
+END
+$$
+DELIMITER ;
+DROP TRIGGER IF EXISTS `statement_INSERT`;
+DELIMITER $$
+CREATE TRIGGER `statement_INSERT` AFTER INSERT ON `statement` FOR EACH ROW BEGIN
+
+INSERT INTO events (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=NEW.uploadBy),"新增","財務報表","statement",NEW.ID);
+
+END
+$$
+DELIMITER ;
+DROP TRIGGER IF EXISTS `statement_UPDATE_CONTENT`;
+DELIMITER $$
+CREATE TRIGGER `statement_UPDATE_CONTENT` AFTER UPDATE ON `statement` FOR EACH ROW IF OLD.status = NEW.status THEN
+
+INSERT INTO events (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=OLD.uploadBy),"修改","財務報表","statement",OLD.ID);
+
+END IF
+$$
+DELIMITER ;
+DROP TRIGGER IF EXISTS `statement_UPDATE_STATUS`;
+DELIMITER $$
+CREATE TRIGGER `statement_UPDATE_STATUS` AFTER UPDATE ON `statement` FOR EACH ROW IF OLD.status <> NEW.status THEN
+
+INSERT INTO events (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=OLD.uploadBy),"修改","狀態","statement",OLD.ID);
+
+END IF
+$$
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
 -- 資料表結構 `statement_comment`
---
--- 建立時間： 2021-09-18 17:09:58
--- 最後更新： 2021-09-18 22:28:25
 --
 
 DROP TABLE IF EXISTS `statement_comment`;
@@ -763,7 +948,10 @@ CREATE TABLE IF NOT EXISTS `statement_comment` (
 INSERT INTO `statement_comment` (`statementID`, `commentID`) VALUES
 (2, 5),
 (2, 6),
-(2, 13);
+(2, 13),
+(2, 14),
+(2, 15),
+(2, 16);
 
 --
 -- 已傾印資料表的限制式
@@ -824,6 +1012,12 @@ ALTER TABLE `conference_comment`
 ALTER TABLE `content`
   ADD CONSTRAINT `account_ID` FOREIGN KEY (`account`) REFERENCES `account` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `statement_ID` FOREIGN KEY (`statement`) REFERENCES `statement` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- 資料表的限制式 `events`
+--
+ALTER TABLE `events`
+  ADD CONSTRAINT `who` FOREIGN KEY (`who`) REFERENCES `member` (`sID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- 資料表的限制式 `officer`
