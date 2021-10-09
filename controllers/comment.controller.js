@@ -23,8 +23,8 @@ class Comment {
         if (body.isHide == true || body.isHide == false) {
             isHide = body.isHide;
         } else {
-            res.status(401).json({ "result": "isHide Error." });
-            return new Promise((resolve, reject) => {});
+            res.status(400).json({ "result": "isHide Error." });
+            return new Promise((resolve, reject) => { });
         }
 
         const time = new Date();
@@ -50,29 +50,29 @@ class Comment {
                         commentModels.searchID().then((commentID) => {
                             commentModels.addTables(tables, tableID, commentID).then(() => {
                                 res.status(201).json({ "result": true });
-                                return new Promise((resolve, reject) => {});
+                                return new Promise((resolve, reject) => { });
                             }).catch((err) => {
                                 res.status(500).json({ "result": err });
-                                return new Promise((resolve, reject) => {});
+                                return new Promise((resolve, reject) => { });
                             });
                         }).catch((err) => {
                             res.status(500).json({ "result": err });
-                            return new Promise((resolve, reject) => {});
+                            return new Promise((resolve, reject) => { });
                         });
                     }).catch((err) => {
                         res.status(500).json({ "result": err });
-                        return new Promise((resolve, reject) => {});
+                        return new Promise((resolve, reject) => { });
                     });
                 } else {
-                    res.status(401).json({ "result": "No this table." });
-                    return new Promise((resolve, reject) => {});
+                    res.status(404).json({ "result": "No this table." });
+                    return new Promise((resolve, reject) => { });
                 }
             } else {
-                res.status(400).json({ "result": "Permission denied." });
-                return new Promise((resolve, reject) => {});
+                res.status(403).json({ "result": "Permission denied." });
+                return new Promise((resolve, reject) => { });
             }
         }).catch(() => {
-            res.status(403).json({ 'result': 'Not Login' });
+            res.status(401).json({ 'result': 'Not Login' });
         });
     }
     fetchByID = (req, res) => {
@@ -84,14 +84,14 @@ class Comment {
         if (tables == "account" || tables == "statement" || tables == "conference") {
             commentModels.fetchByID(tables, tableID).then((result) => {
                 res.status(200).json(result);
-                return new Promise((resolve, reject) => {});
+                return new Promise((resolve, reject) => { });
             }).catch((err) => {
                 res.status(500).json({ "result": err });
-                return new Promise((resolve, reject) => {});
+                return new Promise((resolve, reject) => { });
             });
         } else {
-            res.status(401).json({ "result": "No this table." });
-            return new Promise((resolve, reject) => {});
+            res.status(404).json({ "result": "No this table." });
+            return new Promise((resolve, reject) => { });
         }
 
     }
@@ -102,14 +102,14 @@ class Comment {
             commentModels.fetchByMember(sID).then((result) => {
                 result = dateFormat(result);
                 res.status(200).json(result);
-                return new Promise((resolve, reject) => {});
+                return new Promise((resolve, reject) => { });
             }).catch((err) => {
                 res.status(500).json({ "result": err });
-                return new Promise((resolve, reject) => {});
+                return new Promise((resolve, reject) => { });
             })
 
         }).catch(() => {
-            res.status(403).json({ 'result': 'Not Login' });
+            res.status(401).json({ 'result': 'Not Login' });
         })
     }
     fetchAll = (req, res) => {
@@ -138,17 +138,22 @@ class Comment {
                         if (index == array.length - 1) {
                             if (index2 == array2.length - 1) {
                                 res.status(200).json(json);
-                                return new Promise((resolve, reject) => {});
+                                return new Promise((resolve, reject) => { });
                             }
                         }
                     }).catch((err) => {
-                        res.status(500).json({ "result": err });
-                        return new Promise((resolve, reject) => {});
+                        if (err == "Comment does not exist.") {
+                            res.status(404).json({ "result": err });
+                            return new Promise((resolve, reject) => { });
+                        } else {
+                            res.status(500).json({ "result": err });
+                            return new Promise((resolve, reject) => { });
+                        }
                     });
                 });
             }).catch((err) => {
                 res.status(500).json({ "result": err });
-                return new Promise((resolve, reject) => {});
+                return new Promise((resolve, reject) => { });
             });
         })
 
@@ -177,22 +182,22 @@ class Comment {
 
                     commentModels.update(comment).then(() => {
                         res.status(200).json({ "result": true });
-                        return new Promise((resolve, reject) => {});
+                        return new Promise((resolve, reject) => { });
                     }).catch((err) => {
                         res.status(500).json({ "result": err });
-                        return new Promise((resolve, reject) => {});
+                        return new Promise((resolve, reject) => { });
                     });
 
                 } else {
-                    res.status(400).json({ "result": "Permission denied." });
-                    return new Promise((resolve, reject) => {});
+                    res.status(403).json({ "result": "Permission denied." });
+                    return new Promise((resolve, reject) => { });
                 }
             }).catch((err) => {
                 res.status(500).json({ "result": err });
-                return new Promise((resolve, reject) => {});
+                return new Promise((resolve, reject) => { });
             })
         }).catch(() => {
-            res.status(403).json({ 'result': 'Not Login' });
+            res.status(401).json({ 'result': 'Not Login' });
         });
     }
     delete = (req, res) => {
@@ -204,21 +209,21 @@ class Comment {
                 if (req.session.permission !== '組織成員' || req.session.sID == sID) {
                     commentModels.delete(commentID).then(() => {
                         res.status(200).json({ "result": true });
-                        return new Promise((resolve, reject) => {});
+                        return new Promise((resolve, reject) => { });
                     }).catch((err) => {
                         res.status(500).json({ "result": err });
-                        return new Promise((resolve, reject) => {});
+                        return new Promise((resolve, reject) => { });
                     })
                 } else {
-                    res.status(400).json({ "result": "Permission denied." });
-                    return new Promise((resolve, reject) => {});
+                    res.status(403).json({ "result": "Permission denied." });
+                    return new Promise((resolve, reject) => { });
                 }
             }).catch((error) => {
                 res.status(500).json({ "result": error });
-                return new Promise((resolve, reject) => {});
+                return new Promise((resolve, reject) => { });
             })
         }).catch(() => {
-            res.status(403).json({ 'result': 'Not Login' });
+            res.status(401).json({ 'result': 'Not Login' });
         })
     }
 }
