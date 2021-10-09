@@ -60,7 +60,7 @@ const check_sID = (sID) => {
 const sendErrorMsg = (res, statusCode, error) => {
     if (!error)
         error = "Some error occurred in the api of officer.";
-    if (typeof(error) == "object")
+    if (typeof (error) == "object")
         error = error.message;
     res.status(statusCode).send(error);
     return console.error(error);
@@ -75,32 +75,32 @@ exports.add = (req, res) => {
                 Officer.check(sID, (error, results) => {
                     if (error || !results.length) {
                         res.status(500).json({ "result": error })
-                        return new Promise((resolve, reject) => {});
+                        return new Promise((resolve, reject) => { });
                     }
                     if (results[0].total == "0") {
                         res.status(404).json({ "result": "Member Not Found" })
-                        return new Promise((resolve, reject) => {});
+                        return new Promise((resolve, reject) => { });
                     }
                     if (results[0].total == "1") {
                         Officer.add(req, (error, results) => {
                             if (error || !results.affectedRows)
                                 return sendErrorMsg(res, 500, error);
                             res.status(201).send("Add Officer Successfully.");
-                            return new Promise((resolve, reject) => {});
+                            return new Promise((resolve, reject) => { });
                         });
                     }
                 });
             } else {
-                res.status(401).json({ "result": "sID format error" });
-                return new Promise((resolve, reject) => {});
+                res.status(400).json({ "result": "sID format error" });
+                return new Promise((resolve, reject) => { });
             }
         } else {
-            res.status(400).json({ 'result': 'Permission denied.' })
-            return new Promise((resolve, reject) => {});
+            res.status(403).json({ 'result': 'Permission denied.' })
+            return new Promise((resolve, reject) => { });
         }
     }).catch(() => {
-        res.status(403).json({ 'result': 'Not Login' })
-        return new Promise((resolve, reject) => {});
+        res.status(401).json({ 'result': 'Not Login' })
+        return new Promise((resolve, reject) => { });
     })
 
 };
@@ -119,16 +119,16 @@ exports.delete = (req, res) => {
                     res.status(200).send("Delete Officer Successfully.");
                 }).catch(error => sendErrorMsg(res, 500, error));
             } else {
-                res.status(401).json({ "result": "sID format error" });
-                return new Promise((resolve, reject) => {});
+                res.status(400).json({ "result": "sID format error" });
+                return new Promise((resolve, reject) => { });
             }
         } else {
-            res.status(400).json({ 'result': 'Permission denied.' })
-            return new Promise((resolve, reject) => {});
+            res.status(403).json({ 'result': 'Permission denied.' })
+            return new Promise((resolve, reject) => { });
         }
     }).catch(() => {
-        res.status(403).json({ 'result': 'Not Login' })
-        return new Promise((resolve, reject) => {});
+        res.status(401).json({ 'result': 'Not Login' })
+        return new Promise((resolve, reject) => { });
     })
 
 
@@ -147,7 +147,7 @@ exports.fetchAll = (req, res) => {
         if (!results.length)
             return sendErrorMsg(res, 404, "There is nothing to show.");
         res.status(200).send(results);
-        return new Promise((resolve, reject) => {});
+        return new Promise((resolve, reject) => { });
     });
 
 };
@@ -161,7 +161,7 @@ exports.fetchByPosition = (req, res) => {
         if (!results.length)
             return sendErrorMsg(res, 404, "There is nothing to show.");
         res.status(200).send(results);
-        return new Promise((resolve, reject) => {});
+        return new Promise((resolve, reject) => { });
     });
 
 };
@@ -175,7 +175,7 @@ exports.fetchByPermission = (req, res) => {
         if (!results.length)
             return sendErrorMsg(res, 404, "There is nothing to show.");
         res.status(200).send(results);
-        return new Promise((resolve, reject) => {});
+        return new Promise((resolve, reject) => { });
     });
 
 };
@@ -193,11 +193,11 @@ exports.updateOfficer = (req, res) => {
                 Officer.check(sID, (error, results) => {
                     if (error || !results.length) {
                         res.status(500).json({ "result": error })
-                        return new Promise((resolve, reject) => {});
+                        return new Promise((resolve, reject) => { });
                     }
                     if (results[0].total == "0") {
                         res.status(404).json({ "result": "Member Not Found" })
-                        return new Promise((resolve, reject) => {});
+                        return new Promise((resolve, reject) => { });
                     }
                     if (results[0].total == "1") {
                         Officer.updateOfficer(req, (error, results) => {
@@ -206,21 +206,21 @@ exports.updateOfficer = (req, res) => {
                             if (!results.affectedRows)
                                 return sendErrorMsg(res, 404, "The condition is not exist.");
                             res.status(200).json({ "result": true });
-                            return new Promise((resolve, reject) => {});
+                            return new Promise((resolve, reject) => { });
                         });
                     }
                 });
             } else {
-                res.status(401).json({ "result": "sID format error" });
-                return new Promise((resolve, reject) => {});
+                res.status(400).json({ "result": "sID format error" });
+                return new Promise((resolve, reject) => { });
             }
         } else {
-            res.status(400).json({ 'result': 'Permission denied.' })
-            return new Promise((resolve, reject) => {});
+            res.status(403).json({ 'result': 'Permission denied.' })
+            return new Promise((resolve, reject) => { });
         }
     }).catch(() => {
-        res.status(403).json({ 'result': 'Not Login' })
-        return new Promise((resolve, reject) => {});
+        res.status(401).json({ 'result': 'Not Login' })
+        return new Promise((resolve, reject) => { });
     })
 };
 
@@ -252,7 +252,7 @@ exports.updatePermission = (req, res) => {
             }
             if (cnt > 0) {
                 res.status(500).json({ "result": "Permission cannot be repeated" });
-                return new Promise((resolve, reject) => {});
+                return new Promise((resolve, reject) => { });
             } else {
                 Officer.updatePermission(req, (error, results) => {
                     if (error)
@@ -260,16 +260,16 @@ exports.updatePermission = (req, res) => {
                     if (!results.affectedRows)
                         return sendErrorMsg(res, 404, "The condition is not exist.");
                     res.status(200).json({ "result": true });
-                    return new Promise((resolve, reject) => {});
+                    return new Promise((resolve, reject) => { });
                 });
             }
         } else {
-            res.status(400).json({ 'result': 'Permission denied.' })
-            return new Promise((resolve, reject) => {});
+            res.status(403).json({ 'result': 'Permission denied.' })
+            return new Promise((resolve, reject) => { });
         }
     }).catch(() => {
-        res.status(403).json({ 'result': 'Not Login' })
-        return new Promise((resolve, reject) => {});
+        res.status(401).json({ 'result': 'Not Login' })
+        return new Promise((resolve, reject) => { });
     })
 
 };

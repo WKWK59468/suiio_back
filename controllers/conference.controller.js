@@ -31,15 +31,15 @@ class Conference {
         models.list(req, (err, results) => {
             if (err) {
                 res.status(500).json(errMessage(500, err));
-                return new Promise((resolve, reject) => {});
+                return new Promise((resolve, reject) => { });
             }
             if (!results.length) {
                 res.status(404).json(errMessage(404, err));
-                return new Promise((resolve, reject) => {});
+                return new Promise((resolve, reject) => { });
             }
             results = dateFormat(results);
             res.status(200).json(results);
-            return new Promise((resolve, reject) => {});
+            return new Promise((resolve, reject) => { });
         });
 
     };
@@ -49,29 +49,29 @@ class Conference {
         models.fetchBycategory(req, (err, results) => {
             if (err) {
                 res.status(500).json(errMessage(500, err));
-                return new Promise((resolve, reject) => {});
+                return new Promise((resolve, reject) => { });
             }
             if (!results.length) {
                 res.status(404).json(errMessage(404, err));
-                return new Promise((resolve, reject) => {});
+                return new Promise((resolve, reject) => { });
             }
             results = dateFormat(results)
             res.status(200).json(results);
-            return new Promise((resolve, reject) => {});
+            return new Promise((resolve, reject) => { });
         });
 
     };
 
     fetchContent = (req, res) => {
 
-        models.fetchOne(req, async(err, results) => {
+        models.fetchOne(req, async (err, results) => {
             if (err) {
                 res.status(500).json(errMessage(500, err));
-                return new Promise((resolve, reject) => {});
+                return new Promise((resolve, reject) => { });
             }
             if (!results.length) {
                 res.status(404).json(errMessage(404, err));
-                return new Promise((resolve, reject) => {});
+                return new Promise((resolve, reject) => { });
             }
             await models.fetchAbsentees(req, (err, absentees) => {
                 let arr = [];
@@ -87,7 +87,7 @@ class Conference {
                 });
                 results[0]["attendees"] = arr2;
                 res.status(200).json(results);
-                return new Promise((resolve, reject) => {});
+                return new Promise((resolve, reject) => { });
             });
         });
 
@@ -123,20 +123,20 @@ class Conference {
                             }
                         }).then(() => {
                             res.status(200).json(successMessage);
-                            return new Promise((resolve, reject) => {});
+                            return new Promise((resolve, reject) => { });
                         });
                     })
                 ).catch(err => {
                     res.status(500).json(errMessage(500, err));
-                    return new Promise((resolve, reject) => {});
+                    return new Promise((resolve, reject) => { });
                 })
             } else {
-                res.status(400).json({ 'result': 'Permission denied.' })
-                return new Promise((resolve, reject) => {});
+                res.status(403).json({ 'result': 'Permission denied.' })
+                return new Promise((resolve, reject) => { });
             }
         }).catch(() => {
-            res.status(403).json({ 'result': 'Not Login' })
-            return new Promise((resolve, reject) => {});
+            res.status(401).json({ 'result': 'Not Login' })
+            return new Promise((resolve, reject) => { });
         })
     };
 
@@ -147,26 +147,26 @@ class Conference {
                     models.updateStatus(req, (err, results) => {
                         if (err) {
                             res.status(500).json(errMessage(500, err));
-                            return new Promise((resolve, reject) => {});
+                            return new Promise((resolve, reject) => { });
                         }
                         if (!results.affectedRows) {
                             res.status(500).json(errMessage(500, err));
-                            return new Promise((resolve, reject) => {});
+                            return new Promise((resolve, reject) => { });
                         }
                         res.status(200).json(successMessage);
-                        return new Promise((resolve, reject) => {});
+                        return new Promise((resolve, reject) => { });
                     });
                 } else {
-                    res.status(401).json({ "result": "Please Enter 0 ~ 4." });
-                    return new Promise((resolve, reject) => {});
+                    res.status(400).json({ "result": "Please Enter 0 ~ 4." });
+                    return new Promise((resolve, reject) => { });
                 }
             } else {
-                res.status(400).json({ 'result': 'Permission denied.' })
-                return new Promise((resolve, reject) => {});
+                res.status(403).json({ 'result': 'Permission denied.' })
+                return new Promise((resolve, reject) => { });
             }
         }).catch(() => {
-            res.status(403).json({ 'result': 'Not Login' })
-            return new Promise((resolve, reject) => {});
+            res.status(401).json({ 'result': 'Not Login' })
+            return new Promise((resolve, reject) => { });
         })
     };
 
@@ -176,22 +176,22 @@ class Conference {
                 models.updateContent(req, (err, results) => {
                     if (err) {
                         res.status(500).json(errMessage(500, err));
-                        return new Promise((resolve, reject) => {});
+                        return new Promise((resolve, reject) => { });
                     }
                     if (!results.affectedRows) {
                         res.status(500).json(errMessage(500, err));
-                        return new Promise((resolve, reject) => {});
+                        return new Promise((resolve, reject) => { });
                     }
                     res.status(200).json(successMessage);
-                    return new Promise((resolve, reject) => {});
+                    return new Promise((resolve, reject) => { });
                 });
             } else {
-                res.status(400).json({ 'result': 'Permission denied.' })
-                return new Promise((resolve, reject) => {});
+                res.status(403).json({ 'result': 'Permission denied.' })
+                return new Promise((resolve, reject) => { });
             }
         }).catch(() => {
-            res.status(403).json({ 'result': 'Not Login' })
-            return new Promise((resolve, reject) => {});
+            res.status(401).json({ 'result': 'Not Login' })
+            return new Promise((resolve, reject) => { });
         })
     };
 }
