@@ -10,21 +10,21 @@ class categoryController {
                     if (err) {
                         if (err.sqlState == "23000") {
                             res.status(500).json({ "result": "Duplicate primary key" });
-                            return new Promise((resolve, reject) => {});
+                            return new Promise((resolve, reject) => { });
                         }
                         res.status(500).json({ "result": err });
-                        return new Promise((resolve, reject) => {});
+                        return new Promise((resolve, reject) => { });
                     }
                     res.status(201).json({ "result": true });
-                    return new Promise((resolve, reject) => {});
+                    return new Promise((resolve, reject) => { });
                 })
             } else {
-                res.status(400).json({ 'result': 'Permission denied.' })
-                return new Promise((resolve, reject) => {});
+                res.status(403).json({ 'result': 'Permission denied.' })
+                return new Promise((resolve, reject) => { });
             }
         }).catch(() => {
-            res.status(403).json({ 'result': 'Not Login' })
-            return new Promise((resolve, reject) => {});
+            res.status(401).json({ 'result': 'Not Login' })
+            return new Promise((resolve, reject) => { });
         })
     }
     listCategory = (req, res) => {
@@ -33,11 +33,11 @@ class categoryController {
         models.list(req, (err, results) => {
             if (err) {
                 res.status(500).json({ "result": err })
-                return new Promise((resolve, reject) => {});
+                return new Promise((resolve, reject) => { });
             }
             if (!results.length) {
                 res.status(404).json({ "result": "There is nothing to show." });
-                return new Promise((resolve, reject) => {});
+                return new Promise((resolve, reject) => { });
             }
             results.forEach(element => {
                 if (element.ID != 1 && element.ID != 9) {
@@ -45,7 +45,7 @@ class categoryController {
                 }
             });
             res.status(200).json(arr);
-            return new Promise((resolve, reject) => {});
+            return new Promise((resolve, reject) => { });
         });
 
     }
@@ -57,18 +57,18 @@ class categoryController {
             models.StatusOn(req, (err, results) => {
                 if (err) {
                     res.status(500).json({ "result": err })
-                    return new Promise((resolve, reject) => {});
+                    return new Promise((resolve, reject) => { });
                 }
                 if (!results.length) {
                     res.status(404).json({ "result": "There is nothing to show." });
-                    return new Promise((resolve, reject) => {});
+                    return new Promise((resolve, reject) => { });
                 }
                 res.status(200).json(results);
-                return new Promise((resolve, reject) => {});
+                return new Promise((resolve, reject) => { });
             });
         } else {
-            res.status(401).json({ "result": "Please Enter 0 or 1." });
-            return new Promise((resolve, reject) => {});
+            res.status(400).json({ "result": "Please Enter 0 or 1." });
+            return new Promise((resolve, reject) => { });
         }
 
     }
@@ -78,22 +78,22 @@ class categoryController {
                 models.del(req, (err, results) => {
                     if (err) {
                         res.status(500).json({ "result": err });
-                        return new Promise((resolve, reject) => {});
+                        return new Promise((resolve, reject) => { });
                     }
                     if (!results.affectedRows) {
                         res.status(404).json({ "result": "Can't find category." });
-                        return new Promise((resolve, reject) => {});
+                        return new Promise((resolve, reject) => { });
                     }
                     res.status(200).json({ "result": true });
-                    return new Promise((resolve, reject) => {});
+                    return new Promise((resolve, reject) => { });
                 })
             } else {
-                res.status(400).json({ 'result': 'Permission denied.' })
-                return new Promise((resolve, reject) => {});
+                res.status(403).json({ 'result': 'Permission denied.' })
+                return new Promise((resolve, reject) => { });
             }
         }).catch(() => {
-            res.status(403).json({ 'result': 'Not Login' })
-            return new Promise((resolve, reject) => {});
+            res.status(401).json({ 'result': 'Not Login' })
+            return new Promise((resolve, reject) => { });
         })
 
     }
@@ -102,29 +102,29 @@ class categoryController {
             if (permission !== '組織成員') {
                 const status = req.body.status;
                 if (status == 0 || status == 1) {
-                    models.setStatus(req, function(err, results, fields) {
+                    models.setStatus(req, function (err, results, fields) {
                         if (err) {
                             res.status(500).json({ "result": err });
-                            return new Promise((resolve, reject) => {});
+                            return new Promise((resolve, reject) => { });
                         }
                         if (!results.affectedRows) {
                             res.status(404).json({ "result": "Can't find category." });
-                            return new Promise((resolve, reject) => {});
+                            return new Promise((resolve, reject) => { });
                         }
                         res.status(200).json({ "result": true });
-                        return new Promise((resolve, reject) => {});
+                        return new Promise((resolve, reject) => { });
                     });
                 } else {
-                    res.status(401).json({ "result": "Please Enter 0 or 1." });
-                    return new Promise((resolve, reject) => {});
+                    res.status(400).json({ "result": "Please Enter 0 or 1." });
+                    return new Promise((resolve, reject) => { });
                 }
             } else {
-                res.status(400).json({ 'result': 'Permission denied.' })
-                return new Promise((resolve, reject) => {});
+                res.status(403).json({ 'result': 'Permission denied.' })
+                return new Promise((resolve, reject) => { });
             }
         }).catch(() => {
-            res.status(403).json({ 'result': 'Not Login' })
-            return new Promise((resolve, reject) => {});
+            res.status(401).json({ 'result': 'Not Login' })
+            return new Promise((resolve, reject) => { });
         })
     }
 
