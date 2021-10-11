@@ -71,17 +71,17 @@ class UserController {
             models.list(req, (err, results) => {
                 if (err) {
                     res.status(500).json({ "result": "false" })
-                    return new Promise((resolve, reject) => {});
+                    return new Promise((resolve, reject) => { });
                 }
                 if (!results.length) {
                     res.sendStatus(404).json({ "result": "There is nothing to show." });
-                    return new Promise((resolve, reject) => {});
+                    return new Promise((resolve, reject) => { });
                 }
                 results = dateFormat(results);
                 res.status(200).json(results);
             })
         }).catch(() => {
-            res.status(403).json({ 'result': 'Not Login' })
+            res.status(401).json({ 'result': 'Not Login' })
         })
     }
 
@@ -90,26 +90,26 @@ class UserController {
             if (permission == "組織負責人") {
                 const sID = req.body.sID;
                 if (check_sID(sID)) {
-                    models.add(req).then(function(pwd) {
+                    models.add(req).then(function (pwd) {
                         mail.sendMail(req, pwd).then(() => {
                             res.status(201).json({ "result": true });
-                            return new Promise((resolve, reject) => {});
+                            return new Promise((resolve, reject) => { });
                         });
                     }).catch((err) => {
                         res.status(500).json({ "result": err });
-                        return new Promise((resolve, reject) => {});
+                        return new Promise((resolve, reject) => { });
                     })
                 } else {
-                    res.status(401).json({ "result": "format error" });
-                    return new Promise((resolve, reject) => {});
+                    res.status(400).json({ "result": "format error" });
+                    return new Promise((resolve, reject) => { });
                 }
             } else {
-                res.status(400).json({ 'result': 'Permission denied.' })
-                return new Promise((resolve, reject) => {});
+                res.status(403).json({ 'result': 'Permission denied.' })
+                return new Promise((resolve, reject) => { });
             }
         }).catch(() => {
-            res.status(403).json({ 'result': 'Not Login' })
-            return new Promise((resolve, reject) => {});
+            res.status(401).json({ 'result': 'Not Login' })
+            return new Promise((resolve, reject) => { });
         });
     }
 
@@ -121,26 +121,26 @@ class UserController {
                     models.del(req, (err, results) => {
                         if (err) {
                             res.status(500).json({ 'result': err });
-                            return new Promise((resolve, reject) => {});
+                            return new Promise((resolve, reject) => { });
                         }
                         if (!results.affectedRows) {
                             res.status(404).json({ 'result': "Can't find member." });
-                            return new Promise((resolve, reject) => {});
+                            return new Promise((resolve, reject) => { });
                         }
                         res.status(200).json({ 'result': true });
-                        return new Promise((resolve, reject) => {});
+                        return new Promise((resolve, reject) => { });
                     });
                 } else {
-                    res.status(401).json({ "result": "format error" });
-                    return new Promise((resolve, reject) => {});
+                    res.status(400).json({ "result": "format error" });
+                    return new Promise((resolve, reject) => { });
                 }
             } else {
-                res.status(400).json({ 'result': 'Permission denied.' })
-                return new Promise((resolve, reject) => {});
+                res.status(403).json({ 'result': 'Permission denied.' })
+                return new Promise((resolve, reject) => { });
             }
         }).catch(() => {
-            res.status(403).json({ "result": "Not Login" });
-            return new Promise((resolve, reject) => {});
+            res.status(401).json({ "result": "Not Login" });
+            return new Promise((resolve, reject) => { });
         });
     }
 
@@ -157,33 +157,38 @@ class UserController {
                         //patch
                         models.patch(req).then(() => {
                             res.status(200).json({ 'result': true });
-                            return new Promise((resolve, reject) => {});
+                            return new Promise((resolve, reject) => { });
                         }).catch((patcherr) => {
                             if (patcherr == "sex err") {
-                                res.status(401).json({ "result": patcherr });
-                                return new Promise((resolve, reject) => {});
+                                res.status(400).json({ "result": patcherr });
+                                return new Promise((resolve, reject) => { });
                             } else if (err == "update err") {
                                 res.status(404).json({ "result": patcherr });
-                                return new Promise((resolve, reject) => {});
+                                return new Promise((resolve, reject) => { });
                             } else {
                                 res.status(500).json({ "result": patcherr });
-                                return new Promise((resolve, reject) => {});
+                                return new Promise((resolve, reject) => { });
                             }
                         })
                     } else {
-                        res.status(401).json({ "result": "Password Error." });
-                        return new Promise((resolve, reject) => {});
+                        res.status(400).json({ "result": "Password Error." });
+                        return new Promise((resolve, reject) => { });
                     }
                 }).catch((err) => {
-                    res.status(401).json({ "result": err });
-                    return new Promise((resolve, reject) => {});
+                    res.status(400).json({ "result": err });
+                    return new Promise((resolve, reject) => { });
                 })
             }).catch((error) => {
-                res.status(401).json({ "result": error });
-                return new Promise((resolve, reject) => {});
+                if (error == 'User Not Found.') {
+                    res.status(404).json({ "result": error });
+                    return new Promise((resolve, reject) => { });
+                } else {
+                    res.status(500).json({ "result": error });
+                    return new Promise((resolve, reject) => { });
+                }
             })
         }).catch(() => {
-            res.status(403).json({ 'result': 'Not Login' })
+            res.status(401).json({ 'result': 'Not Login' })
         })
     }
 
@@ -197,37 +202,42 @@ class UserController {
                     if (checkpwd) {
                         models.patchPwd(req).then(() => {
                             res.status(200).json({ 'result': true });
-                            return new Promise((resolve, reject) => {});
+                            return new Promise((resolve, reject) => { });
                         }).catch((patcherr) => {
                             if (err == "update err") {
                                 res.status(404).json({ "result": patcherr });
-                                return new Promise((resolve, reject) => {});
+                                return new Promise((resolve, reject) => { });
                             } else {
                                 res.status(500).json({ "result": patcherr });
-                                return new Promise((resolve, reject) => {});
+                                return new Promise((resolve, reject) => { });
                             }
                         })
                     } else {
-                        res.status(401).json({ "result": "Password Error." });
-                        return new Promise((resolve, reject) => {});
+                        res.status(400).json({ "result": "Password Error." });
+                        return new Promise((resolve, reject) => { });
                     }
                 }).catch(err => {
-                    res.status(500).json({ "result": err });
-                    return new Promise((resolve, reject) => {});
+                    res.status(400).json({ "result": err });
+                    return new Promise((resolve, reject) => { });
                 })
             }).catch((error) => {
-                res.status(500).json({ "result": error });
-                return new Promise((resolve, reject) => {});
+                if (error == 'User Not Found.') {
+                    res.status(404).json({ "result": error });
+                    return new Promise((resolve, reject) => { });
+                } else {
+                    res.status(500).json({ "result": error });
+                    return new Promise((resolve, reject) => { });
+                }
             })
         }).catch(() => {
-            res.status(403).json({ 'result': 'Not Login' })
+            res.status(401).json({ 'result': 'Not Login' })
         })
     }
 
     login = (req, res) => {
         myFunction.check_session(req).then(() => {
-            res.status(403).json({ 'result': 'isLogin' })
-            return new Promise((resolve, reject) => {});
+            res.status(200).json({ 'result': 'isLogin' })
+            return new Promise((resolve, reject) => { });
         }).catch(() => {
             const body = req.body;
             const sID = body.sID;
@@ -248,7 +258,7 @@ class UserController {
                                     "position": req.session.position,
                                     "permission": req.session.permission
                                 });
-                                return new Promise((resolve, reject) => {});
+                                return new Promise((resolve, reject) => { });
                             } else {
                                 req.session.sID = sID;
                                 req.session.position = result[0].position;
@@ -259,22 +269,28 @@ class UserController {
                                     "position": req.session.position,
                                     "permission": req.session.permission
                                 });
-                                return new Promise((resolve, reject) => {});
+                                return new Promise((resolve, reject) => { });
                             }
                         }).catch((err) => {
                             res.status(500).json({ 'result': err });
-                            return new Promise((resolve, reject) => {});
+                            return new Promise((resolve, reject) => { });
                         })
                     } else {
-                        res.status(401).json({ 'result': "Password Error." });
-                        return new Promise((resolve, reject) => {});
+                        res.status(400).json({ 'result': "Password Error." });
+                        return new Promise((resolve, reject) => { });
                     }
                 }).catch(err => {
-                    res.status(401).json({ 'result': err });
-                    return new Promise((resolve, reject) => {});
+                    res.status(400).json({ 'result': err });
+                    return new Promise((resolve, reject) => { });
                 });
-            }).catch((err) => {
-                res.status(500).json({ 'result': err })
+            }).catch((error) => {
+                if (error == 'User Not Found.') {
+                    res.status(404).json({ "result": error });
+                    return new Promise((resolve, reject) => { });
+                } else {
+                    res.status(500).json({ "result": error });
+                    return new Promise((resolve, reject) => { });
+                }
             });
         })
 
@@ -284,7 +300,7 @@ class UserController {
             req.session.destroy();
             res.status(200).json({ 'result': true })
         }).catch(() => {
-            res.status(403).json({ 'result': 'Not Login' })
+            res.status(401).json({ 'result': 'Not Login' })
         });
     }
     check = (req, res) => {

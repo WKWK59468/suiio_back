@@ -21,29 +21,29 @@ class StatementController {
                         content.forEach(account => {
                             models.addContent(statement, account).catch(err => {
                                 res.status(500).json({ "result": err });
-                                return new Promise((resolve, reject) => {});
+                                return new Promise((resolve, reject) => { });
                             });
                         })
                     }).catch(err => {
                         res.status(500).json({ "result": err });
-                        return new Promise((resolve, reject) => {});
+                        return new Promise((resolve, reject) => { });
                     })
                 ).then(() => {
                     res.status(201).json({ "result": true });
-                    return new Promise((resolve, reject) => {});
+                    return new Promise((resolve, reject) => { });
                 }).catch(err => {
                     if (err) {
                         res.status(500).json({ "result": err });
-                        return new Promise((resolve, reject) => {});
+                        return new Promise((resolve, reject) => { });
                     }
                 });
             } else {
-                res.status(400).json({ 'result': 'Permission denied.' })
-                return new Promise((resolve, reject) => {});
+                res.status(403).json({ 'result': 'Permission denied.' })
+                return new Promise((resolve, reject) => { });
             }
         }).catch(() => {
-            res.status(403).json({ 'result': 'Not Login' })
-            return new Promise((resolve, reject) => {});
+            res.status(401).json({ 'result': 'Not Login' })
+            return new Promise((resolve, reject) => { });
         })
     }
     addByCategory = (req, res) => {
@@ -57,32 +57,32 @@ class StatementController {
                             accountArray.forEach(account => {
                                 models.addContent(statement, account.ID).catch(err => {
                                     res.status(500).json({ "result": err });
-                                    return new Promise((resolve, reject) => {});
+                                    return new Promise((resolve, reject) => { });
                                 });
                             })
                         }).catch(err => {
                             res.status(500).json({ "result": err })
-                            return new Promise((resolve, reject) => {})
+                            return new Promise((resolve, reject) => { })
                         }).then(accountArray => {
                             res.status(201).json({ "result": true })
-                            return new Promise((resolve, reject) => {})
+                            return new Promise((resolve, reject) => { })
                         });
 
                     }).catch(err => {
                         res.status(500).json({ "result": err });
-                        return new Promise((resolve, reject) => {})
+                        return new Promise((resolve, reject) => { })
                     })
                 ).catch(err => {
                     res.status(500).json({ "result": err });
-                    return new Promise((resolve, reject) => {});
+                    return new Promise((resolve, reject) => { });
                 });
             } else {
-                res.status(400).json({ 'result': 'Permission denied.' })
-                return new Promise((resolve, reject) => {});
+                res.status(403).json({ 'result': 'Permission denied.' })
+                return new Promise((resolve, reject) => { });
             }
         }).catch(() => {
-            res.status(403).json({ 'result': 'Not Login' })
-            return new Promise((resolve, reject) => {});
+            res.status(401).json({ 'result': 'Not Login' })
+            return new Promise((resolve, reject) => { });
         })
     }
     addByMonth = (req, res) => {
@@ -96,32 +96,32 @@ class StatementController {
                             accountArray.forEach(account => {
                                 models.addContent(statement, account.ID).catch(err => {
                                     res.status(500).json({ "result": err });
-                                    return new Promise((resolve, reject) => {});
+                                    return new Promise((resolve, reject) => { });
                                 });
                             })
                         }).catch(err => {
                             res.status(500).json({ "result": err });
-                            return new Promise((resolve, reject) => {});
+                            return new Promise((resolve, reject) => { });
                         }).then(accountArray => {
                             res.status(201).json({ "result": true })
-                            return new Promise((resolve, reject) => {});
+                            return new Promise((resolve, reject) => { });
                         });
 
                     }).catch(err => {
                         res.status(500).json({ "result": err });
-                        return new Promise((resolve, reject) => {});
+                        return new Promise((resolve, reject) => { });
                     })
                 ).catch(err => {
                     res.status(500).json({ "result": err });
-                    return new Promise((resolve, reject) => {});
+                    return new Promise((resolve, reject) => { });
                 });
             } else {
-                res.status(400).json({ 'result': 'Permission denied.' })
-                return new Promise((resolve, reject) => {});
+                res.status(403).json({ 'result': 'Permission denied.' })
+                return new Promise((resolve, reject) => { });
             }
         }).catch(() => {
-            res.status(403).json({ 'result': 'Not Login' })
-            return new Promise((resolve, reject) => {});
+            res.status(401).json({ 'result': 'Not Login' })
+            return new Promise((resolve, reject) => { });
         })
 
     }
@@ -131,22 +131,22 @@ class StatementController {
                 models.delete(req, (err, results) => {
                     if (err) {
                         res.status(500).json({ 'result': err });
-                        return new Promise((resolve, reject) => {});
+                        return new Promise((resolve, reject) => { });
                     }
                     if (!results.affectedRows) {
                         res.status(404).json({ 'result': "Can't find statement." });
-                        return new Promise((resolve, reject) => {});
+                        return new Promise((resolve, reject) => { });
                     }
                     res.status(200).json({ 'result': true });
-                    return new Promise((resolve, reject) => {});
+                    return new Promise((resolve, reject) => { });
                 })
             } else {
-                res.status(400).json({ 'result': 'Permission denied.' })
-                return new Promise((resolve, reject) => {});
+                res.status(403).json({ 'result': 'Permission denied.' })
+                return new Promise((resolve, reject) => { });
             }
         }).catch(() => {
-            res.status(403).json({ 'result': 'Not Login' })
-            return new Promise((resolve, reject) => {});
+            res.status(401).json({ 'result': 'Not Login' })
+            return new Promise((resolve, reject) => { });
         })
     }
     update = (req, res) => {
@@ -155,22 +155,22 @@ class StatementController {
                 models.update(req, (err, results) => {
                     if (err) {
                         res.status(500).json({ 'result': err });
-                        return new Promise((resolve, reject) => {});
+                        return new Promise((resolve, reject) => { });
                     }
                     if (!results.affectedRows) {
                         res.status(404).json({ 'result': "Can't find statement." });
-                        return new Promise((resolve, reject) => {});
+                        return new Promise((resolve, reject) => { });
                     }
                     res.status(200).json({ 'result': true });
-                    return new Promise((resolve, reject) => {});
+                    return new Promise((resolve, reject) => { });
                 })
             } else {
-                res.status(400).json({ 'result': 'Permission denied.' })
-                return new Promise((resolve, reject) => {});
+                res.status(403).json({ 'result': 'Permission denied.' })
+                return new Promise((resolve, reject) => { });
             }
         }).catch(() => {
-            res.status(403).json({ 'result': 'Not Login' })
-            return new Promise((resolve, reject) => {});
+            res.status(401).json({ 'result': 'Not Login' })
+            return new Promise((resolve, reject) => { });
         })
     }
     updateStatus = (req, res) => {
@@ -179,22 +179,22 @@ class StatementController {
                 models.updateStatus(req, (err, results) => {
                     if (err) {
                         res.status(500).json({ 'result': err });
-                        return new Promise((resolve, reject) => {});
+                        return new Promise((resolve, reject) => { });
                     }
                     if (!results.affectedRows) {
                         res.status(404).json({ 'result': "Can't find statement." });
-                        return new Promise((resolve, reject) => {});
+                        return new Promise((resolve, reject) => { });
                     }
                     res.status(200).json({ 'result': true });
-                    return new Promise((resolve, reject) => {});
+                    return new Promise((resolve, reject) => { });
                 })
             } else {
-                res.status(400).json({ 'result': 'Permission denied.' })
-                return new Promise((resolve, reject) => {});
+                res.status(403).json({ 'result': 'Permission denied.' })
+                return new Promise((resolve, reject) => { });
             }
         }).catch(() => {
-            res.status(403).json({ 'result': 'Not Login' })
-            return new Promise((resolve, reject) => {});
+            res.status(401).json({ 'result': 'Not Login' })
+            return new Promise((resolve, reject) => { });
         })
 
     }
@@ -203,15 +203,15 @@ class StatementController {
         models.fetchAll(req, (err, results) => {
             if (err) {
                 res.status(500).json({ 'result': err });
-                return new Promise((resolve, reject) => {});
+                return new Promise((resolve, reject) => { });
             }
             if (!results.length) {
                 res.status(404).json({ 'result': "There is nothing to show." });
-                return new Promise((resolve, reject) => {});
+                return new Promise((resolve, reject) => { });
             }
             results = dateFormat(results);
             res.status(200).json(results);
-            return new Promise((resolve, reject) => {});
+            return new Promise((resolve, reject) => { });
         });
 
     }
@@ -220,15 +220,15 @@ class StatementController {
         models.fetchByName(req, (err, results) => {
             if (err) {
                 res.status(500).json({ 'result': err });
-                return new Promise((resolve, reject) => {});
+                return new Promise((resolve, reject) => { });
             }
             if (!results.length) {
                 res.status(404).json({ 'result': "There is nothing to show." });
-                return new Promise((resolve, reject) => {});
+                return new Promise((resolve, reject) => { });
             }
             results = dateFormat(results);
             res.status(200).json(results);
-            return new Promise((resolve, reject) => {});
+            return new Promise((resolve, reject) => { });
         })
 
     }
@@ -237,15 +237,15 @@ class StatementController {
         models.fetchByStatus(req, (err, results) => {
             if (err) {
                 res.status(500).json({ 'result': err });
-                return new Promise((resolve, reject) => {});
+                return new Promise((resolve, reject) => { });
             }
             if (!results.length) {
                 res.status(404).json({ 'result': "There is nothing to show." });
-                return new Promise((resolve, reject) => {});
+                return new Promise((resolve, reject) => { });
             }
             results = dateFormat(results);
             res.status(200).json(results);
-            return new Promise((resolve, reject) => {});
+            return new Promise((resolve, reject) => { });
         })
 
     }
@@ -254,15 +254,15 @@ class StatementController {
         models.fetchByWhom(req, (err, results) => {
             if (err) {
                 res.status(500).json({ 'result': err });
-                return new Promise((resolve, reject) => {});
+                return new Promise((resolve, reject) => { });
             }
             if (!results.length) {
                 res.status(404).json({ 'result': "There is nothing to show." });
-                return new Promise((resolve, reject) => {});
+                return new Promise((resolve, reject) => { });
             }
             results = dateFormat(results);
             res.status(200).json(results);
-            return new Promise((resolve, reject) => {});
+            return new Promise((resolve, reject) => { });
         })
 
     }
@@ -273,20 +273,20 @@ class StatementController {
         models.fetchByID(req, (err, results) => {
             if (err) {
                 res.status(500).json({ 'result': err });
-                return new Promise((resolve, reject) => {});
+                return new Promise((resolve, reject) => { });
             }
             if (!results.length) {
                 res.status(404).json({ 'result': "There is nothing to show." });
-                return new Promise((resolve, reject) => {});
+                return new Promise((resolve, reject) => { });
             }
             results = dateFormat(results);
             models.fetchAccountByStatement(StatementID).then((accounts) => {
                 results[0].accounts = accounts;
                 res.status(200).json(results[0]);
-                return new Promise((resolve, reject) => {});
+                return new Promise((resolve, reject) => { });
             }).catch((err) => {
                 res.status(500).json({ "result": err });
-                return new Promise((resolve, reject) => {});
+                return new Promise((resolve, reject) => { });
             });
         })
 
@@ -296,15 +296,15 @@ class StatementController {
         models.fetchByDate(req, (err, results) => {
             if (err) {
                 res.status(500).json({ 'result': err });
-                return new Promise((resolve, reject) => {});
+                return new Promise((resolve, reject) => { });
             }
             if (!results.length) {
                 res.status(404).json({ 'result': "There is nothing to show." });
-                return new Promise((resolve, reject) => {});
+                return new Promise((resolve, reject) => { });
             }
             results = dateFormat(results);
             res.status(200).json(results);
-            return new Promise((resolve, reject) => {});
+            return new Promise((resolve, reject) => { });
         });
 
     }
