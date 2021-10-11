@@ -42,14 +42,31 @@ const MySQLEventWatcher = new MySQLEvents(conn, {
         mysql: true,
     },
 });
-MySQLEventWatcher.start().then(() => console.log('I\'m running!'))
+MySQLEventWatcher.start().then(() => console.log('MySQLEventWatcher is running!'))
     .catch(err => console.error('Something bad happened', err));
 MySQLEventWatcher.addTrigger({
     name: 'SuiioEvents',
     expression: 'suiio.events',
     statement: MySQLEvents.STATEMENTS.ALL,
     onEvent: async (event) => {
-        console.log(event.affectedRows[0].after);   //事件
+        const affectedRows = event.affectedRows[0].after;
+        const type = event.affectedRows[0].after.type;
+        const action = event.affectedRows[0].after.action;
+        const content = event.affectedRows[0].after.content;
+        if (action == "account") {
+            if (type == "新增") {
+                io.emit('officer', { "events": affectedRows });
+            }
+        }
+        if (action == "statement") {
+
+        }
+        if (action == "conference") {
+
+        }
+        if (action == "comment") {
+
+        }
     },
 })
 MySQLEventWatcher.on(MySQLEvents.EVENTS.CONNECTION_ERROR, console.error);
