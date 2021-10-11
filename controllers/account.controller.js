@@ -141,7 +141,6 @@ class AccountController {
             return new Promise((resolve, reject) => { });
         })
 
-        results = dateForm
     }
     fetchByStatus = (req, res) => {
         myFunction.check_session(req).then(() => {
