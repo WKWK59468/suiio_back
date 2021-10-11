@@ -86,6 +86,7 @@ class Conference {
                     arr2.push(element.attendees);
                 });
                 results[0]["attendees"] = arr2;
+                results = dateFormat(results)
                 res.status(200).json(results);
                 return new Promise((resolve, reject) => { });
             });
