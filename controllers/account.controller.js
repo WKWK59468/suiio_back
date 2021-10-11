@@ -136,7 +136,7 @@ class AccountController {
             if (!results.length) {
                 res.status(404).json({ "result": "There is nothing to show." });
                 return new Promise((resolve, reject) => { });
-            } at(results);
+            }
             res.status(200).json(results);
             return new Promise((resolve, reject) => { });
         })
