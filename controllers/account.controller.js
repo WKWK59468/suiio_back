@@ -160,7 +160,7 @@ class AccountController {
                     return new Promise((resolve, reject) => { });
                 })
             } else {
-                res.status(403).json({ "result": "Please Enter 0 ~ 4." });
+                res.status(400).json({ "result": "Please Enter 0 ~ 4." });
                 return new Promise((resolve, reject) => { });
             }
         }).catch(() => {
