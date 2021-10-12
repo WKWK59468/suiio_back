@@ -133,7 +133,7 @@ module.exports = {
         obj[last2_month] = [];
         obj[last3_month] = [];
         return new Promise((resolve, reject) => {
-            sql = `SELECT category.name AS category,account.amount,account.date FROM account,category WHERE account.date >= '${last_date}' AND account.date <= '${now_date}' ORDER BY account.date DESC`;
+            sql = `SELECT category.name AS category,account.amount,account.date FROM account,category WHERE account.date >= '${last_date}' AND account.date <= '${now_date}' AND category.ID = account.category ORDER BY account.date DESC`;
             return conn.query(sql, (err, res) => {
                 res.forEach(element => {
                     obj[element.date.getMonth() + 1].push({ "amount": element.amount, "category": element.category })
