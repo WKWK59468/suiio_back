@@ -49,23 +49,95 @@ MySQLEventWatcher.addTrigger({
     expression: 'suiio.events',
     statement: MySQLEvents.STATEMENTS.ALL,
     onEvent: async (event) => {
+        const organization = '組織';
+        const finance = '財務';
+        const meeting = '會議';
+        const officer = 'officer';
         const affectedRows = event.affectedRows[0].after;
+        const sID = event.affectedRows[0].after.who;
         const type = event.affectedRows[0].after.type;
         const action = event.affectedRows[0].after.action;
         const content = event.affectedRows[0].after.content;
-        if (action == "account") {
-            if (type == "新增") {
-                io.emit('officer', { "events": affectedRows });
+
+        //account
+        if (type == "account") {
+            if (action == "新增") {
+                io.emit(organization, { "events": "account新增" });
+                io.emit(finance, { "events": "account新增" });
+            }
+            if (action == "修改") {
+                if (content == "狀態") {
+                    io.emit(sID, { "events": "account修改狀態" });
+                }
+                if (content == "收支") {
+                    io.emit(organization, { "events": "account修改內容" });
+                    io.emit(finance, { "events": "account修改內容" });
+                }
+            }
+            if (action == "刪除") {
+                io.emit(organization, { "events": "account刪除" });
+                io.emit(finance, { "events": "account刪除" });
             }
         }
-        if (action == "statement") {
-
+        //statement
+        if (type == "statement") {
+            if (action == "新增") {
+                io.emit(organization, { "events": "statement新增" });
+                io.emit(finance, { "events": "statement新增" });
+            }
+            if (action == "修改") {
+                if (content == "狀態") {
+                    io.emit(sID, { "events": "statement修改狀態" });
+                }
+                if (content == "財務報表") {
+                    io.emit(organization, { "events": "statement修改內容" });
+                    io.emit(finance, { "events": "statement修改內容" });
+                }
+            }
+            if (action == "刪除") {
+                io.emit(organization, { "events": "statement刪除" });
+                io.emit(finance, { "events": "statement刪除" });
+            }
         }
-        if (action == "conference") {
-
+        //conference
+        if (type == "conference") {
+            if (action == "新增") {
+                io.emit(organization, { "events": "conference新增" });
+                io.emit(finance, { "events": "conference新增" });
+                io.emit(meeting, { "events": "conference新增" });
+            }
+            if (action == "修改") {
+                if (content == "狀態") {
+                    io.emit(sID, { "events": "conference修改狀態" });
+                }
+                if (content == "會議記錄") {
+                    io.emit(organization, { "events": "conference修改內容" });
+                    io.emit(finance, { "events": "conference修改內容" });
+                    io.emit(meeting, { "events": "conference修改內容" });
+                }
+            }
+            if (action == "刪除") {
+                io.emit(organization, { "events": "conference刪除" });
+                io.emit(finance, { "events": "conference刪除" });
+                io.emit(meeting, { "events": "conference刪除" });
+            }
         }
-        if (action == "comment") {
-
+        //comment
+        if (type == "comment") {
+            if (action == "新增") {
+                io.emit(organization, { "events": "comment新增" });
+                io.emit(finance, { "events": "comment新增" });
+            }
+            if (action == "修改") {
+                if (content == "留言") {
+                    io.emit(organization, { "events": "comment修改內容" });
+                    io.emit(finance, { "events": "comment修改內容" });
+                }
+            }
+            if (action == "刪除") {
+                io.emit(organization, { "events": "comment刪除" });
+                io.emit(finance, { "events": "comment刪除" });
+            }
         }
     },
 })
