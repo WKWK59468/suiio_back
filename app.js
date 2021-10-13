@@ -49,10 +49,11 @@ MySQLEventWatcher.addTrigger({
     expression: 'suiio.events',
     statement: MySQLEvents.STATEMENTS.ALL,
     onEvent: async (event) => {
-        const organization = '組織';
-        const finance = '財務';
-        const meeting = '會議';
-        const officer = 'officer';
+        const organization = '組織負責人';
+        const finance = '財務負責人';
+        const meeting = '會議負責人';
+        const officer = '一般幹部';
+        const member = '組織成員'
         const affectedRows = event.affectedRows[0].after;
         const sID = event.affectedRows[0].after.who;
         const type = event.affectedRows[0].after.type;
