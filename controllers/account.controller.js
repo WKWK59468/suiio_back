@@ -237,6 +237,34 @@ class AccountController {
         })
 
     }
+    diagram = (req, res) => {
+        const params = req.params;
+        const year = params.year;
+        const now_month = params.month;
+        let last_month;
+
+        if (now_month == 1) {
+            last_month = 10;
+        } else if (now_month == 2) {
+            last_month = 11;
+        } else if (now_month == 3) {
+            last_month = 12;
+        } else {
+            last_month = now_month - 3;
+        }
+        if (now_month <= 12) {
+            models.diagram(year, now_month, last_month).then((result) => {
+                res.status(200).json(result);
+                return new Promise((resolve, reject) => { });
+            }).catch((err) => {
+                res.status(500).json({ "result": err });
+                return new Promise((resolve, reject) => { });
+            })
+        } else {
+            res.status(400).json({ "result": "Month Enter Error." });
+            return new Promise((resolve, reject) => { });
+        }
+    }
 }
 
 module.exports = new AccountController();
