@@ -1,15 +1,16 @@
 const mysql = require("mysql");
 const conf = require("../conf");
 
-const conn = mysql.createConnection(conf.db);
+const conn = mysql.createPool(conf.db);
 let sql = "";
 module.exports = {
-    fetch: (type, objectID) => {
-        return new Promise((resolve, reject) => {
-            sql = `SELECT who FROM events WHERE type = '${type}' AND objectID = ${objectID} GROUP BY who`;
-            conn.query(sql, (err, res) => {
-                err ? reject(err) : resolve(res);
-            })
-        })
+
+    fetch: (type, objectID, callback) => {
+        sql = `SELECT ${type}ID FROM ${type}_comment WHERE commentID = ${objectID} GROUP BY ${type}ID`;
+        conn.query(sql, callback);
+    },
+    fetch_sID: (type, objectID, callback) => {
+        sql = `SELECT comment.sID FROM ${type}_comment,comment WHERE ${type}_comment.${type}ID = ${objectID} AND comment.ID = ${type}_comment.commentID GROUP BY comment.sID`;
+        conn.query(sql, callback);
     }
 }
