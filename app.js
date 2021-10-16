@@ -135,63 +135,44 @@ MySQLEventWatcher.addTrigger({
         //comment
         if (type == "comment") {
             if (action == "新增") {
-                arr.forEach(element => {
-                    //搜尋為哪個類型的留言
-                    eventsmodel.fetch(element, objectID, (err, result) => {
-                        if (!err && result.length) {
-                            //搜尋所有留過言的人
-                            eventsmodel.fetch_sID(element, result[0][element + "ID"], (err, result) => {
-                                if (!err && result.length) {
-                                    console.log(result);
-                                    //result為所有留言過的人
-                                }
-                            })
+                setTimeout(() => {
 
-                        }
-                    })
-
-                });
-                io.emit(organization, { "events": "comment新增" });
-                io.emit(finance, { "events": "comment新增" });
-            }
-            if (action == "修改") {
-                if (content == "留言") {
                     arr.forEach(element => {
                         //搜尋為哪個類型的留言
                         eventsmodel.fetch(element, objectID, (err, result) => {
                             if (!err && result.length) {
                                 //搜尋所有留過言的人
-                                eventsmodel.fetch_sID(element, result[0][element + "ID"], (err, result) => {
+                                eventsmodel.fetch_sID(element, result[0][element + "ID"], async (err, results) => {
                                     if (!err && result.length) {
-                                        console.log(result);
+                                        let array = [];
+                                        await results.forEach(getsID => {
+                                            array.push(getsID.sID);
+                                        })
+                                        array = await array.filter((item) => {
+                                            return item != sID;
+                                        })
+                                        array.forEach(emit_sID => {
+                                            io.emit(emit_sID, { "events": `${sID}回應了${element}的留言` });
+                                        })
                                         //result為所有留言過的人
                                     }
                                 })
-
                             }
                         })
 
                     });
+
+                }, 1000);
+                io.emit(organization, { "events": "comment新增" });
+                io.emit(finance, { "events": "comment新增" });
+            }
+            if (action == "修改") {
+                if (content == "留言") {
                     io.emit(organization, { "events": "comment修改內容" });
                     io.emit(finance, { "events": "comment修改內容" });
                 }
             }
             if (action == "刪除") {
-                arr.forEach(element => {
-                    //搜尋為哪個類型的留言
-                    eventsmodel.fetch(element, objectID, (err, result) => {
-                        if (!err && result.length) {
-                            //搜尋所有留過言的人
-                            eventsmodel.fetch_sID(element, result[0][element + "ID"], (err, result) => {
-                                if (!err && result.length) {
-                                    //result為所有留言過的人
-                                }
-                            })
-
-                        }
-                    })
-
-                });
                 io.emit(organization, { "events": "comment刪除" });
                 io.emit(finance, { "events": "comment刪除" });
             }
