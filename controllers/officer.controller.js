@@ -267,9 +267,11 @@ exports.updatePermission = (req, res) => {
             res.status(403).json({ 'result': 'Permission denied.' })
             return new Promise((resolve, reject) => { });
         }
+
     }).catch(() => {
         res.status(401).json({ 'result': 'Not Login' })
         return new Promise((resolve, reject) => { });
     })
+
 
 };
