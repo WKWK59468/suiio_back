@@ -3,34 +3,26 @@ const myFunction = require('../myFunction');
 const URL = "/files/image/";
 const fs = require('fs');
 
-const uploadFile = (req, res) => {
-    myFunction.check_permission(req).then(async (permission) => {
-        if (permission !== '組織成員') {
-            try {
-                await upload(req, res);
-                if (req.file == undefined) {
-                    res.status(400).json({ 'result': 'Choose a file to upload' });
-                    return new Promise((resolve, reject) => { });
-                }
-                res.status(200).json({ 'result': 'File uploaded successfully: ' + req.file.originalname });
-                return new Promise((resolve, reject) => { });
-            } catch (error) {
-                console.log(error);
-                if (error.code == 'LIMIT_FILE_SIZE') {
-                    res.status(400).json({ 'result': 'File size should be less than 500MB.' });
-                    return new Promise((resolve, reject) => { });
-                }
-                res.status(500).json({ 'result': `Error occured: ${error}` });
-                return new Promise((resolve, reject) => { });
-            }
-        } else {
-            res.status(403).json({ 'result': 'Permission denied.' })
+const uploadFile = async (req, res) => {
+
+    try {
+        await upload(req, res);
+        if (req.file == undefined) {
+            res.status(400).json({ 'result': 'Choose a file to upload' });
             return new Promise((resolve, reject) => { });
         }
-    }).catch(() => {
-        res.status(401).json({ 'result': 'Not Login' })
+        res.status(200).json({ 'result': 'File uploaded successfully: ' + req.file.originalname });
         return new Promise((resolve, reject) => { });
-    })
+    } catch (error) {
+        console.log(error);
+        if (error.code == 'LIMIT_FILE_SIZE') {
+            res.status(400).json({ 'result': 'File size should be less than 500MB.' });
+            return new Promise((resolve, reject) => { });
+        }
+        res.status(500).json({ 'result': `Error occured: ${error}` });
+        return new Promise((resolve, reject) => { });
+    }
+
 }
 
 const getFilesList = (req, res) => {

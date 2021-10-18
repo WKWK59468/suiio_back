@@ -67,241 +67,213 @@ const dateFormat = (res) => {
 class UserController {
 
     listMember = (req, res) => {
-        myFunction.check_session(req).then(() => {
-            models.list(req, (err, results) => {
-                if (err) {
-                    res.status(500).json({ "result": "false" })
-                    return new Promise((resolve, reject) => { });
-                }
-                if (!results.length) {
-                    res.sendStatus(404).json({ "result": "There is nothing to show." });
-                    return new Promise((resolve, reject) => { });
-                }
-                results = dateFormat(results);
-                res.status(200).json(results);
-            })
-        }).catch(() => {
-            res.status(401).json({ 'result': 'Not Login' })
+
+        models.list(req, (err, results) => {
+            if (err) {
+                res.status(500).json({ "result": "false" })
+                return new Promise((resolve, reject) => { });
+            }
+            if (!results.length) {
+                res.sendStatus(404).json({ "result": "There is nothing to show." });
+                return new Promise((resolve, reject) => { });
+            }
+            results = dateFormat(results);
+            res.status(200).json(results);
         })
+
     }
 
     addMember = (req, res) => {
-        myFunction.check_permission(req).then((permission) => {
-            if (permission == "組織負責人") {
-                const sID = req.body.sID;
-                if (check_sID(sID)) {
-                    models.add(req).then(function (pwd) {
-                        mail.sendMail(req, pwd).then(() => {
-                            res.status(201).json({ "result": true });
-                            return new Promise((resolve, reject) => { });
-                        });
-                    }).catch((err) => {
-                        res.status(500).json({ "result": err });
-                        return new Promise((resolve, reject) => { });
-                    })
-                } else {
-                    res.status(400).json({ "result": "format error" });
+
+        const sID = req.body.sID;
+        if (check_sID(sID)) {
+            models.add(req).then(function (pwd) {
+                mail.sendMail(req, pwd).then(() => {
+                    res.status(201).json({ "result": true });
                     return new Promise((resolve, reject) => { });
-                }
-            } else {
-                res.status(403).json({ 'result': 'Permission denied.' })
+                });
+            }).catch((err) => {
+                res.status(500).json({ "result": err });
                 return new Promise((resolve, reject) => { });
-            }
-        }).catch(() => {
-            res.status(401).json({ 'result': 'Not Login' })
+            })
+        } else {
+            res.status(400).json({ "result": "format error" });
             return new Promise((resolve, reject) => { });
-        });
+        }
+
     }
 
     delMember = (req, res) => {
-        myFunction.check_permission(req).then((permission) => {
-            if (permission == "組織負責人") {
-                const sID = req.body.sID;
-                if (check_sID(sID)) {
-                    models.del(req, (err, results) => {
-                        if (err) {
-                            res.status(500).json({ 'result': err });
-                            return new Promise((resolve, reject) => { });
-                        }
-                        if (!results.affectedRows) {
-                            res.status(404).json({ 'result': "Can't find member." });
-                            return new Promise((resolve, reject) => { });
-                        }
-                        res.status(200).json({ 'result': true });
-                        return new Promise((resolve, reject) => { });
-                    });
-                } else {
-                    res.status(400).json({ "result": "format error" });
+
+        const sID = req.body.sID;
+        if (check_sID(sID)) {
+            models.del(req, (err, results) => {
+                if (err) {
+                    res.status(500).json({ 'result': err });
                     return new Promise((resolve, reject) => { });
                 }
-            } else {
-                res.status(403).json({ 'result': 'Permission denied.' })
+                if (!results.affectedRows) {
+                    res.status(404).json({ 'result': "Can't find member." });
+                    return new Promise((resolve, reject) => { });
+                }
+                res.status(200).json({ 'result': true });
                 return new Promise((resolve, reject) => { });
-            }
-        }).catch(() => {
-            res.status(401).json({ "result": "Not Login" });
+            });
+        } else {
+            res.status(400).json({ "result": "format error" });
             return new Promise((resolve, reject) => { });
-        });
+        }
+
     }
 
     patchUser = (req, res) => {
         const body = req.body;
         const oldPassword = body.oldpassword;
         //session
-        myFunction.check_session(req).then(() => {
-            //DBpassword
-            models.login(req.session.sID).then((dbPWD) => {
-                //verify
-                bcrypt.compare(oldPassword, dbPWD).then((checkpwd) => {
-                    if (checkpwd) {
-                        //patch
-                        models.patch(req).then(() => {
-                            res.status(200).json({ 'result': true });
-                            return new Promise((resolve, reject) => { });
-                        }).catch((patcherr) => {
-                            if (patcherr == "sex err") {
-                                res.status(400).json({ "result": patcherr });
-                                return new Promise((resolve, reject) => { });
-                            } else if (err == "update err") {
-                                res.status(404).json({ "result": patcherr });
-                                return new Promise((resolve, reject) => { });
-                            } else {
-                                res.status(500).json({ "result": patcherr });
-                                return new Promise((resolve, reject) => { });
-                            }
-                        })
-                    } else {
-                        res.status(400).json({ "result": "Password Error." });
+
+        //DBpassword
+        models.login(req.session.sID).then((dbPWD) => {
+            //verify
+            bcrypt.compare(oldPassword, dbPWD).then((checkpwd) => {
+                if (checkpwd) {
+                    //patch
+                    models.patch(req).then(() => {
+                        res.status(200).json({ 'result': true });
                         return new Promise((resolve, reject) => { });
-                    }
-                }).catch((err) => {
-                    res.status(400).json({ "result": err });
-                    return new Promise((resolve, reject) => { });
-                })
-            }).catch((error) => {
-                if (error == 'User Not Found.') {
-                    res.status(404).json({ "result": error });
-                    return new Promise((resolve, reject) => { });
+                    }).catch((patcherr) => {
+                        if (patcherr == "sex err") {
+                            res.status(400).json({ "result": patcherr });
+                            return new Promise((resolve, reject) => { });
+                        } else if (err == "update err") {
+                            res.status(404).json({ "result": patcherr });
+                            return new Promise((resolve, reject) => { });
+                        } else {
+                            res.status(500).json({ "result": patcherr });
+                            return new Promise((resolve, reject) => { });
+                        }
+                    })
                 } else {
-                    res.status(500).json({ "result": error });
+                    res.status(400).json({ "result": "Password Error." });
                     return new Promise((resolve, reject) => { });
                 }
+            }).catch((err) => {
+                res.status(400).json({ "result": err });
+                return new Promise((resolve, reject) => { });
             })
-        }).catch(() => {
-            res.status(401).json({ 'result': 'Not Login' })
+        }).catch((error) => {
+            if (error == 'User Not Found.') {
+                res.status(404).json({ "result": error });
+                return new Promise((resolve, reject) => { });
+            } else {
+                res.status(500).json({ "result": error });
+                return new Promise((resolve, reject) => { });
+            }
         })
+
     }
 
     patchPassword = (req, res) => {
         const body = req.body;
         const oldPassword = body.oldpassword;
         //session
-        myFunction.check_session(req).then(() => {
-            models.login(req.session.sID).then((dbPWD) => {
-                bcrypt.compare(oldPassword, dbPWD).then((checkpwd) => {
-                    if (checkpwd) {
-                        models.patchPwd(req).then(() => {
-                            res.status(200).json({ 'result': true });
-                            return new Promise((resolve, reject) => { });
-                        }).catch((patcherr) => {
-                            if (err == "update err") {
-                                res.status(404).json({ "result": patcherr });
-                                return new Promise((resolve, reject) => { });
-                            } else {
-                                res.status(500).json({ "result": patcherr });
-                                return new Promise((resolve, reject) => { });
-                            }
-                        })
-                    } else {
-                        res.status(400).json({ "result": "Password Error." });
+
+        models.login(req.session.sID).then((dbPWD) => {
+            bcrypt.compare(oldPassword, dbPWD).then((checkpwd) => {
+                if (checkpwd) {
+                    models.patchPwd(req).then(() => {
+                        res.status(200).json({ 'result': true });
                         return new Promise((resolve, reject) => { });
-                    }
-                }).catch(err => {
-                    res.status(400).json({ "result": err });
-                    return new Promise((resolve, reject) => { });
-                })
-            }).catch((error) => {
-                if (error == 'User Not Found.') {
-                    res.status(404).json({ "result": error });
-                    return new Promise((resolve, reject) => { });
+                    }).catch((patcherr) => {
+                        if (err == "update err") {
+                            res.status(404).json({ "result": patcherr });
+                            return new Promise((resolve, reject) => { });
+                        } else {
+                            res.status(500).json({ "result": patcherr });
+                            return new Promise((resolve, reject) => { });
+                        }
+                    })
                 } else {
-                    res.status(500).json({ "result": error });
+                    res.status(400).json({ "result": "Password Error." });
                     return new Promise((resolve, reject) => { });
                 }
+            }).catch(err => {
+                res.status(400).json({ "result": err });
+                return new Promise((resolve, reject) => { });
             })
-        }).catch(() => {
-            res.status(401).json({ 'result': 'Not Login' })
+        }).catch((error) => {
+            if (error == 'User Not Found.') {
+                res.status(404).json({ "result": error });
+                return new Promise((resolve, reject) => { });
+            } else {
+                res.status(500).json({ "result": error });
+                return new Promise((resolve, reject) => { });
+            }
         })
+
     }
 
     login = (req, res) => {
-        myFunction.check_session(req).then(() => {
-            res.status(200).json({ 'result': 'isLogin' })
-            return new Promise((resolve, reject) => { });
-        }).catch(() => {
-            const body = req.body;
-            const sID = body.sID;
-            const userPWD = body.password;
 
-            models.login(sID).then((dbPWD) => {
+        const body = req.body;
+        const sID = body.sID;
+        const userPWD = body.password;
 
-                bcrypt.compare(userPWD, dbPWD).then((checkpwd) => {
-                    if (checkpwd) {
-                        models.find(sID).then((result) => {
-                            if (result == 'Member is not officer.') {
-                                req.session.sID = sID;
-                                req.session.position = '組織成員';
-                                req.session.permission = '組織成員';
-                                res.status(200).json({
-                                    'result': result,
-                                    "sID": req.session.sID,
-                                    "position": req.session.position,
-                                    "permission": req.session.permission
-                                });
-                                return new Promise((resolve, reject) => { });
-                            } else {
-                                req.session.sID = sID;
-                                req.session.position = result[0].position;
-                                req.session.permission = result[0].permission;
-                                res.status(200).json({
-                                    'result': true,
-                                    "sID": req.session.sID,
-                                    "position": req.session.position,
-                                    "permission": req.session.permission
-                                });
-                                return new Promise((resolve, reject) => { });
-                            }
-                        }).catch((err) => {
-                            res.status(500).json({ 'result': err });
+        models.login(sID).then((dbPWD) => {
+
+            bcrypt.compare(userPWD, dbPWD).then((checkpwd) => {
+                if (checkpwd) {
+                    models.find(sID).then((result) => {
+                        if (result == 'Member is not officer.') {
+                            req.session.sID = sID;
+                            req.session.position = '組織成員';
+                            req.session.permission = '組織成員';
+                            res.status(200).json({
+                                'result': result,
+                                "sID": req.session.sID,
+                                "position": req.session.position,
+                                "permission": req.session.permission
+                            });
                             return new Promise((resolve, reject) => { });
-                        })
-                    } else {
-                        res.status(400).json({ 'result': "Password Error." });
+                        } else {
+                            req.session.sID = sID;
+                            req.session.position = result[0].position;
+                            req.session.permission = result[0].permission;
+                            res.status(200).json({
+                                'result': true,
+                                "sID": req.session.sID,
+                                "position": req.session.position,
+                                "permission": req.session.permission
+                            });
+                            return new Promise((resolve, reject) => { });
+                        }
+                    }).catch((err) => {
+                        res.status(500).json({ 'result': err });
                         return new Promise((resolve, reject) => { });
-                    }
-                }).catch(err => {
-                    res.status(400).json({ 'result': err });
-                    return new Promise((resolve, reject) => { });
-                });
-            }).catch((error) => {
-                if (error == 'User Not Found.') {
-                    res.status(404).json({ "result": error });
-                    return new Promise((resolve, reject) => { });
+                    })
                 } else {
-                    res.status(500).json({ "result": error });
+                    res.status(400).json({ 'result': "Password Error." });
                     return new Promise((resolve, reject) => { });
                 }
+            }).catch(err => {
+                res.status(400).json({ 'result': err });
+                return new Promise((resolve, reject) => { });
             });
-        })
+        }).catch((error) => {
+            if (error == 'User Not Found.') {
+                res.status(404).json({ "result": error });
+                return new Promise((resolve, reject) => { });
+            } else {
+                res.status(500).json({ "result": error });
+                return new Promise((resolve, reject) => { });
+            }
+        });
 
     }
     logout = (req, res) => {
-        myFunction.check_session(req).then(() => {
-            req.session.destroy();
-            res.status(200).json({ 'result': true })
-        }).catch(() => {
-            res.status(401).json({ 'result': 'Not Login' })
-        });
+
+        req.session.destroy();
+        res.status(200).json({ 'result': true })
+
     }
     check = (req, res) => {
         myFunction.check_session(req).then(() => {

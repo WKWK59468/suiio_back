@@ -95,105 +95,81 @@ class Conference {
     };
 
     upload = (req, res) => {
-        myFunction.check_permission(req).then((permission) => {
-            if (permission == '組織負責人' || permission == '會議負責人') {
-                let position = [];
-                const attendees = req.body.attendees;
-                models.upload(req).then(
-                    officerModels.fetchAll(req, (err, positionArray) => {
-                        positionArray.forEach(element => {
-                            position.push(element.position);
-                        });
-                        const absentees = position.concat(attendees).filter((element, index, arr) => {
-                            return arr.indexOf(element) === arr.lastIndexOf(element);
-                        });
-                        //GET ConferenceID
-                        models.getConferenceID().then(ConferenceID => {
-                            //attendees
-                            const attendees = req.body.attendees;
-                            for (let k in attendees) {
-                                models.addAttendees(ConferenceID, attendees[k]).catch(err => {
-                                    console.log(errMessage(500, err));
-                                });
-                            }
-                            //absentees
-                            for (let k in absentees) {
-                                models.addAbsentees(ConferenceID, absentees[k]).catch(err => {
-                                    console.log(errMessage(500, err));
-                                });
-                            }
-                        }).then(() => {
-                            res.status(200).json(successMessage);
-                            return new Promise((resolve, reject) => { });
-                        });
-                    })
-                ).catch(err => {
-                    res.status(500).json(errMessage(500, err));
-                    return new Promise((resolve, reject) => { });
-                })
-            } else {
-                res.status(403).json({ 'result': 'Permission denied.' })
-                return new Promise((resolve, reject) => { });
-            }
-        }).catch(() => {
-            res.status(401).json({ 'result': 'Not Login' })
-            return new Promise((resolve, reject) => { });
-        })
-    };
 
-    updateStatus = (req, res) => {
-        myFunction.check_permission(req).then((permission) => {
-            if (permission == '組織負責人' || permission == '會議負責人') {
-                if (req.body.status == 0 || req.body.status == 1 || req.body.status == 2 || req.body.status == 3 || req.body.status == 4) {
-                    models.updateStatus(req, (err, results) => {
-                        if (err) {
-                            res.status(500).json(errMessage(500, err));
-                            return new Promise((resolve, reject) => { });
-                        }
-                        if (!results.affectedRows) {
-                            res.status(500).json(errMessage(500, err));
-                            return new Promise((resolve, reject) => { });
-                        }
-                        res.status(200).json(successMessage);
-                        return new Promise((resolve, reject) => { });
-                    });
-                } else {
-                    res.status(400).json({ "result": "Please Enter 0 ~ 4." });
-                    return new Promise((resolve, reject) => { });
-                }
-            } else {
-                res.status(403).json({ 'result': 'Permission denied.' })
-                return new Promise((resolve, reject) => { });
-            }
-        }).catch(() => {
-            res.status(401).json({ 'result': 'Not Login' })
-            return new Promise((resolve, reject) => { });
-        })
-    };
-
-    updateContent = (req, res) => {
-        myFunction.check_permission(req).then((permission) => {
-            if (permission !== '組織成員') {
-                models.updateContent(req, (err, results) => {
-                    if (err) {
-                        res.status(500).json(errMessage(500, err));
-                        return new Promise((resolve, reject) => { });
+        let position = [];
+        const attendees = req.body.attendees;
+        models.upload(req).then(
+            officerModels.fetchAll(req, (err, positionArray) => {
+                positionArray.forEach(element => {
+                    position.push(element.position);
+                });
+                const absentees = position.concat(attendees).filter((element, index, arr) => {
+                    return arr.indexOf(element) === arr.lastIndexOf(element);
+                });
+                //GET ConferenceID
+                models.getConferenceID().then(ConferenceID => {
+                    //attendees
+                    const attendees = req.body.attendees;
+                    for (let k in attendees) {
+                        models.addAttendees(ConferenceID, attendees[k]).catch(err => {
+                            console.log(errMessage(500, err));
+                        });
                     }
-                    if (!results.affectedRows) {
-                        res.status(500).json(errMessage(500, err));
-                        return new Promise((resolve, reject) => { });
+                    //absentees
+                    for (let k in absentees) {
+                        models.addAbsentees(ConferenceID, absentees[k]).catch(err => {
+                            console.log(errMessage(500, err));
+                        });
                     }
+                }).then(() => {
                     res.status(200).json(successMessage);
                     return new Promise((resolve, reject) => { });
                 });
-            } else {
-                res.status(403).json({ 'result': 'Permission denied.' })
-                return new Promise((resolve, reject) => { });
-            }
-        }).catch(() => {
-            res.status(401).json({ 'result': 'Not Login' })
+            })
+        ).catch(err => {
+            res.status(500).json(errMessage(500, err));
             return new Promise((resolve, reject) => { });
         })
+
+    };
+
+    updateStatus = (req, res) => {
+
+        if (req.body.status == 0 || req.body.status == 1 || req.body.status == 2 || req.body.status == 3 || req.body.status == 4) {
+            models.updateStatus(req, (err, results) => {
+                if (err) {
+                    res.status(500).json(errMessage(500, err));
+                    return new Promise((resolve, reject) => { });
+                }
+                if (!results.affectedRows) {
+                    res.status(500).json(errMessage(500, err));
+                    return new Promise((resolve, reject) => { });
+                }
+                res.status(200).json(successMessage);
+                return new Promise((resolve, reject) => { });
+            });
+        } else {
+            res.status(400).json({ "result": "Please Enter 0 ~ 4." });
+            return new Promise((resolve, reject) => { });
+        }
+
+    };
+
+    updateContent = (req, res) => {
+
+        models.updateContent(req, (err, results) => {
+            if (err) {
+                res.status(500).json(errMessage(500, err));
+                return new Promise((resolve, reject) => { });
+            }
+            if (!results.affectedRows) {
+                res.status(500).json(errMessage(500, err));
+                return new Promise((resolve, reject) => { });
+            }
+            res.status(200).json(successMessage);
+            return new Promise((resolve, reject) => { });
+        });
+
     };
 }
 

@@ -13,187 +13,137 @@ const dateFormat = (res) => {
 
 class StatementController {
     add = (req, res) => {
-        myFunction.check_permission(req).then((permission) => {
-            if (permission == '組織負責人' || permission == '財務負責人') {
-                const content = req.body.content;
-                models.add(req).then(
-                    models.searchID().then(statement => {
-                        content.forEach(account => {
-                            models.addContent(statement, account).catch(err => {
-                                res.status(500).json({ "result": err });
-                                return new Promise((resolve, reject) => { });
-                            });
-                        })
-                    }).catch(err => {
+
+        const content = req.body.content;
+        models.add(req).then(
+            models.searchID().then(statement => {
+                content.forEach(account => {
+                    models.addContent(statement, account).catch(err => {
                         res.status(500).json({ "result": err });
                         return new Promise((resolve, reject) => { });
-                    })
-                ).then(() => {
-                    res.status(201).json({ "result": true });
-                    return new Promise((resolve, reject) => { });
-                }).catch(err => {
-                    if (err) {
-                        res.status(500).json({ "result": err });
-                        return new Promise((resolve, reject) => { });
-                    }
-                });
-            } else {
-                res.status(403).json({ 'result': 'Permission denied.' })
+                    });
+                })
+            }).catch(err => {
+                res.status(500).json({ "result": err });
+                return new Promise((resolve, reject) => { });
+            })
+        ).then(() => {
+            res.status(201).json({ "result": true });
+            return new Promise((resolve, reject) => { });
+        }).catch(err => {
+            if (err) {
+                res.status(500).json({ "result": err });
                 return new Promise((resolve, reject) => { });
             }
-        }).catch(() => {
-            res.status(401).json({ 'result': 'Not Login' })
-            return new Promise((resolve, reject) => { });
-        })
+        });
+
     }
     addByCategory = (req, res) => {
-        myFunction.check_permission(req).then((permission) => {
-            if (permission == '組織負責人' || permission == '財務負責人') {
-                const category = req.body.category;
-                models.addByCategory(req).then(
-                    models.searchID().then(statement => {
 
-                        models.fetchAccountByCategory(category).then(accountArray => {
-                            accountArray.forEach(account => {
-                                models.addContent(statement, account.ID).catch(err => {
-                                    res.status(500).json({ "result": err });
-                                    return new Promise((resolve, reject) => { });
-                                });
-                            })
-                        }).catch(err => {
-                            res.status(500).json({ "result": err })
-                            return new Promise((resolve, reject) => { })
-                        }).then(accountArray => {
-                            res.status(201).json({ "result": true })
-                            return new Promise((resolve, reject) => { })
-                        });
+        const category = req.body.category;
+        models.addByCategory(req).then(
+            models.searchID().then(statement => {
 
-                    }).catch(err => {
-                        res.status(500).json({ "result": err });
-                        return new Promise((resolve, reject) => { })
-                    })
-                ).catch(err => {
-                    res.status(500).json({ "result": err });
-                    return new Promise((resolve, reject) => { });
-                });
-            } else {
-                res.status(403).json({ 'result': 'Permission denied.' })
-                return new Promise((resolve, reject) => { });
-            }
-        }).catch(() => {
-            res.status(401).json({ 'result': 'Not Login' })
-            return new Promise((resolve, reject) => { });
-        })
-    }
-    addByMonth = (req, res) => {
-        myFunction.check_permission(req).then((permission) => {
-            if (permission == '組織負責人' || permission == '財務負責人') {
-                const Month = new Date(req.body.date);
-                models.addByMonth(req).then(
-                    models.searchID().then(statement => {
-
-                        models.fetchAccountByMonth(Month.getMonth() + 1).then(accountArray => {
-                            accountArray.forEach(account => {
-                                models.addContent(statement, account.ID).catch(err => {
-                                    res.status(500).json({ "result": err });
-                                    return new Promise((resolve, reject) => { });
-                                });
-                            })
-                        }).catch(err => {
+                models.fetchAccountByCategory(category).then(accountArray => {
+                    accountArray.forEach(account => {
+                        models.addContent(statement, account.ID).catch(err => {
                             res.status(500).json({ "result": err });
                             return new Promise((resolve, reject) => { });
-                        }).then(accountArray => {
-                            res.status(201).json({ "result": true })
+                        });
+                    })
+                }).catch(err => {
+                    res.status(500).json({ "result": err })
+                    return new Promise((resolve, reject) => { })
+                }).then(accountArray => {
+                    res.status(201).json({ "result": true })
+                    return new Promise((resolve, reject) => { })
+                });
+
+            }).catch(err => {
+                res.status(500).json({ "result": err });
+                return new Promise((resolve, reject) => { })
+            })
+        ).catch(err => {
+            res.status(500).json({ "result": err });
+            return new Promise((resolve, reject) => { });
+        });
+
+    }
+    addByMonth = (req, res) => {
+
+        const Month = new Date(req.body.date);
+        models.addByMonth(req).then(
+            models.searchID().then(statement => {
+
+                models.fetchAccountByMonth(Month.getMonth() + 1).then(accountArray => {
+                    accountArray.forEach(account => {
+                        models.addContent(statement, account.ID).catch(err => {
+                            res.status(500).json({ "result": err });
                             return new Promise((resolve, reject) => { });
                         });
-
-                    }).catch(err => {
-                        res.status(500).json({ "result": err });
-                        return new Promise((resolve, reject) => { });
                     })
-                ).catch(err => {
+                }).catch(err => {
                     res.status(500).json({ "result": err });
                     return new Promise((resolve, reject) => { });
+                }).then(accountArray => {
+                    res.status(201).json({ "result": true })
+                    return new Promise((resolve, reject) => { });
                 });
-            } else {
-                res.status(403).json({ 'result': 'Permission denied.' })
+
+            }).catch(err => {
+                res.status(500).json({ "result": err });
                 return new Promise((resolve, reject) => { });
-            }
-        }).catch(() => {
-            res.status(401).json({ 'result': 'Not Login' })
+            })
+        ).catch(err => {
+            res.status(500).json({ "result": err });
             return new Promise((resolve, reject) => { });
-        })
+        });
 
     }
     delete = (req, res) => {
-        myFunction.check_permission(req).then((permission) => {
-            if (permission == '組織負責人' || permission == '財務負責人') {
-                models.delete(req, (err, results) => {
-                    if (err) {
-                        res.status(500).json({ 'result': err });
-                        return new Promise((resolve, reject) => { });
-                    }
-                    if (!results.affectedRows) {
-                        res.status(404).json({ 'result': "Can't find statement." });
-                        return new Promise((resolve, reject) => { });
-                    }
-                    res.status(200).json({ 'result': true });
-                    return new Promise((resolve, reject) => { });
-                })
-            } else {
-                res.status(403).json({ 'result': 'Permission denied.' })
+
+        models.delete(req, (err, results) => {
+            if (err) {
+                res.status(500).json({ 'result': err });
                 return new Promise((resolve, reject) => { });
             }
-        }).catch(() => {
-            res.status(401).json({ 'result': 'Not Login' })
+            if (!results.affectedRows) {
+                res.status(404).json({ 'result': "Can't find statement." });
+                return new Promise((resolve, reject) => { });
+            }
+            res.status(200).json({ 'result': true });
             return new Promise((resolve, reject) => { });
         })
+
     }
     update = (req, res) => {
-        myFunction.check_permission(req).then((permission) => {
-            if (permission == '組織負責人' || permission == '財務負責人') {
-                models.update(req, (err, results) => {
-                    if (err) {
-                        res.status(500).json({ 'result': err });
-                        return new Promise((resolve, reject) => { });
-                    }
-                    if (!results.affectedRows) {
-                        res.status(404).json({ 'result': "Can't find statement." });
-                        return new Promise((resolve, reject) => { });
-                    }
-                    res.status(200).json({ 'result': true });
-                    return new Promise((resolve, reject) => { });
-                })
-            } else {
-                res.status(403).json({ 'result': 'Permission denied.' })
+
+        models.update(req, (err, results) => {
+            if (err) {
+                res.status(500).json({ 'result': err });
                 return new Promise((resolve, reject) => { });
             }
-        }).catch(() => {
-            res.status(401).json({ 'result': 'Not Login' })
+            if (!results.affectedRows) {
+                res.status(404).json({ 'result': "Can't find statement." });
+                return new Promise((resolve, reject) => { });
+            }
+            res.status(200).json({ 'result': true });
             return new Promise((resolve, reject) => { });
         })
+
     }
     updateStatus = (req, res) => {
-        myFunction.check_permission(req).then((permission) => {
-            if (permission == '組織負責人' || permission == '財務負責人') {
-                models.updateStatus(req, (err, results) => {
-                    if (err) {
-                        res.status(500).json({ 'result': err });
-                        return new Promise((resolve, reject) => { });
-                    }
-                    if (!results.affectedRows) {
-                        res.status(404).json({ 'result': "Can't find statement." });
-                        return new Promise((resolve, reject) => { });
-                    }
-                    res.status(200).json({ 'result': true });
-                    return new Promise((resolve, reject) => { });
-                })
-            } else {
-                res.status(403).json({ 'result': 'Permission denied.' })
+
+        models.updateStatus(req, (err, results) => {
+            if (err) {
+                res.status(500).json({ 'result': err });
                 return new Promise((resolve, reject) => { });
             }
-        }).catch(() => {
-            res.status(401).json({ 'result': 'Not Login' })
+            if (!results.affectedRows) {
+                res.status(404).json({ 'result': "Can't find statement." });
+                return new Promise((resolve, reject) => { });
+            }
+            res.status(200).json({ 'result': true });
             return new Promise((resolve, reject) => { });
         })
 
