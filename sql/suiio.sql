@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主機： 127.0.0.1:3308
--- 產生時間： 2021-08-19 04:51:02
+-- 產生時間： 2021-09-18 22:29:41
 -- 伺服器版本： 5.7.31
 -- PHP 版本： 7.3.21
 
@@ -27,6 +27,9 @@ USE `suiio`;
 
 --
 -- 資料表結構 `absentees`
+--
+-- 建立時間： 2021-09-18 16:38:49
+-- 最後更新： 2021-09-18 16:38:49
 --
 
 DROP TABLE IF EXISTS `absentees`;
@@ -88,6 +91,9 @@ INSERT INTO `absentees` (`conference`, `absentees`) VALUES
 
 --
 -- 資料表結構 `account`
+--
+-- 建立時間： 2021-09-18 16:38:49
+-- 最後更新： 2021-09-18 16:38:49
 --
 
 DROP TABLE IF EXISTS `account`;
@@ -202,7 +208,37 @@ INSERT INTO `account` (`ID`, `date`, `category`, `name`, `amount`, `content`, `r
 -- --------------------------------------------------------
 
 --
+-- 資料表結構 `account_comment`
+--
+-- 建立時間： 2021-09-18 17:16:55
+-- 最後更新： 2021-09-18 22:17:57
+--
+
+DROP TABLE IF EXISTS `account_comment`;
+CREATE TABLE IF NOT EXISTS `account_comment` (
+  `accountID` int(11) NOT NULL,
+  `commentID` int(11) NOT NULL,
+  PRIMARY KEY (`accountID`,`commentID`),
+  KEY `commentID_account` (`commentID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- 傾印資料表的資料 `account_comment`
+--
+
+INSERT INTO `account_comment` (`accountID`, `commentID`) VALUES
+(7, 1),
+(29, 2),
+(32, 3),
+(38, 4);
+
+-- --------------------------------------------------------
+
+--
 -- 資料表結構 `attendees`
+--
+-- 建立時間： 2021-09-18 16:38:49
+-- 最後更新： 2021-09-18 16:38:49
 --
 
 DROP TABLE IF EXISTS `attendees`;
@@ -262,6 +298,8 @@ INSERT INTO `attendees` (`conference`, `attendees`) VALUES
 --
 -- 資料表結構 `budget`
 --
+-- 建立時間： 2021-09-18 16:38:48
+--
 
 DROP TABLE IF EXISTS `budget`;
 CREATE TABLE IF NOT EXISTS `budget` (
@@ -279,6 +317,8 @@ CREATE TABLE IF NOT EXISTS `budget` (
 --
 -- 資料表結構 `budgetcategory`
 --
+-- 建立時間： 2021-09-18 16:38:48
+--
 
 DROP TABLE IF EXISTS `budgetcategory`;
 CREATE TABLE IF NOT EXISTS `budgetcategory` (
@@ -291,6 +331,9 @@ CREATE TABLE IF NOT EXISTS `budgetcategory` (
 
 --
 -- 資料表結構 `category`
+--
+-- 建立時間： 2021-09-18 16:38:48
+-- 最後更新： 2021-09-18 16:38:48
 --
 
 DROP TABLE IF EXISTS `category`;
@@ -321,7 +364,49 @@ INSERT INTO `category` (`ID`, `name`, `status`) VALUES
 -- --------------------------------------------------------
 
 --
+-- 資料表結構 `comment`
+--
+-- 建立時間： 2021-09-18 22:14:26
+-- 最後更新： 2021-09-18 22:28:24
+--
+
+DROP TABLE IF EXISTS `comment`;
+CREATE TABLE IF NOT EXISTS `comment` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `date` datetime NOT NULL,
+  `content` varchar(500) NOT NULL,
+  `status` char(1) NOT NULL,
+  `isHide` tinyint(1) NOT NULL,
+  `sID` char(10) NOT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `sID_comment` (`sID`)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 COMMENT='留言';
+
+--
+-- 傾印資料表的資料 `comment`
+--
+
+INSERT INTO `comment` (`ID`, `date`, `content`, `status`, `isHide`, `sID`) VALUES
+(1, '2021-09-19 06:16:03', '膠帶是買了幾捲..也太貴了?', '0', 0, '1110634025'),
+(2, '2021-09-19 06:17:06', '小冊子是什麼怎麼那麼貴?', '0', 0, '1110634025'),
+(3, '2021-09-19 06:17:28', '這膠帶哪裡買的...?', '0', 0, '1110634025'),
+(4, '2021-09-19 06:17:56', '水是買了幾箱...?', '0', 0, '1110634025'),
+(5, '2021-09-19 06:19:04', '十月支出好多...', '0', 0, '1110634025'),
+(6, '2021-09-19 06:19:28', '原來是大迎新', '0', 0, '1110634025'),
+(8, '2021-09-19 06:24:12', '這報表內容也太混了...開會內容就只打內容?', '0', 0, '1110634025'),
+(9, '2021-09-19 06:24:38', '怎麼突然增加表演獎金?', '0', 0, '1110634025'),
+(10, '2021-09-19 06:25:46', '怎麼突然增加場地費用?', '0', 0, '1110634025'),
+(11, '2021-09-19 06:27:02', '獎金金額也太高了!', '0', 0, '1110634025'),
+(12, '2021-09-19 06:27:32', '所以人員怎麼配置?', '0', 0, '1110634025'),
+(13, '2021-09-19 06:28:24', '這花費也太兇了', '0', 0, '1110634025');
+
+-- --------------------------------------------------------
+
+--
 -- 資料表結構 `conference`
+--
+-- 建立時間： 2021-09-18 16:38:49
+-- 最後更新： 2021-09-18 16:38:49
 --
 
 DROP TABLE IF EXISTS `conference`;
@@ -360,7 +445,38 @@ INSERT INTO `conference` (`ID`, `category`, `name`, `date`, `attached_file`, `co
 -- --------------------------------------------------------
 
 --
+-- 資料表結構 `conference_comment`
+--
+-- 建立時間： 2021-09-18 17:12:18
+-- 最後更新： 2021-09-18 22:27:33
+--
+
+DROP TABLE IF EXISTS `conference_comment`;
+CREATE TABLE IF NOT EXISTS `conference_comment` (
+  `conferenceID` int(11) NOT NULL,
+  `commentID` int(11) NOT NULL,
+  PRIMARY KEY (`conferenceID`,`commentID`),
+  KEY `commentID_conference` (`commentID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- 傾印資料表的資料 `conference_comment`
+--
+
+INSERT INTO `conference_comment` (`conferenceID`, `commentID`) VALUES
+(1, 8),
+(6, 9),
+(8, 10),
+(9, 11),
+(3, 12);
+
+-- --------------------------------------------------------
+
+--
 -- 資料表結構 `content`
+--
+-- 建立時間： 2021-09-18 16:38:49
+-- 最後更新： 2021-09-18 16:38:49
 --
 
 DROP TABLE IF EXISTS `content`;
@@ -518,6 +634,8 @@ INSERT INTO `content` (`statement`, `account`) VALUES
 --
 -- 資料表結構 `member`
 --
+-- 建立時間： 2021-09-18 16:38:48
+--
 
 DROP TABLE IF EXISTS `member`;
 CREATE TABLE IF NOT EXISTS `member` (
@@ -541,6 +659,7 @@ INSERT INTO `member` (`sID`, `password`, `name`, `nickname`, `sex`, `birth`) VAL
 ('1110634003', '$2b$10$Pcq2oBufpcQetFOOjollferCTUFwX1sDzEcYFN4Ij2s8j1mROo15e', '施羽珊', '小施', '女', '2002-02-02'),
 ('1110634004', '$2b$10$ZsI6RiiOJD.tJAOfeufuGu.qryKCWcnXm6YgOqd/vPuIYNiFIKT22', '張芸菱', '小張', '女', '2002-02-08'),
 ('1110634006', '$2b$10$3mgQHwb3hw6N5iSggoKn4umiifi/tkRj.bQDsuDwUkPaZ6CkgZp/C', '黃子瑜', '小黃', '女', '2001-10-07'),
+('1110634007', '$2b$10$Z3WqwGAU3JgI5tKY3bVFy.xQiqwLVQUWfFwC6BzP3JEMDkbqbJ1ci', '王小明', '小王', '男', '2021-07-14'),
 ('1110634015', '$2b$10$X4UkvXoMVY2VWFGjrcZvWuCLBHOUnV0Yqya0PjSY.13w9/mKeo6CW', '林均蓉', '小林', '女', '2001-09-10'),
 ('1110634025', '$2b$10$3SpXuHeaRuS3zGArGYpHEuwG/qHOZbOcxAUIcDnQh/NcIq3zFF8.6', '廖建榕', '小廖', '男', '2001-09-13'),
 ('1110634029', '$2b$10$ohzC5BtDJKoe.FMMiHKA9Ol5TxSuCvMn8PZ44eXs/dPZHqeCApXAe', '蔣明諭', '小蔣', '男', '2002-02-01'),
@@ -551,21 +670,10 @@ INSERT INTO `member` (`sID`, `password`, `name`, `nickname`, `sex`, `birth`) VAL
 -- --------------------------------------------------------
 
 --
--- 資料表結構 `message`
---
-
-DROP TABLE IF EXISTS `message`;
-CREATE TABLE IF NOT EXISTS `message` (
-  `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `content` varchar(500) NOT NULL,
-  `uID` int(11) NOT NULL,
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='留言';
-
--- --------------------------------------------------------
-
---
 -- 資料表結構 `officer`
+--
+-- 建立時間： 2021-09-18 16:38:49
+-- 最後更新： 2021-09-18 16:38:49
 --
 
 DROP TABLE IF EXISTS `officer`;
@@ -600,6 +708,9 @@ INSERT INTO `officer` (`permission`, `position`, `sID`) VALUES
 --
 -- 資料表結構 `statement`
 --
+-- 建立時間： 2021-09-18 16:38:49
+-- 最後更新： 2021-09-18 16:38:49
+--
 
 DROP TABLE IF EXISTS `statement`;
 CREATE TABLE IF NOT EXISTS `statement` (
@@ -628,6 +739,32 @@ INSERT INTO `statement` (`ID`, `category`, `name`, `date`, `status`, `uploadBy`,
 (6, 0, '資管科十二月份財務報表', '2020-01-02 00:00:00', '0', '財務長', 117119),
 (7, 4, '聖誕晚會財務報表', '2020-01-02 00:00:00', '0', '財務長', 0);
 
+-- --------------------------------------------------------
+
+--
+-- 資料表結構 `statement_comment`
+--
+-- 建立時間： 2021-09-18 17:09:58
+-- 最後更新： 2021-09-18 22:28:25
+--
+
+DROP TABLE IF EXISTS `statement_comment`;
+CREATE TABLE IF NOT EXISTS `statement_comment` (
+  `statementID` int(11) NOT NULL,
+  `commentID` int(11) NOT NULL,
+  PRIMARY KEY (`statementID`,`commentID`),
+  KEY `commentID_statement` (`commentID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- 傾印資料表的資料 `statement_comment`
+--
+
+INSERT INTO `statement_comment` (`statementID`, `commentID`) VALUES
+(2, 5),
+(2, 6),
+(2, 13);
+
 --
 -- 已傾印資料表的限制式
 --
@@ -647,11 +784,24 @@ ALTER TABLE `account`
   ADD CONSTRAINT `officer_position_account` FOREIGN KEY (`uploadBy`) REFERENCES `officer` (`position`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
+-- 資料表的限制式 `account_comment`
+--
+ALTER TABLE `account_comment`
+  ADD CONSTRAINT `account` FOREIGN KEY (`accountID`) REFERENCES `account` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `commentID_account` FOREIGN KEY (`commentID`) REFERENCES `comment` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- 資料表的限制式 `attendees`
 --
 ALTER TABLE `attendees`
   ADD CONSTRAINT `confernece_ID_attendees` FOREIGN KEY (`conference`) REFERENCES `conference` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `officer_position_attendees` FOREIGN KEY (`attendees`) REFERENCES `officer` (`position`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- 資料表的限制式 `comment`
+--
+ALTER TABLE `comment`
+  ADD CONSTRAINT `sID_comment` FOREIGN KEY (`sID`) REFERENCES `member` (`sID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- 資料表的限制式 `conference`
@@ -660,6 +810,13 @@ ALTER TABLE `conference`
   ADD CONSTRAINT `category_ID_conference` FOREIGN KEY (`category`) REFERENCES `category` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `officer_position_conference_host` FOREIGN KEY (`host`) REFERENCES `officer` (`position`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `officer_position_conference_recorder` FOREIGN KEY (`recorder`) REFERENCES `officer` (`position`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- 資料表的限制式 `conference_comment`
+--
+ALTER TABLE `conference_comment`
+  ADD CONSTRAINT `commentID_conference` FOREIGN KEY (`commentID`) REFERENCES `comment` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `conference` FOREIGN KEY (`conferenceID`) REFERENCES `conference` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- 資料表的限制式 `content`
@@ -680,6 +837,13 @@ ALTER TABLE `officer`
 ALTER TABLE `statement`
   ADD CONSTRAINT `category_ID_statement` FOREIGN KEY (`category`) REFERENCES `category` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `officer_position_statement` FOREIGN KEY (`uploadBy`) REFERENCES `officer` (`position`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- 資料表的限制式 `statement_comment`
+--
+ALTER TABLE `statement_comment`
+  ADD CONSTRAINT `commentID_statement` FOREIGN KEY (`commentID`) REFERENCES `comment` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `statement` FOREIGN KEY (`statementID`) REFERENCES `statement` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

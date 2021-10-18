@@ -1,6 +1,5 @@
-const { check } = require('../models/officer.model');
-const officerModel = require('../models/officer.model');
 const Officer = require('../models/officer.model');
+const myFunction = require('../myFunction');
 
 const check_sID = (sID) => {
     if (sID.length == 10) {
@@ -61,7 +60,7 @@ const check_sID = (sID) => {
 const sendErrorMsg = (res, statusCode, error) => {
     if (!error)
         error = "Some error occurred in the api of officer.";
-    if (typeof(error) == "object")
+    if (typeof (error) == "object")
         error = error.message;
     res.status(statusCode).send(error);
     return console.error(error);
@@ -69,42 +68,69 @@ const sendErrorMsg = (res, statusCode, error) => {
 
 // add officer
 exports.add = (req, res) => {
-    const sID = req.body.sID;
-    if (check_sID(sID)) {
-        Officer.check(sID, (error, results) => {
-            if (error || !results.length) {
-                res.status(500).json({ "result": error })
-            }
-            if (results[0].total == "0") {
-                res.status(404).json({ "result": "Member Not Found" })
-            }
-            if (results[0].total == "1") {
-                Officer.add(req, (error, results) => {
-                    if (error || !results.affectedRows)
-                        return sendErrorMsg(res, 500, error);
-                    res.send("Add Officer Successfully.");
+    myFunction.check_permission(req).then((permission) => {
+        if (permission == '組織負責人') {
+            const sID = req.body.sID;
+            if (check_sID(sID)) {
+                Officer.check(sID, (error, results) => {
+                    if (error || !results.length) {
+                        res.status(500).json({ "result": error })
+                        return new Promise((resolve, reject) => { });
+                    }
+                    if (results[0].total == "0") {
+                        res.status(404).json({ "result": "Member Not Found" })
+                        return new Promise((resolve, reject) => { });
+                    }
+                    if (results[0].total == "1") {
+                        Officer.add(req, (error, results) => {
+                            if (error || !results.affectedRows)
+                                return sendErrorMsg(res, 500, error);
+                            res.status(201).send("Add Officer Successfully.");
+                            return new Promise((resolve, reject) => { });
+                        });
+                    }
                 });
+            } else {
+                res.status(400).json({ "result": "sID format error" });
+                return new Promise((resolve, reject) => { });
             }
-        });
-    } else {
-        res.status(500).json({ "result": "sID format error" });
-    }
+        } else {
+            res.status(403).json({ 'result': 'Permission denied.' })
+            return new Promise((resolve, reject) => { });
+        }
+    }).catch(() => {
+        res.status(401).json({ 'result': 'Not Login' })
+        return new Promise((resolve, reject) => { });
+    })
+
 };
 
 // delete officer
 exports.delete = (req, res) => {
-    const sID = req.body.sID;
-    if (check_sID(sID)) {
-        Officer.delete(req, (error, results) => {
-            if (error)
-                return sendErrorMsg(res, 500, error);
-            if (!results.affectedRows)
-                return sendErrorMsg(res, 404, "The condition is not exist.");
-            res.send("Delete Officer Successfully.");
-        }).catch(error => sendErrorMsg(res, 500, error));
-    } else {
-        res.status(500).json({ "result": "sID format error" });
-    }
+    myFunction.check_permission(req).then((permission) => {
+        if (permission == '組織負責人') {
+            const sID = req.body.sID;
+            if (check_sID(sID)) {
+                Officer.delete(req, (error, results) => {
+                    if (error)
+                        return sendErrorMsg(res, 500, error);
+                    if (!results.affectedRows)
+                        return sendErrorMsg(res, 404, "The condition is not exist.");
+                    res.status(200).send("Delete Officer Successfully.");
+                }).catch(error => sendErrorMsg(res, 500, error));
+            } else {
+                res.status(400).json({ "result": "sID format error" });
+                return new Promise((resolve, reject) => { });
+            }
+        } else {
+            res.status(403).json({ 'result': 'Permission denied.' })
+            return new Promise((resolve, reject) => { });
+        }
+    }).catch(() => {
+        res.status(401).json({ 'result': 'Not Login' })
+        return new Promise((resolve, reject) => { });
+    })
+
 
 };
 
@@ -114,35 +140,44 @@ exports.delete = (req, res) => {
 
 // fetch all officer
 exports.fetchAll = (req, res) => {
+
     Officer.fetchAll(req, (error, results) => {
         if (error)
             return sendErrorMsg(res, 500, error);
         if (!results.length)
             return sendErrorMsg(res, 404, "There is nothing to show.");
-        res.send(results);
+        res.status(200).send(results);
+        return new Promise((resolve, reject) => { });
     });
+
 };
 
 // fetch by position
 exports.fetchByPosition = (req, res) => {
+
     Officer.fetchByPosition(req, (error, results) => {
         if (error)
             return sendErrorMsg(res, 500, error);
         if (!results.length)
             return sendErrorMsg(res, 404, "There is nothing to show.");
-        res.send(results);
+        res.status(200).send(results);
+        return new Promise((resolve, reject) => { });
     });
+
 };
 
 // fetch by authority
 exports.fetchByPermission = (req, res) => {
+
     Officer.fetchByPermission(req, (error, results) => {
         if (error)
             return sendErrorMsg(res, 500, error);
         if (!results.length)
             return sendErrorMsg(res, 404, "There is nothing to show.");
-        res.send(results);
+        res.status(200).send(results);
+        return new Promise((resolve, reject) => { });
     });
+
 };
 
 /****************
@@ -151,65 +186,92 @@ exports.fetchByPermission = (req, res) => {
 
 // update officer by position
 exports.updateOfficer = (req, res) => {
-    const sID = req.body.sID;
-    if (check_sID(sID)) {
-        Officer.check(sID, (error, results) => {
-            if (error || !results.length) {
-                res.status(500).json({ "result": error })
-            }
-            if (results[0].total == "0") {
-                res.status(404).json({ "result": "Member Not Found" })
-            }
-            if (results[0].total == "1") {
-                Officer.updateOfficer(req, (error, results) => {
-                    if (error)
-                        return sendErrorMsg(res, 500, error);
-                    if (!results.affectedRows)
-                        return sendErrorMsg(res, 404, "The condition is not exist.");
-                    res.json({ "result": true });
+    myFunction.check_permission(req).then((permission) => {
+        if (permission == '組織負責人') {
+            const sID = req.body.sID;
+            if (check_sID(sID)) {
+                Officer.check(sID, (error, results) => {
+                    if (error || !results.length) {
+                        res.status(500).json({ "result": error })
+                        return new Promise((resolve, reject) => { });
+                    }
+                    if (results[0].total == "0") {
+                        res.status(404).json({ "result": "Member Not Found" })
+                        return new Promise((resolve, reject) => { });
+                    }
+                    if (results[0].total == "1") {
+                        Officer.updateOfficer(req, (error, results) => {
+                            if (error)
+                                return sendErrorMsg(res, 500, error);
+                            if (!results.affectedRows)
+                                return sendErrorMsg(res, 404, "The condition is not exist.");
+                            res.status(200).json({ "result": true });
+                            return new Promise((resolve, reject) => { });
+                        });
+                    }
                 });
+            } else {
+                res.status(400).json({ "result": "sID format error" });
+                return new Promise((resolve, reject) => { });
             }
-        });
-    } else {
-        res.status(500).json({ "result": "sID format error" });
-    }
-
+        } else {
+            res.status(403).json({ 'result': 'Permission denied.' })
+            return new Promise((resolve, reject) => { });
+        }
+    }).catch(() => {
+        res.status(401).json({ 'result': 'Not Login' })
+        return new Promise((resolve, reject) => { });
+    })
 };
 
 // update permission by position
 exports.updatePermission = (req, res) => {
-    const organize = req.body.organize;
-    const finance = req.body.finance;
-    const conference = req.body.conference;
-    const data = [organize, finance, conference];
-    let arr = [];
-    let arr2 = [];
-    let cnt = 0;
-    for (let i = 0; i < 3; i++) {
-        for (let j = 0; j < 2; j++) {
-            if (data[i][j]) {
-                arr.push(data[i][j]);
-                arr2.push(data[i][j]);
+    myFunction.check_permission(req).then((permission) => {
+        if (permission == '組織負責人') {
+            const organize = req.body.organize;
+            const finance = req.body.finance;
+            const conference = req.body.conference;
+            const data = [organize, finance, conference];
+            let arr = [];
+            let arr2 = [];
+            let cnt = 0;
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 2; j++) {
+                    if (data[i][j]) {
+                        arr.push(data[i][j]);
+                        arr2.push(data[i][j]);
+                    }
+                }
             }
-        }
-    }
-    for (let i = 0; i < arr.length; i++) {
-        for (let j = i + 1; j < arr2.length; j++) {
-            if (arr[i] == arr2[j]) {
-                cnt += 1;
+            for (let i = 0; i < arr.length; i++) {
+                for (let j = i + 1; j < arr2.length; j++) {
+                    if (arr[i] == arr2[j]) {
+                        cnt += 1;
+                    }
+                }
             }
+            if (cnt > 0) {
+                res.status(500).json({ "result": "Permission cannot be repeated" });
+                return new Promise((resolve, reject) => { });
+            } else {
+                Officer.updatePermission(req, (error, results) => {
+                    if (error)
+                        return sendErrorMsg(res, 500, error);
+                    if (!results.affectedRows)
+                        return sendErrorMsg(res, 404, "The condition is not exist.");
+                    res.status(200).json({ "result": true });
+                    return new Promise((resolve, reject) => { });
+                });
+            }
+        } else {
+            res.status(403).json({ 'result': 'Permission denied.' })
+            return new Promise((resolve, reject) => { });
         }
-    }
 
-    if (cnt > 0) {
-        res.status(500).json({ "result": "Permission cannot be repeated" });
-    } else {
-        Officer.updatePermission(req, (error, results) => {
-            if (error)
-                return sendErrorMsg(res, 500, error);
-            if (!results.affectedRows)
-                return sendErrorMsg(res, 404, "The condition is not exist.");
-            res.status(200).json({ "result": true });
-        });
-    }
+    }).catch(() => {
+        res.status(401).json({ 'result': 'Not Login' })
+        return new Promise((resolve, reject) => { });
+    })
+
+
 };

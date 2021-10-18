@@ -10,12 +10,12 @@ $(document).ready(function() {
     }
 
     $.ajax({
-        type: "post",
+        type: "get",
         dataType: 'json',
         async: true,
         // data: { 'sID': acc },
-        data: { 'sID': sID },
-        url: 'http://127.0.0.1:3000/api/user/getUser',
+        // data: { 'sID': sID },
+        url: 'http://127.0.0.1:4000/api/member/fetch/all',
         success: function(data_in) {
             console.log(data_in);
         }
@@ -24,4 +24,57 @@ $(document).ready(function() {
 
 $('#change').click(function() {
     alert("修改成功");
+});
+
+$('#check').click(() => {
+    const sID = 1110634025;
+    $.ajax({
+        type: "post",
+        dataType: 'json',
+        async: true,
+        data: { 'sID': sID },
+        url: 'http://127.0.0.1:4000/api/member/check',
+        success: function(data_in) {
+            console.log(data_in);
+        }
+    })
+});
+
+$('#logout').click(() => {
+    $.ajax({
+        type: "post",
+        dataType: 'json',
+        async: true,
+        data: {},
+        url: 'http://127.0.0.1:4000/api/member/logout',
+        success: function(data_in) {
+            console.log(data_in);
+        }
+    })
+});
+
+$('#reg').click(() => {
+    $.ajax({
+        type: "post",
+        dataType: 'json',
+        async: true,
+        data: { "sID": "1110634007" },
+        url: 'http://127.0.0.1:4000/api/member/add',
+        success: function(data_in) {
+            console.log(data_in);
+        }
+    })
+});
+
+$('#del').click(() => {
+    $.ajax({
+        type: "post",
+        dataType: 'json',
+        async: true,
+        data: { "sID": "1110634007" },
+        url: 'http://127.0.0.1:4000/api/member/delete',
+        success: function(data_in) {
+            console.log(data_in);
+        }
+    })
 });
