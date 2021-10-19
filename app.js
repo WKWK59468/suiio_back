@@ -68,10 +68,19 @@ MySQLEventWatcher.addTrigger({
         const action = event.affectedRows[0].after.action;
         const content = event.affectedRows[0].after.content;
         const arr = ["account", "statement", "conference"];
-
+        let eventJSON = {
+            "events": `${nickname[0].nickname}在${tableName[0].name} 收支 新增了一則留言`,
+            "table": element,
+            "tableID": result[0][element + "ID"]
+        }
         //account
         if (type == "account") {
             if (action == "新增") {
+                let eventJSON = {
+                    "events": `${nickname[0].nickname}新增了一筆收支`,
+                    "table": "account",
+                    "tableID": ""
+                }
                 io.emit(organization, { "events": "account新增" });
                 io.emit(finance, { "events": "account新增" });
             }
@@ -148,44 +157,41 @@ MySQLEventWatcher.addTrigger({
                                         await results.forEach(getsID => {
                                             array.push(getsID.sID);
                                         })
-                                        array = await array.filter((item) => {
+                                        array = array.filter((item) => {
                                             return item != sID;
                                         })
                                         array.forEach(emit_sID => {
-                                            //搜尋匿名名稱
-                                            eventsmodel.fetch_neme(emit_sID, (sIDerr, nickname) => {
-                                                if (!sIDerr) {
-                                                    eventsmodel.fetch_tableName(element, result[0][element + "ID"], (error, tableName) => {
-                                                        if (!error) {
-                                                            if (table == "account") {
-                                                                eventJSON = {
-                                                                    "events": `${nickname[0].nickname}在${tableName[0].name} 收支 新增了一則留言`,
-                                                                    "table": element,
-                                                                    "tableID": result[0][element + "ID"]
-                                                                }
-                                                                io.emit(emit_sID, eventJSON);
-                                                            }
-                                                            if (table == "statement") {
-                                                                eventJSON = {
-                                                                    "events": `${nickname[0].nickname}在${tableName[0].name} 財務報表 新增了一則留言`,
-                                                                    "table": element,
-                                                                    "tableID": result[0][element + "ID"]
-                                                                }
-                                                                io.emit(emit_sID, eventJSON);
-                                                            }
-                                                            if (table == "conference") {
-                                                                eventJSON = {
-                                                                    "events": `${nickname[0].nickname}在${tableName[0].name} 會議記錄 新增了一則留言`,
-                                                                    "table": element,
-                                                                    "tableID": result[0][element + "ID"]
-                                                                }
-                                                                io.emit(emit_sID, eventJSON);
-                                                            }
 
-                                                        }
-                                                    })
+                                            if (table == "account") {
+                                                let eventJSON = {
+                                                    "events": `您留言過的收支紀錄新增了一則留言`,
+                                                    "table": element,
+                                                    "tableID": result[0][element + "ID"]
                                                 }
-                                            })
+                                                io.emit(emit_sID, eventJSON);
+                                                io.emit(organization, eventJSON);
+                                                io.emit(finance, eventJSON);
+                                            }
+                                            if (table == "statement") {
+                                                let eventJSON = {
+                                                    "events": `您留言過的財務報表新增了一則留言`,
+                                                    "table": element,
+                                                    "tableID": result[0][element + "ID"]
+                                                }
+                                                io.emit(emit_sID, eventJSON);
+                                                io.emit(organization, eventJSON);
+                                                io.emit(finance, eventJSON);
+                                            }
+                                            if (table == "conference") {
+                                                let eventJSON = {
+                                                    "events": `您留言過的會議記錄新增了一則留言`,
+                                                    "table": element,
+                                                    "tableID": result[0][element + "ID"]
+                                                }
+                                                io.emit(emit_sID, eventJSON);
+                                                io.emit(organization, eventJSON);
+                                                io.emit(finance, eventJSON);
+                                            }
 
                                         })
                                         //result為所有留言過的人
@@ -197,19 +203,19 @@ MySQLEventWatcher.addTrigger({
                     });
 
                 }, 1000);
-                io.emit(organization, { "events": "comment新增" });
-                io.emit(finance, { "events": "comment新增" });
+
             }
-            if (action == "修改") {
-                if (content == "留言") {
-                    io.emit(organization, { "events": "comment修改內容" });
-                    io.emit(finance, { "events": "comment修改內容" });
-                }
-            }
-            if (action == "刪除") {
-                io.emit(organization, { "events": "comment刪除" });
-                io.emit(finance, { "events": "comment刪除" });
-            }
+            // if (action == "修改") {
+            //     if (content == "留言") {
+
+            //         io.emit(organization, { "events": "comment修改內容" });
+            //         io.emit(finance, { "events": "comment修改內容" });
+            //     }
+            // }
+            // if (action == "刪除") {
+            //     io.emit(organization, { "events": "comment刪除" });
+            //     io.emit(finance, { "events": "comment刪除" });
+            // }
         }
     },
 })
