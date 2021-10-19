@@ -142,8 +142,8 @@ MySQLEventWatcher.addTrigger({
                         eventsmodel.fetch(element, objectID, (err, result) => {
                             if (!err && result.length) {
                                 //搜尋所有留過言的人
-                                eventsmodel.fetch_sID(element, result[0][element + "ID"], async (err, results) => {
-                                    if (!err && result.length) {
+                                eventsmodel.fetch_sID(element, result[0][element + "ID"], async (IDerr, results) => {
+                                    if (!IDerr && result.length) {
                                         let array = [];
                                         await results.forEach(getsID => {
                                             array.push(getsID.sID);
@@ -152,7 +152,41 @@ MySQLEventWatcher.addTrigger({
                                             return item != sID;
                                         })
                                         array.forEach(emit_sID => {
-                                            io.emit(emit_sID, { "events": `${sID}回應了${element}的留言` });
+                                            //搜尋匿名名稱
+                                            eventsmodel.fetch_neme(emit_sID, (sIDerr, nickname) => {
+                                                if (!sIDerr) {
+                                                    eventsmodel.fetch_tableName(element, result[0][element + "ID"], (error, tableName) => {
+                                                        if (!error) {
+                                                            if (table == "account") {
+                                                                eventJSON = {
+                                                                    "events": `${nickname[0].nickname}在${tableName[0].name} 收支 新增了一則留言`,
+                                                                    "table": element,
+                                                                    "tableID": result[0][element + "ID"]
+                                                                }
+                                                                io.emit(emit_sID, eventJSON);
+                                                            }
+                                                            if (table == "statement") {
+                                                                eventJSON = {
+                                                                    "events": `${nickname[0].nickname}在${tableName[0].name} 財務報表 新增了一則留言`,
+                                                                    "table": element,
+                                                                    "tableID": result[0][element + "ID"]
+                                                                }
+                                                                io.emit(emit_sID, eventJSON);
+                                                            }
+                                                            if (table == "conference") {
+                                                                eventJSON = {
+                                                                    "events": `${nickname[0].nickname}在${tableName[0].name} 會議記錄 新增了一則留言`,
+                                                                    "table": element,
+                                                                    "tableID": result[0][element + "ID"]
+                                                                }
+                                                                io.emit(emit_sID, eventJSON);
+                                                            }
+
+                                                        }
+                                                    })
+                                                }
+                                            })
+
                                         })
                                         //result為所有留言過的人
                                     }
