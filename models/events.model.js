@@ -14,7 +14,7 @@ module.exports = {
         conn.query(sql, callback);
     },
     fetch_neme: (sID, callback) => {
-        sql = `SELECT nickname FROM member WHERE sID = '${sID}'`;
+        sql = `SELECT name FROM member WHERE sID = '${sID}'`;
         conn.query(sql, callback);
     },
     fetch_tableName: (type, objectID, callback) => {
