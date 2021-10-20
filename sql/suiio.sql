@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.2
+-- version 5.1.1
 -- https://www.phpmyadmin.net/
 --
--- 主機： 127.0.0.1:3308
--- 產生時間： 2021-10-09 05:08:58
--- 伺服器版本： 5.7.31
--- PHP 版本： 7.3.21
+-- 主機： 127.0.0.1
+-- 產生時間： 2021-10-20 12:08:04
+-- 伺服器版本： 10.4.21-MariaDB-log
+-- PHP 版本： 7.4.24
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- 資料庫： `suiio`
+-- 資料庫: `suiio`
 --
 CREATE DATABASE IF NOT EXISTS `suiio` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 USE `suiio`;
@@ -42,46 +42,46 @@ CREATE TABLE IF NOT EXISTS `absentees` (
 --
 
 INSERT INTO `absentees` (`conference`, `absentees`) VALUES
-(16, '公關長'),
 (1, '副會長'),
-(2, '副會長'),
-(3, '副會長'),
-(4, '副會長'),
-(5, '副會長'),
-(6, '副會長'),
-(7, '副會長'),
-(8, '副會長'),
-(9, '副會長'),
 (1, '會長'),
-(2, '會長'),
-(3, '會長'),
-(4, '會長'),
-(5, '會長'),
-(6, '會長'),
-(7, '會長'),
-(8, '會長'),
-(9, '會長'),
 (1, '活動長'),
+(1, '資訊長'),
+(2, '副會長'),
+(2, '會長'),
 (2, '活動長'),
+(2, '資訊長'),
+(3, '副會長'),
+(3, '會長'),
 (3, '活動長'),
+(3, '資訊長'),
+(4, '副會長'),
+(4, '會長'),
 (4, '活動長'),
+(4, '資訊長'),
+(5, '副會長'),
+(5, '會長'),
 (5, '活動長'),
+(5, '資訊長'),
+(6, '副會長'),
+(6, '會長'),
 (6, '活動長'),
+(6, '資訊長'),
+(7, '副會長'),
+(7, '會長'),
 (7, '活動長'),
+(7, '資訊長'),
+(8, '副會長'),
+(8, '會長'),
 (8, '活動長'),
+(8, '財務長'),
+(9, '副會長'),
+(9, '會長'),
 (9, '活動長'),
+(9, '財務長'),
+(16, '公關長'),
 (16, '生活長'),
 (16, '秘書長'),
 (16, '美宣長'),
-(8, '財務長'),
-(9, '財務長'),
-(1, '資訊長'),
-(2, '資訊長'),
-(3, '資訊長'),
-(4, '資訊長'),
-(5, '資訊長'),
-(6, '資訊長'),
-(7, '資訊長'),
 (16, '資訊長');
 
 -- --------------------------------------------------------
@@ -104,7 +104,7 @@ CREATE TABLE IF NOT EXISTS `account` (
   PRIMARY KEY (`ID`,`category`) USING BTREE,
   KEY `category_ID_account` (`category`),
   KEY `officer_position_account` (`uploadBy`)
-) ENGINE=InnoDB AUTO_INCREMENT=95 DEFAULT CHARSET=utf8 COMMENT='收支紀錄';
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8 COMMENT='收支紀錄';
 
 --
 -- 傾印資料表的資料 `account`
@@ -230,7 +230,7 @@ DELIMITER ;
 DROP TRIGGER IF EXISTS `account_UPDATE_STATUS`;
 DELIMITER $$
 CREATE TRIGGER `account_UPDATE_STATUS` AFTER UPDATE ON `account` FOR EACH ROW IF OLD.status <> NEW.status THEN
-INSERT INTO events (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=NEW.uploadBy),"修改","狀態","account",OLD.ID);
+INSERT INTO events (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=NEW.uploadBy),"修改",NEW.status,"account",OLD.ID);
 END IF
 $$
 DELIMITER ;
@@ -255,6 +255,7 @@ CREATE TABLE IF NOT EXISTS `account_comment` (
 
 INSERT INTO `account_comment` (`accountID`, `commentID`) VALUES
 (7, 1),
+(7, 17),
 (29, 2),
 (32, 3),
 (38, 4);
@@ -279,42 +280,42 @@ CREATE TABLE IF NOT EXISTS `attendees` (
 
 INSERT INTO `attendees` (`conference`, `attendees`) VALUES
 (1, '公關長'),
-(2, '公關長'),
-(3, '公關長'),
-(4, '公關長'),
-(5, '公關長'),
-(6, '公關長'),
-(7, '公關長'),
-(16, '副會長'),
 (1, '器材長'),
+(1, '秘書長'),
+(1, '體育長'),
+(2, '公關長'),
 (2, '器材長'),
+(2, '秘書長'),
+(2, '體育長'),
+(3, '公關長'),
 (3, '器材長'),
+(3, '秘書長'),
+(3, '體育長'),
+(4, '公關長'),
 (4, '器材長'),
+(4, '秘書長'),
+(4, '體育長'),
+(5, '公關長'),
 (5, '器材長'),
+(5, '秘書長'),
+(5, '體育長'),
+(6, '公關長'),
 (6, '器材長'),
+(6, '秘書長'),
+(6, '體育長'),
+(7, '公關長'),
 (7, '器材長'),
+(7, '秘書長'),
+(7, '體育長'),
 (8, '器材長'),
+(8, '體育長'),
 (9, '器材長'),
+(9, '體育長'),
+(16, '副會長'),
 (16, '器材長'),
 (16, '會長'),
 (16, '活動長'),
-(1, '秘書長'),
-(2, '秘書長'),
-(3, '秘書長'),
-(4, '秘書長'),
-(5, '秘書長'),
-(6, '秘書長'),
-(7, '秘書長'),
 (16, '財務長'),
-(1, '體育長'),
-(2, '體育長'),
-(3, '體育長'),
-(4, '體育長'),
-(5, '體育長'),
-(6, '體育長'),
-(7, '體育長'),
-(8, '體育長'),
-(9, '體育長'),
 (16, '體育長');
 
 -- --------------------------------------------------------
@@ -394,7 +395,7 @@ CREATE TABLE IF NOT EXISTS `comment` (
   `sID` char(10) NOT NULL,
   PRIMARY KEY (`ID`),
   KEY `sID_comment` (`sID`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8 COMMENT='留言';
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8 COMMENT='留言';
 
 --
 -- 傾印資料表的資料 `comment`
@@ -414,8 +415,7 @@ INSERT INTO `comment` (`ID`, `date`, `content`, `status`, `isHide`, `sID`) VALUE
 (12, '2021-09-19 06:27:32', '所以人員怎麼配置?', '0', 1, '1110634025'),
 (13, '2021-09-19 06:28:24', '這花費也太兇了', '0', 0, '1110634025'),
 (14, '2021-09-21 19:56:17', '這花費也太兇了', '0', 1, '1110634029'),
-(15, '2021-09-23 00:08:58', '這花費也太兇了', '0', 1, '1110634025'),
-(16, '2021-10-09 13:02:52', '這膠帶也太貴了...', '1', 1, '1110634039');
+(15, '2021-09-23 00:08:58', '這花費也太兇了', '0', 1, '1110634025');
 
 --
 -- 觸發器 `comment`
@@ -451,7 +451,7 @@ DROP TRIGGER IF EXISTS `comment_UPDATE_STATUS`;
 DELIMITER $$
 CREATE TRIGGER `comment_UPDATE_STATUS` AFTER UPDATE ON `comment` FOR EACH ROW IF OLD.status <> NEW.status THEN
 
-INSERT INTO events (who,action,content,type,objectID) VALUES (NEW.sID,"修改","狀態","comment",NEW.ID);
+INSERT INTO events (who,action,content,type,objectID) VALUES (NEW.sID,"修改",NEW.status,"comment",NEW.ID);
 
 END IF
 $$
@@ -556,10 +556,10 @@ CREATE TABLE IF NOT EXISTS `conference_comment` (
 
 INSERT INTO `conference_comment` (`conferenceID`, `commentID`) VALUES
 (1, 8),
+(3, 12),
 (6, 9),
 (8, 10),
-(9, 11),
-(3, 12);
+(9, 11);
 
 -- --------------------------------------------------------
 
@@ -581,117 +581,118 @@ CREATE TABLE IF NOT EXISTS `content` (
 
 INSERT INTO `content` (`statement`, `account`) VALUES
 (2, 7),
-(3, 7),
 (2, 8),
-(3, 8),
 (2, 9),
-(3, 9),
 (2, 10),
 (2, 11),
 (2, 12),
 (2, 13),
-(3, 13),
 (2, 14),
-(3, 14),
 (2, 15),
 (2, 16),
 (2, 17),
 (2, 18),
-(5, 18),
 (2, 19),
-(5, 19),
 (2, 20),
-(3, 20),
 (2, 21),
 (2, 22),
-(3, 22),
 (2, 23),
 (2, 24),
 (2, 25),
 (2, 26),
-(3, 26),
 (2, 27),
 (2, 28),
 (2, 29),
-(3, 29),
 (2, 30),
-(3, 30),
 (2, 31),
-(3, 31),
 (2, 32),
 (2, 33),
-(3, 33),
 (2, 34),
-(3, 34),
 (2, 35),
-(3, 35),
 (2, 36),
-(3, 36),
 (2, 37),
-(3, 37),
 (2, 38),
-(3, 38),
 (2, 39),
-(3, 39),
 (2, 40),
 (2, 41),
-(3, 41),
 (2, 42),
 (2, 43),
-(3, 43),
 (2, 44),
 (2, 45),
 (2, 46),
-(3, 46),
 (2, 47),
-(3, 47),
 (2, 48),
-(3, 48),
 (2, 49),
-(3, 49),
 (2, 50),
-(3, 50),
 (2, 51),
-(3, 51),
 (2, 52),
-(3, 52),
 (2, 53),
-(3, 53),
 (2, 54),
-(3, 54),
 (2, 55),
-(3, 55),
 (2, 56),
-(3, 56),
 (2, 57),
-(3, 57),
 (2, 58),
-(3, 58),
 (2, 59),
-(3, 59),
 (2, 60),
-(3, 60),
 (2, 61),
-(3, 61),
 (2, 62),
-(3, 62),
 (2, 63),
+(3, 7),
+(3, 8),
+(3, 9),
+(3, 13),
+(3, 14),
+(3, 20),
+(3, 22),
+(3, 26),
+(3, 29),
+(3, 30),
+(3, 31),
+(3, 33),
+(3, 34),
+(3, 35),
+(3, 36),
+(3, 37),
+(3, 38),
+(3, 39),
+(3, 41),
+(3, 43),
+(3, 46),
+(3, 47),
+(3, 48),
+(3, 49),
+(3, 50),
+(3, 51),
+(3, 52),
+(3, 53),
+(3, 54),
+(3, 55),
+(3, 56),
+(3, 57),
+(3, 58),
+(3, 59),
+(3, 60),
+(3, 61),
+(3, 62),
 (4, 64),
 (4, 65),
 (4, 66),
-(5, 66),
 (4, 67),
-(5, 67),
 (4, 68),
 (4, 69),
 (4, 70),
 (4, 71),
+(5, 18),
+(5, 19),
+(5, 66),
+(5, 67),
+(5, 91),
+(5, 92),
 (6, 72),
 (6, 73),
 (6, 74),
 (6, 75),
 (6, 76),
-(7, 76),
 (6, 77),
 (6, 78),
 (6, 79),
@@ -701,21 +702,20 @@ INSERT INTO `content` (`statement`, `account`) VALUES
 (6, 83),
 (6, 84),
 (6, 85),
-(7, 85),
 (6, 86),
-(7, 86),
 (6, 87),
-(7, 87),
 (6, 88),
-(7, 88),
 (6, 89),
-(7, 89),
 (6, 90),
-(5, 91),
 (6, 91),
-(5, 92),
 (6, 92),
-(6, 93);
+(6, 93),
+(7, 76),
+(7, 85),
+(7, 86),
+(7, 87),
+(7, 88),
+(7, 89);
 
 -- --------------------------------------------------------
 
@@ -726,7 +726,7 @@ INSERT INTO `content` (`statement`, `account`) VALUES
 DROP TABLE IF EXISTS `events`;
 CREATE TABLE IF NOT EXISTS `events` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `timestamp` timestamp NOT NULL DEFAULT current_timestamp(),
   `who` char(10) NOT NULL,
   `action` varchar(20) NOT NULL,
   `content` varchar(20) NOT NULL,
@@ -734,7 +734,7 @@ CREATE TABLE IF NOT EXISTS `events` (
   `objectID` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `who` (`who`)
-) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8 COMMENT='通知';
+) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=utf8 COMMENT='通知';
 
 --
 -- 傾印資料表的資料 `events`
@@ -761,28 +761,16 @@ INSERT INTO `events` (`id`, `timestamp`, `who`, `action`, `content`, `type`, `ob
 (18, '2021-10-09 04:29:13', '1110634025', '修改', '狀態', 'statement', 2),
 (19, '2021-10-09 04:29:34', '1110634025', '刪除', '財務報表', 'statement', 8),
 (20, '2021-10-09 04:29:53', '1110634029', '刪除', '會議記錄', 'conference', 17),
-(21, '2021-10-09 04:48:40', '1110634039', '新增', '留言', 'comment', 16),
-(22, '2021-10-09 04:50:47', '1110634039', '修改', '狀態', 'comment', 16),
-(24, '2021-10-09 04:53:18', '1110634039', '修改', '留言', 'comment', 16),
-(25, '2021-10-09 04:53:48', '1110634039', '修改', '留言', 'comment', 16),
-(26, '2021-10-09 04:53:48', '1110634039', '刪除', '留言', 'comment', 16),
-(27, '2021-10-09 04:56:01', '1110634039', '修改', '留言', 'comment', 16),
-(28, '2021-10-09 04:56:01', '1110634039', '刪除', '留言', 'comment', 16),
-(29, '2021-10-09 04:57:21', '1110634039', '修改', '留言', 'comment', 16),
-(30, '2021-10-09 04:57:21', '1110634039', '刪除', '留言', 'comment', 16),
-(31, '2021-10-09 04:57:48', '1110634039', '修改', '留言', 'comment', 16),
-(32, '2021-10-09 04:57:48', '1110634039', '刪除', '留言', 'comment', 16),
-(33, '2021-10-09 04:58:25', '1110634039', '修改', '留言', 'comment', 16),
-(34, '2021-10-09 04:58:58', '1110634039', '修改', '留言', 'comment', 16),
-(35, '2021-10-09 04:59:07', '1110634039', '修改', '留言', 'comment', 16),
-(36, '2021-10-09 04:59:07', '1110634039', '刪除', '留言', 'comment', 16),
-(37, '2021-10-09 05:00:47', '1110634039', '刪除', '留言', 'comment', 16),
-(38, '2021-10-09 05:00:47', '1110634039', '修改', '留言', 'comment', 16),
-(39, '2021-10-09 05:01:56', '1110634039', '修改', '留言', 'comment', 16),
-(40, '2021-10-09 05:02:05', '1110634039', '刪除', '留言', 'comment', 16),
-(41, '2021-10-09 05:02:30', '1110634039', '修改', '留言', 'comment', 16),
-(42, '2021-10-09 05:02:38', '1110634039', '刪除', '留言', 'comment', 16),
-(43, '2021-10-09 05:02:52', '1110634039', '刪除', '留言', 'comment', 16);
+(44, '2021-10-12 02:03:30', '1110634025', '新增', '收支', 'account', 95),
+(45, '2021-10-12 02:04:48', '1110634025', '刪除', '收支', 'account', 95),
+(46, '2021-10-12 03:02:07', '1110634025', '新增', '收支', 'account', 96),
+(47, '2021-10-12 03:02:15', '1110634025', '刪除', '收支', 'account', 96),
+(48, '2021-10-12 03:02:56', '1110634025', '新增', '收支', 'account', 97),
+(49, '2021-10-12 03:03:01', '1110634025', '刪除', '收支', 'account', 97),
+(50, '2021-10-12 03:04:06', '1110634025', '新增', '收支', 'account', 98),
+(51, '2021-10-12 03:04:10', '1110634025', '刪除', '收支', 'account', 98),
+(52, '2021-10-12 03:11:18', '1110634025', '新增', '收支', 'account', 99),
+(53, '2021-10-12 03:11:27', '1110634025', '刪除', '收支', 'account', 99);
 
 -- --------------------------------------------------------
 
@@ -921,7 +909,7 @@ DROP TRIGGER IF EXISTS `statement_UPDATE_STATUS`;
 DELIMITER $$
 CREATE TRIGGER `statement_UPDATE_STATUS` AFTER UPDATE ON `statement` FOR EACH ROW IF OLD.status <> NEW.status THEN
 
-INSERT INTO events (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=OLD.uploadBy),"修改","狀態","statement",OLD.ID);
+INSERT INTO events (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=OLD.uploadBy),"修改",NEW.status,"statement",OLD.ID);
 
 END IF
 $$
@@ -951,7 +939,15 @@ INSERT INTO `statement_comment` (`statementID`, `commentID`) VALUES
 (2, 13),
 (2, 14),
 (2, 15),
-(2, 16);
+(2, 16),
+(2, 18),
+(2, 19),
+(2, 20),
+(2, 21),
+(2, 22),
+(2, 23),
+(2, 24),
+(2, 25);
 
 --
 -- 已傾印資料表的限制式
