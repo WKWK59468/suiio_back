@@ -67,107 +67,88 @@ MySQLEventWatcher.addTrigger({
         //account
         if (type == "account") {
             if (action == "新增") {
-                eventsmodel.fetch(type, objectID, (err, result) => {
-                    if (!err && result.length) {
-                        eventsmodel.fetch_neme(sID, (error, results) => {
-                            if (!error && results.length) {
-                                let eventJSON = {
-                                    "events": `${results[0].name}新增了一筆收支`,
-                                    "table": type,
-                                    "tableID": result[0][type + "ID"]
-                                }
-                                io.emit(organization, eventJSON);
-                                io.emit(finance, eventJSON);
-                            }
-                        })
-
+                eventsmodel.fetch_neme(sID, (error, results) => {
+                    if (!error && results.length) {
+                        let eventJSON = {
+                            "events": `${results[0].name}新增了一筆收支`,
+                            "table": type,
+                            "tableID": objectID
+                        }
+                        io.emit(organization, eventJSON);
+                        io.emit(finance, eventJSON);
                     }
                 })
             }
             if (action == "修改") {
                 if (content !== "收支") {
-                    eventsmodel.fetch(type, objectID, (err, result) => {
-                        if (!err && result.length) {
-                            let eventJSON = {};
-                            switch (content) {
-                                case "0":
-                                    eventJSON = {
-                                        "events": `收支狀態變更為 未審核`,
-                                        "table": type,
-                                        "tableID": result[0][type + "ID"]
-                                    }
-                                    io.emit(sID, eventJSON);
-                                    break;
-                                case "1":
-                                    eventJSON = {
-                                        "events": `收支狀態變更為 通過`,
-                                        "table": type,
-                                        "tableID": result[0][type + "ID"]
-                                    }
-                                    io.emit(sID, eventJSON);
-                                    break;
-                                case "2":
-                                    eventJSON = {
-                                        "events": `收支狀態變更為 組織負責人已審核`,
-                                        "table": type,
-                                        "tableID": result[0][type + "ID"]
-                                    }
-                                    io.emit(sID, eventJSON);
-                                    break;
-                                case "3":
-                                    eventJSON = {
-                                        "events": `收支狀態變更為 財務負責人已審核`,
-                                        "table": type,
-                                        "tableID": result[0][type + "ID"]
-                                    }
-                                    io.emit(sID, eventJSON);
-                                    break;
-                                case "4":
-                                    eventJSON = {
-                                        "events": `收支狀態變更為 駁回`,
-                                        "table": type,
-                                        "tableID": result[0][type + "ID"]
-                                    }
-                                    io.emit(sID, eventJSON);
-                                    break;
+                    let eventJSON = {};
+                    switch (content) {
+                        case "0":
+                            eventJSON = {
+                                "events": `收支狀態變更為 未審核`,
+                                "table": type,
+                                "tableID": objectID
                             }
-                        }
-                    })
+                            io.emit(sID, eventJSON);
+                            break;
+                        case "1":
+                            eventJSON = {
+                                "events": `收支狀態變更為 通過`,
+                                "table": type,
+                                "tableID": objectID
+                            }
+                            io.emit(sID, eventJSON);
+                            break;
+                        case "2":
+                            eventJSON = {
+                                "events": `收支狀態變更為 組織負責人已審核`,
+                                "table": type,
+                                "tableID": objectID
+                            }
+                            io.emit(sID, eventJSON);
+                            break;
+                        case "3":
+                            eventJSON = {
+                                "events": `收支狀態變更為 財務負責人已審核`,
+                                "table": type,
+                                "tableID": objectID
+                            }
+                            io.emit(sID, eventJSON);
+                            break;
+                        case "4":
+                            eventJSON = {
+                                "events": `收支狀態變更為 駁回`,
+                                "table": type,
+                                "tableID": objectID
+                            }
+                            io.emit(sID, eventJSON);
+                            break;
+                    }
                 }
                 if (content === "收支") {
-                    eventsmodel.fetch(type, objectID, (err, result) => {
-                        if (!err && result.length) {
-                            eventsmodel.fetch_neme(sID, (error, results) => {
-                                if (!error && results.length) {
-                                    let eventJSON = {
-                                        "events": `${results[0].name}修改了一筆收支紀錄`,
-                                        "table": type,
-                                        "tableID": result[0][type + "ID"]
-                                    }
-                                    io.emit(organization, eventJSON);
-                                    io.emit(finance, eventJSON);
-                                }
-                            })
-
+                    eventsmodel.fetch_neme(sID, (error, results) => {
+                        if (!error && results.length) {
+                            let eventJSON = {
+                                "events": `${results[0].name}修改了一筆收支紀錄`,
+                                "table": type,
+                                "tableID": objectID
+                            }
+                            io.emit(organization, eventJSON);
+                            io.emit(finance, eventJSON);
                         }
                     })
-
                 }
             }
             if (action == "刪除") {
-                eventsmodel.fetch(type, objectID, (err, result) => {
-                    if (!err && result.length) {
-                        eventsmodel.fetch_neme(sID, (error, results) => {
-                            if (!error && results.length) {
-                                let eventJSON = {
-                                    "events": `${results[0].name}刪除了一筆收支紀錄`,
-                                    "table": type,
-                                    "tableID": result[0][type + "ID"]
-                                }
-                                io.emit(organization, eventJSON);
-                                io.emit(finance, eventJSON);
-                            }
-                        })
+                eventsmodel.fetch_neme(sID, (error, results) => {
+                    if (!error && results.length) {
+                        let eventJSON = {
+                            "events": `${results[0].name}刪除了一筆收支紀錄`,
+                            "table": type,
+                            "tableID": objectID
+                        }
+                        io.emit(organization, eventJSON);
+                        io.emit(finance, eventJSON);
                     }
                 })
             }
@@ -175,109 +156,92 @@ MySQLEventWatcher.addTrigger({
         //statement
         if (type == "statement") {
             if (action == "新增") {
-                eventsmodel.fetch(type, objectID, (err, result) => {
-                    if (!err && result.length) {
-                        eventsmodel.fetch_neme(sID, (error, results) => {
-                            if (!error && results.length) {
-                                let eventJSON = {
-                                    "events": `${results[0].name}新增了一筆財務報表`,
-                                    "table": type,
-                                    "tableID": result[0][type + "ID"]
-                                }
-                                io.emit(organization, eventJSON);
-                                io.emit(finance, eventJSON);
-                            }
-                        })
+                eventsmodel.fetch_neme(sID, (error, results) => {
+                    if (!error && results.length) {
+                        let eventJSON = {
+                            "events": `${results[0].name}新增了一筆財務報表`,
+                            "table": type,
+                            "tableID": objectID
+                        }
+                        io.emit(organization, eventJSON);
+                        io.emit(finance, eventJSON);
                     }
                 })
             }
             if (action == "修改") {
                 if (content !== "財務報表") {
-                    eventsmodel.fetch(type, objectID, (err, result) => {
-                        if (!err && result.length) {
-                            eventsmodel.fetch_neme(sID, (error, results) => {
-                                if (!error && results.length) {
-                                    let eventJSON = {};
-                                    switch (content) {
-                                        case "0":
-                                            eventJSON = {
-                                                "events": `財務報表狀態變更為 未審核`,
-                                                "table": type,
-                                                "tableID": result[0][type + "ID"]
-                                            }
-                                            io.emit(sID, eventJSON);
-                                            break;
-                                        case "1":
-                                            eventJSON = {
-                                                "events": `財務報表狀態變更為 通過`,
-                                                "table": type,
-                                                "tableID": result[0][type + "ID"]
-                                            }
-                                            io.emit(sID, eventJSON);
-                                            break;
-                                        case "2":
-                                            eventJSON = {
-                                                "events": `財務報表狀態變更為 組織負責人已審核`,
-                                                "table": type,
-                                                "tableID": result[0][type + "ID"]
-                                            }
-                                            io.emit(sID, eventJSON);
-                                            break;
-                                        case "3":
-                                            eventJSON = {
-                                                "events": `財務報表狀態變更為 財務負責人已審核`,
-                                                "table": type,
-                                                "tableID": result[0][type + "ID"]
-                                            }
-                                            io.emit(sID, eventJSON);
-                                            break;
-                                        case "4":
-                                            eventJSON = {
-                                                "events": `財務報表狀態變更為 駁回`,
-                                                "table": type,
-                                                "tableID": result[0][type + "ID"]
-                                            }
-                                            io.emit(sID, eventJSON);
-                                            break;
+                    eventsmodel.fetch_neme(sID, (error, results) => {
+                        if (!error && results.length) {
+                            let eventJSON = {};
+                            switch (content) {
+                                case "0":
+                                    eventJSON = {
+                                        "events": `財務報表狀態變更為 未審核`,
+                                        "table": type,
+                                        "tableID": objectID
                                     }
-                                }
-                            })
+                                    io.emit(sID, eventJSON);
+                                    break;
+                                case "1":
+                                    eventJSON = {
+                                        "events": `財務報表狀態變更為 通過`,
+                                        "table": type,
+                                        "tableID": objectID
+                                    }
+                                    io.emit(sID, eventJSON);
+                                    break;
+                                case "2":
+                                    eventJSON = {
+                                        "events": `財務報表狀態變更為 組織負責人已審核`,
+                                        "table": type,
+                                        "tableID": objectID
+                                    }
+                                    io.emit(sID, eventJSON);
+                                    break;
+                                case "3":
+                                    eventJSON = {
+                                        "events": `財務報表狀態變更為 財務負責人已審核`,
+                                        "table": type,
+                                        "tableID": objectID
+                                    }
+                                    io.emit(sID, eventJSON);
+                                    break;
+                                case "4":
+                                    eventJSON = {
+                                        "events": `財務報表狀態變更為 駁回`,
+                                        "table": type,
+                                        "tableID": objectID
+                                    }
+                                    io.emit(sID, eventJSON);
+                                    break;
+                            }
                         }
                     })
                 }
                 if (content == "財務報表") {
-                    eventsmodel.fetch(type, objectID, (err, result) => {
-                        if (!err && result.length) {
-                            eventsmodel.fetch_neme(sID, (error, results) => {
-                                if (!error && results.length) {
-                                    let eventJSON = {
-                                        "events": `${results[0].name}修改了一筆財務報表`,
-                                        "table": type,
-                                        "tableID": result[0][type + "ID"]
-                                    }
-                                    io.emit(organization, eventJSON);
-                                    io.emit(finance, eventJSON);
-                                }
-                            })
+                    eventsmodel.fetch_neme(sID, (error, results) => {
+                        if (!error && results.length) {
+                            let eventJSON = {
+                                "events": `${results[0].name}修改了一筆財務報表`,
+                                "table": type,
+                                "tableID": objectID
+                            }
+                            io.emit(organization, eventJSON);
+                            io.emit(finance, eventJSON);
                         }
                     })
-
                 }
             }
             if (action == "刪除") {
-                eventsmodel.fetch(type, objectID, (err, result) => {
-                    if (!err && result.length) {
-                        eventsmodel.fetch_neme(sID, (error, results) => {
-                            if (!error && results.length) {
-                                let eventJSON = {
-                                    "events": `${results[0].name}刪除了一筆財務報表`,
-                                    "table": type,
-                                    "tableID": result[0][type + "ID"]
-                                }
-                                io.emit(organization, eventJSON);
-                                io.emit(finance, eventJSON);
-                            }
-                        })
+                eventsmodel.fetch_neme(sID, (error, results) => {
+                    if (!error && results.length) {
+                        let eventJSON = {
+                            "events": `${results[0].name}刪除了一筆財務報表`,
+                            "table": type,
+                            "tableID": objectID
+                        }
+                        io.emit(organization, eventJSON);
+                        io.emit(finance, eventJSON);
                     }
                 })
             }
@@ -285,111 +249,103 @@ MySQLEventWatcher.addTrigger({
         //conference
         if (type == "conference") {
             if (action == "新增") {
-                eventsmodel.fetch(type, objectID, (err, result) => {
-                    if (!err && result.length) {
-                        eventsmodel.fetch_neme(sID, (error, results) => {
-                            if (!error && results.length) {
-                                let eventJSON = {
-                                    "events": `${results[0].name}新增了一筆會議記錄`,
-                                    "table": type,
-                                    "tableID": result[0][type + "ID"]
-                                }
-                                io.emit(organization, eventJSON);
-                                io.emit(finance, eventJSON);
-                                io.emit(meeting, eventJSON);
-                            }
-                        })
+                eventsmodel.fetch_neme(sID, (error, results) => {
+                    if (!error && results.length) {
+                        let eventJSON = {
+                            "events": `${results[0].name}新增了一筆會議記錄`,
+                            "table": type,
+                            "tableID": objectID
+                        }
+                        console.log(eventJSON);
+                        io.emit(organization, eventJSON);
+                        io.emit(finance, eventJSON);
+                        io.emit(meeting, eventJSON);
                     }
                 })
             }
             if (action == "修改") {
                 if (content !== "會議記錄") {
-                    eventsmodel.fetch(type, objectID, (err, result) => {
-                        if (!err && result.length) {
-                            eventsmodel.fetch_neme(sID, (error, results) => {
-                                if (!error && results.length) {
-                                    let eventJSON = {};
-                                    switch (content) {
-                                        case "0":
-                                            eventJSON = {
-                                                "events": `會議記錄狀態變更為 未審核`,
-                                                "table": type,
-                                                "tableID": result[0][type + "ID"]
-                                            }
-                                            io.emit(sID, eventJSON);
-                                            break;
-                                        case "1":
-                                            eventJSON = {
-                                                "events": `會議記錄狀態變更為 通過`,
-                                                "table": type,
-                                                "tableID": result[0][type + "ID"]
-                                            }
-                                            io.emit(sID, eventJSON);
-                                            break;
-                                        case "2":
-                                            eventJSON = {
-                                                "events": `會議記錄狀態變更為 組織負責人已審核`,
-                                                "table": type,
-                                                "tableID": result[0][type + "ID"]
-                                            }
-                                            io.emit(sID, eventJSON);
-                                            break;
-                                        case "3":
-                                            eventJSON = {
-                                                "events": `會議記錄狀態變更為 財務負責人已審核`,
-                                                "table": type,
-                                                "tableID": result[0][type + "ID"]
-                                            }
-                                            io.emit(sID, eventJSON);
-                                            break;
-                                        case "4":
-                                            eventJSON = {
-                                                "events": `會議記錄狀態變更為 駁回`,
-                                                "table": type,
-                                                "tableID": result[0][type + "ID"]
-                                            }
-                                            io.emit(sID, eventJSON);
-                                            break;
+                    eventsmodel.fetch_neme(sID, (error, results) => {
+                        if (!error && results.length) {
+                            let eventJSON = {};
+                            switch (content) {
+                                case "0":
+                                    eventJSON = {
+                                        "events": `會議記錄狀態變更為 未審核`,
+                                        "table": type,
+                                        "tableID": objectID
                                     }
-                                }
-                            })
+                                    console.log(eventJSON);
+                                    io.emit(sID, eventJSON);
+                                    break;
+                                case "1":
+                                    eventJSON = {
+                                        "events": `會議記錄狀態變更為 通過`,
+                                        "table": type,
+                                        "tableID": objectID
+                                    }
+                                    console.log(eventJSON);
+                                    io.emit(sID, eventJSON);
+                                    break;
+                                case "2":
+                                    eventJSON = {
+                                        "events": `會議記錄狀態變更為 組織負責人已審核`,
+                                        "table": type,
+                                        "tableID": objectID
+                                    }
+                                    console.log(eventJSON);
+                                    io.emit(sID, eventJSON);
+                                    break;
+                                case "3":
+                                    eventJSON = {
+                                        "events": `會議記錄狀態變更為 財務負責人已審核`,
+                                        "table": type,
+                                        "tableID": objectID
+                                    }
+                                    console.log(eventJSON);
+                                    io.emit(sID, eventJSON);
+                                    break;
+                                case "4":
+                                    eventJSON = {
+                                        "events": `會議記錄狀態變更為 駁回`,
+                                        "table": type,
+                                        "tableID": objectID
+                                    }
+                                    console.log(eventJSON);
+                                    io.emit(sID, eventJSON);
+                                    break;
+                            }
                         }
                     })
                 }
                 if (content == "會議記錄") {
-                    eventsmodel.fetch(type, objectID, (err, result) => {
-                        if (!err && result.length) {
-                            eventsmodel.fetch_neme(sID, (error, results) => {
-                                if (!error && results.length) {
-                                    let eventJSON = {
-                                        "events": `${results[0].name}修改了一筆會議記錄`,
-                                        "table": type,
-                                        "tableID": result[0][type + "ID"]
-                                    }
-                                    io.emit(organization, eventJSON);
-                                    io.emit(finance, eventJSON);
-                                    io.emit(meeting, eventJSON);
-                                }
-                            })
+                    eventsmodel.fetch_neme(sID, (error, results) => {
+                        if (!error && results.length) {
+                            let eventJSON = {
+                                "events": `${results[0].name}修改了一筆會議記錄`,
+                                "table": type,
+                                "tableID": objectID
+                            }
+                            console.log(eventJSON);
+                            io.emit(organization, eventJSON);
+                            io.emit(finance, eventJSON);
+                            io.emit(meeting, eventJSON);
                         }
                     })
                 }
             }
             if (action == "刪除") {
-                eventsmodel.fetch(type, objectID, (err, result) => {
-                    if (!err && result.length) {
-                        eventsmodel.fetch_neme(sID, (error, results) => {
-                            if (!error && results.length) {
-                                let eventJSON = {
-                                    "events": `${results[0].name}刪除了一筆會議記錄`,
-                                    "table": type,
-                                    "tableID": result[0][type + "ID"]
-                                }
-                                io.emit(organization, eventJSON);
-                                io.emit(finance, eventJSON);
-                                io.emit(meeting, eventJSON);
-                            }
-                        })
+                eventsmodel.fetch_neme(sID, (error, results) => {
+                    if (!error && results.length) {
+                        let eventJSON = {
+                            "events": `${results[0].name}刪除了一筆會議記錄`,
+                            "table": type,
+                            "tableID": objectID
+                        }
+                        console.log(eventJSON);
+                        io.emit(organization, eventJSON);
+                        io.emit(finance, eventJSON);
+                        io.emit(meeting, eventJSON);
                     }
                 })
             }
@@ -414,8 +370,7 @@ MySQLEventWatcher.addTrigger({
                                             return item != sID;
                                         })
                                         array.forEach(emit_sID => {
-
-                                            if (table == "account") {
+                                            if (element == "account") {
                                                 let eventJSON = {
                                                     "events": `您留言過的收支紀錄新增了一則留言`,
                                                     "table": element,
@@ -425,7 +380,7 @@ MySQLEventWatcher.addTrigger({
                                                 io.emit(organization, eventJSON);
                                                 io.emit(finance, eventJSON);
                                             }
-                                            if (table == "statement") {
+                                            if (element == "statement") {
                                                 let eventJSON = {
                                                     "events": `您留言過的財務報表新增了一則留言`,
                                                     "table": element,
@@ -435,7 +390,7 @@ MySQLEventWatcher.addTrigger({
                                                 io.emit(organization, eventJSON);
                                                 io.emit(finance, eventJSON);
                                             }
-                                            if (table == "conference") {
+                                            if (element == "conference") {
                                                 let eventJSON = {
                                                     "events": `您留言過的會議記錄新增了一則留言`,
                                                     "table": element,
@@ -447,7 +402,6 @@ MySQLEventWatcher.addTrigger({
                                             }
 
                                         })
-                                        //result為所有留言過的人
                                     }
                                 })
                             }
@@ -455,7 +409,7 @@ MySQLEventWatcher.addTrigger({
 
                     });
 
-                }, 1000);
+                }, 3000);   //等待多久後發送
 
             }
             // if (action == "修改") {

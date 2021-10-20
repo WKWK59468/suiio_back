@@ -19,7 +19,6 @@ module.exports = {
     },
     fetch_tableName: (type, objectID, callback) => {
         sql = `SELECT name FROM ${type} WHERE ID = ${objectID}`;
-        console.log(sql)
         conn.query(sql, callback);
     }
 }
