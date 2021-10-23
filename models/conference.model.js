@@ -6,11 +6,11 @@ let sql = "";
 
 module.exports = {
     list: (req, callback) => {
-        sql = mysql.format("SELECT conference.ID,category.name AS category,conference.name,conference.date,conference.attached_file,conference.content,conference.host,conference.recorder,conference.status FROM conference,category WHERE conference.category = category.ID ORDER BY date DESC");
+        sql = mysql.format("SELECT conference.ID,category.name AS category,conference.name,conference.date,conference.attached_file,conference.content,conference.host,conference.recorder,conference.status FROM conference,category WHERE conference.category = category.ID ORDER BY conference.date DESC,conference.ID DESC");
         return conn.query(sql, callback);
     },
     fetchBycategory: (req, callback) => {
-        sql = mysql.format("SELECT conference.ID,category.name AS category,conference.name,conference.date,conference.attached_file,conference.content,conference.host,conference.recorder,conference.status FROM conference,category WHERE category = ? AND conference.category = category.ID ORDER BY date DESC", [req.params.id]);
+        sql = mysql.format("SELECT conference.ID,category.name AS category,conference.name,conference.date,conference.attached_file,conference.content,conference.host,conference.recorder,conference.status FROM conference,category WHERE category = ? AND conference.category = category.ID ORDER BY conference.date DESC,conference.ID DESC", [req.params.id]);
         return conn.query(sql, callback);
     },
     fetchOne: (req, callback) => {
