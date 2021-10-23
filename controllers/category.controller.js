@@ -40,7 +40,7 @@ class categoryController {
                 return new Promise((resolve, reject) => { });
             }
             results.forEach(element => {
-                if (element.ID != 1 && element.ID != 9) {
+                if (element.ID != 0) {
                     arr.push(element);
                 }
             });
@@ -53,6 +53,7 @@ class categoryController {
 
         const body = req.params;
         const status = body.status;
+        let arr = [];
         if (status == "0" || status == "1") {
             models.StatusOn(req, (err, results) => {
                 if (err) {
@@ -63,7 +64,12 @@ class categoryController {
                     res.status(404).json({ "result": "There is nothing to show." });
                     return new Promise((resolve, reject) => { });
                 }
-                res.status(200).json(results);
+                results.forEach(element => {
+                    if (element.ID != 0) {
+                        arr.push(element);
+                    }
+                });
+                res.status(200).json(arr);
                 return new Promise((resolve, reject) => { });
             });
         } else {
