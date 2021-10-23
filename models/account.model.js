@@ -54,35 +54,35 @@ module.exports = {
         return conn.query(sql, callback);
     },
     fetchAll: (req, callback) => {
-        sql = 'SELECT account.ID, account.date, category.name AS category, account.name, account.amount, account.status, account.uploadBy FROM account,category WHERE account.category = category.ID ORDER BY account.date DESC';
+        sql = 'SELECT account.ID, account.date, category.name AS category, account.name, account.amount, account.status, account.uploadBy FROM account,category WHERE account.category = category.ID ORDER BY account.date DESC,account.ID DESC';
         return conn.query(sql, callback);
     },
     fetchByStatus: (req, callback) => {
         const body = req.params;
         const status = body.status;
 
-        sql = mysql.format(`SELECT account.ID, account.date, category.name AS category, account.name, account.amount, account.status, account.uploadBy FROM account,category WHERE account.status = '${status}' AND account.category = category.ID ORDER BY account.date DESC`);
+        sql = mysql.format(`SELECT account.ID, account.date, category.name AS category, account.name, account.amount, account.status, account.uploadBy FROM account,category WHERE account.status = '${status}' AND account.category = category.ID ORDER BY account.date DESC,account.ID DESC`);
         return conn.query(sql, callback);
     },
     fetchByName: (req, callback) => {
         const body = req.params;
         const name = "%" + body.name + "%";
 
-        sql = mysql.format(`SELECT account.ID, account.date, category.name AS category, account.name, account.amount, account.status, account.uploadBy FROM account,category WHERE account.name like '${name}' AND account.category = category.ID ORDER BY account.date DESC`);
+        sql = mysql.format(`SELECT account.ID, account.date, category.name AS category, account.name, account.amount, account.status, account.uploadBy FROM account,category WHERE account.name like '${name}' AND account.category = category.ID ORDER BY account.date DESC,account.ID DESC`);
         return conn.query(sql, callback);
     },
     fetchByWhom: (req, callback) => {
         const body = req.params;
         const whom = body.whom;
 
-        sql = mysql.format(`SELECT account.ID, account.date, category.name AS category, account.name, account.amount, account.status, account.uploadBy FROM account,category WHERE account.uploadBy = '${whom}' AND account.category = category.ID ORDER BY account.date DESC`);
+        sql = mysql.format(`SELECT account.ID, account.date, category.name AS category, account.name, account.amount, account.status, account.uploadBy FROM account,category WHERE account.uploadBy = '${whom}' AND account.category = category.ID ORDER BY account.date DESC,account.ID DESC`);
         return conn.query(sql, callback);
     },
     fetchByDate: (req, callback) => {
         const body = req.params;
         const date = "%" + body.date + "%";
 
-        sql = mysql.format(`SELECT account.ID, account.date, category.name AS category, account.name, account.amount, account.status, account.uploadBy FROM account,category WHERE account.date like '${date}' AND account.category = category.ID ORDER BY account.date DESC`);
+        sql = mysql.format(`SELECT account.ID, account.date, category.name AS category, account.name, account.amount, account.status, account.uploadBy FROM account,category WHERE account.date like '${date}' AND account.category = category.ID ORDER BY account.date DESC,account.ID DESC`);
         return conn.query(sql, callback);
     },
     fetchByID: (req, callback) => {
