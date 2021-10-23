@@ -20,5 +20,29 @@ module.exports = {
     fetch_tableName: (type, objectID, callback) => {
         sql = `SELECT name FROM ${type} WHERE ID = ${objectID}`;
         conn.query(sql, callback);
+    },
+    fetch_officer: () => {
+        return new Promise((resolve, reject) => {
+            sql = `SELECT sID,permission FROM officer WHERE permission = '組織負責人' OR permission = '財務負責人' OR permission = '會議負責人'`;
+            conn.query(sql, (err, res) => {
+                err ? reject(err) : resolve(res);
+            });
+        })
+    },
+    add: (sID, content, type, objectID) => {
+        return new Promise((resolve, reject) => {
+            sql = `INSERT INTO events_member(sID, content, type, objectID) VALUES('${sID}','${content}','${type}','${objectID}')`;
+            conn.query(sql, (err, res) => {
+                err ? reject(err) : resolve(res);
+            });
+        })
+    },
+    fetch_comment: (sID) => {
+        return new Promise((resolve, reject) => {
+            sql = `SELECT * FROM events_member WHERE sID = '${sID}'`;
+            conn.query(sql, (err, res) => {
+                err ? reject(err) : resolve(res);
+            });
+        })
     }
 }
