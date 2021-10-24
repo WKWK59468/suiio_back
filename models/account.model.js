@@ -1,9 +1,10 @@
 const mysql = require('mysql');
-const { resolveContent } = require('nodemailer/lib/shared');
 const conf = require('../conf');
 
-const conn = mysql.createConnection(conf.db);
+const conn = mysql.createPool(conf.db);
 let sql = '';
+
+const diagram_sql = `category.name AS category,account.name,account.uploadBy,account.amount,account.date`
 
 module.exports = {
     checkOfficer: (position, callback) => {
@@ -133,18 +134,21 @@ module.exports = {
         obj[last2_month] = [];
         obj[last3_month] = [];
         return new Promise((resolve, reject) => {
-            sql = `SELECT category.name AS category,account.amount,account.date FROM account,category WHERE account.date >= '${last_date}' AND account.date <= '${now_date}' AND category.ID = account.category ORDER BY account.date DESC`;
+            sql = `SELECT ${diagram_sql} FROM account,category WHERE account.date >= '${last_date}' AND account.date <= '${now_date}' AND category.ID = account.category ORDER BY account.date DESC`;
             return conn.query(sql, (err, res) => {
                 res.forEach(element => {
-                    obj[element.date.getMonth() + 1].push({ "amount": element.amount, "category": element.category })
+                    obj[element.date.getMonth() + 1].push({ "name": element.name, "uploadBy": element.uploadBy, "amount": element.amount, "category": element.category })
                 });
                 err ? reject(err) : resolve(obj);
             });
         })
     },
-    diagram_compare: (year) => {
+    diagram_compare: (year, next_year) => {
+        const now_date = year + "-06-01";
+        const next_date = next_year + "-05-31";
+
         return new Promise((resolve, reject) => {
-            sql = `SELECT category.name AS category,account.amount,account.date FROM account,category WHERE category.ID = account.category AND `;
+            sql = `SELECT ${diagram_sql} FROM account,category WHERE category.ID = account.category AND account.date >= '${now_date}' AND account.date <= '${next_date}' ORDER BY account.date DESC,account.ID DESC`;
             conn.query(sql, (err, res) => {
                 err ? reject(err) : resolve(res);
             })

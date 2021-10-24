@@ -268,9 +268,31 @@ class AccountController {
     diagram_compare = (req, res) => {
         const params = req.params;
         const year = parseInt(params.year) + 1911;
-        const last_year = year - 1;
-        console.log(year)
+        const next_year = year + 1;
+        let income = 0;
+        let cost = 0;
+        let gains_and_losses = 0;
 
+        models.diagram_compare(year, next_year).then(async (result) => {
+            await result.forEach((element) => {
+                if (element.amount < 0) {
+                    cost += element.amount;
+                } else if (element.amount > 0) {
+                    income += element.amount;
+                }
+            })
+            gains_and_losses = cost + income;
+            if (gains_and_losses > 0) {
+                res.status(200).json({ "income": income, "cost": cost, "net_income": gains_and_losses });
+                return new Promise((resolve, reject) => { });
+            } else {
+                res.status(200).json({ "income": income, "cost": cost, "net_loss": gains_and_losses });
+                return new Promise((resolve, reject) => { });
+            }
+        }).catch(() => {
+            res.status(500).json(result);
+            return new Promise((resolve, reject) => { });
+        })
     }
 }
 
