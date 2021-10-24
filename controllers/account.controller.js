@@ -265,6 +265,13 @@ class AccountController {
             return new Promise((resolve, reject) => { });
         }
     }
+    diagram_compare = (req, res) => {
+        const params = req.params;
+        const year = parseInt(params.year) + 1911;
+        const last_year = year - 1;
+        console.log(year)
+
+    }
 }
 
 module.exports = new AccountController();

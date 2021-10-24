@@ -141,5 +141,13 @@ module.exports = {
                 err ? reject(err) : resolve(obj);
             });
         })
+    },
+    diagram_compare: (year) => {
+        return new Promise((resolve, reject) => {
+            sql = `SELECT category.name AS category,account.amount,account.date FROM account,category WHERE category.ID = account.category AND `;
+            conn.query(sql, (err, res) => {
+                err ? reject(err) : resolve(res);
+            })
+        })
     }
 }
