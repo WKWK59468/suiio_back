@@ -202,6 +202,85 @@ class AccountController {
         })
 
     }
+    diagram = (req, res) => {
+        const params = req.params;
+        const year = params.year;
+        const now_month = params.month;
+        let last_month;
+
+        if (now_month == 1) {
+            last_month = 10;
+        } else if (now_month == 2) {
+            last_month = 11;
+        } else if (now_month == 3) {
+            last_month = 12;
+        } else {
+            last_month = now_month - 3;
+        }
+        if (now_month <= 12) {
+            models.diagram(year, now_month, last_month).then((result) => {
+                res.status(200).json(result);
+                return new Promise((resolve, reject) => { });
+            }).catch((err) => {
+                res.status(500).json({ "result": err });
+                return new Promise((resolve, reject) => { });
+            })
+        } else {
+            res.status(400).json({ "result": "Month Enter Error." });
+            return new Promise((resolve, reject) => { });
+        }
+    }
+    diagram_compare = (req, res) => {
+        const params = req.params;
+        const year = parseInt(params.year) + 1911;
+        const next_year = year + 1;
+        let income = 0;
+        let cost = 0;
+        let gains_and_losses = 0;
+
+        models.diagram_compare(year, next_year).then(async (result) => {
+            await result.forEach((element) => {
+                if (element.amount < 0) {
+                    cost += element.amount;
+                } else if (element.amount > 0) {
+                    income += element.amount;
+                }
+            })
+            gains_and_losses = cost + income;
+
+            res.status(200).json({ "income": income, "cost": cost, "net_total": gains_and_losses });
+            return new Promise((resolve, reject) => { });
+        }).catch((err) => {
+            res.status(500).json(err);
+            return new Promise((resolve, reject) => { });
+        })
+    }
+    diagram_category = (req, res) => {
+        const params = req.params;
+        const year = parseInt(params.year) + 1911;
+        const next_year = year + 1;
+        let jsonObj = {};
+
+        models.diagram_compare(year, next_year).then(async (result) => {
+
+            await result.forEach((element) => {
+                jsonObj[element.category] = { "cost": 0, "income": 0, "net_total": 0 };
+            })
+            await result.forEach((element) => {
+                if (element.amount < 0) {
+                    jsonObj[element.category].cost += element.amount;
+                } else if (element.amount > 0) {
+                    jsonObj[element.category].income += element.amount;
+                }
+                jsonObj[element.category].net_total += element.amount;
+            })
+            res.status(200).json(jsonObj);
+            return new Promise((resolve, reject) => { });
+        }).catch((err) => {
+            res.status(500).json({ "result": err });
+            return new Promise((resolve, reject) => { });
+        })
+    }
 }
 
 module.exports = new AccountController();
