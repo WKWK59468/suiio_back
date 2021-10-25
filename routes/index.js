@@ -10,6 +10,7 @@ const statement = require('./statement.route');
 const fileupload = require('./fileupload.route');
 const mail = require('./mail');
 const comment = require('./comment.route');
+const events = require('./events.route');
 
 router.use('/member', member);
 router.use('/account', account);
@@ -20,5 +21,6 @@ router.use('/statement', statement);
 router.use('/mail', mail);
 router.use('/file', fileupload);
 router.use('/comment', comment);
+router.use('/events', events);
 
 module.exports = router;
