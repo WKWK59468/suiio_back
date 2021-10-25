@@ -282,15 +282,37 @@ class AccountController {
                 }
             })
             gains_and_losses = cost + income;
-            if (gains_and_losses > 0) {
-                res.status(200).json({ "income": income, "cost": cost, "net_income": gains_and_losses });
-                return new Promise((resolve, reject) => { });
-            } else {
-                res.status(200).json({ "income": income, "cost": cost, "net_loss": gains_and_losses });
-                return new Promise((resolve, reject) => { });
-            }
-        }).catch(() => {
-            res.status(500).json(result);
+
+            res.status(200).json({ "income": income, "cost": cost, "net_total": gains_and_losses });
+            return new Promise((resolve, reject) => { });
+        }).catch((err) => {
+            res.status(500).json(err);
+            return new Promise((resolve, reject) => { });
+        })
+    }
+    diagram_category = (req, res) => {
+        const params = req.params;
+        const year = parseInt(params.year) + 1911;
+        const next_year = year + 1;
+        let jsonObj = {};
+
+        models.diagram_compare(year, next_year).then(async (result) => {
+
+            await result.forEach((element) => {
+                jsonObj[element.category] = { "cost": 0, "income": 0, "net_total": 0 };
+            })
+            await result.forEach((element) => {
+                if (element.amount < 0) {
+                    jsonObj[element.category].cost += element.amount;
+                } else if (element.amount > 0) {
+                    jsonObj[element.category].income += element.amount;
+                }
+                jsonObj[element.category].net_total += element.amount;
+            })
+            res.status(200).json(jsonObj);
+            return new Promise((resolve, reject) => { });
+        }).catch((err) => {
+            res.status(500).json({ "result": err });
             return new Promise((resolve, reject) => { });
         })
     }
