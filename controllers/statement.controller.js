@@ -231,7 +231,8 @@ class StatementController {
             }
             results = dateFormat(results);
             models.fetchAccountByStatement(StatementID).then((accounts) => {
-                results[0].accounts = accounts;
+                accounts = dateFormat(accounts)
+                results[0].accounts = accounts.reverse();
                 res.status(200).json(results[0]);
                 return new Promise((resolve, reject) => { });
             }).catch((err) => {
