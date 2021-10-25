@@ -9,6 +9,10 @@ const errMessage = (status, err) => {
     if (status == 404) {
         return { result: "There is nothing to show." };
     }
+
+    if (status == 400) {
+        return { result: err };
+    }
 };
 
 const dateFormat = (res) => {
@@ -61,6 +65,30 @@ class Conference {
         });
 
     };
+
+    fetchByStatus = (req, res) => {
+        const params = req.params;
+        const status = params.status;
+
+        if (status == "0" || status == "1" || status == "2" || status == "3" || status == "4") {
+            models.fetchByStatus(status).then((result) => {
+                result = dateFormat(result)
+                res.status(200).json(result);
+                return new Promise((resolve, reject) => { });
+            }).catch((err) => {
+                if (err === "There is nothing to show.") {
+                    res.status(404).json(errMessage(404, err));
+                    return new Promise((resolve, reject) => { });
+                } else {
+                    res.status(500).json(errMessage(500, err));
+                    return new Promise((resolve, reject) => { });
+                }
+            })
+        } else {
+            res.status(400).json(errMessage(400, "Please Enter 0 ~ 4."));
+            return new Promise((resolve, reject) => { });
+        }
+    }
 
     fetchContent = (req, res) => {
 

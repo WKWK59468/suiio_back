@@ -4,13 +4,29 @@ const conf = require("../conf");
 const conn = mysql.createConnection(conf.db);
 let sql = "";
 
+const select_conference = 'conference.ID,category.name AS category,conference.name,conference.date,conference.attached_file,conference.content,conference.host,conference.recorder,conference.status'
+
 module.exports = {
     list: (req, callback) => {
-        sql = mysql.format("SELECT conference.ID,category.name AS category,conference.name,conference.date,conference.attached_file,conference.content,conference.host,conference.recorder,conference.status FROM conference,category WHERE conference.category = category.ID ORDER BY conference.date DESC,conference.ID DESC");
+        sql = mysql.format(`SELECT ${select_conference} FROM conference,category WHERE conference.category = category.ID ORDER BY conference.date DESC,conference.ID DESC`);
         return conn.query(sql, callback);
     },
+    fetchByStatus: (status) => {
+        return new Promise((resolve, reject) => {
+            sql = `SELECT ${select_conference} FROM conference,category WHERE conference.status = ${status} AND conference.category = category.ID ORDER BY conference.date DESC,conference.ID DESC`;
+            conn.query(sql, (err, res) => {
+                if (err) {
+                    reject(err);
+                } else if (!res.length) {
+                    reject("There is nothing to show.");
+                } else {
+                    resolve(res);
+                }
+            });
+        })
+    },
     fetchBycategory: (req, callback) => {
-        sql = mysql.format("SELECT conference.ID,category.name AS category,conference.name,conference.date,conference.attached_file,conference.content,conference.host,conference.recorder,conference.status FROM conference,category WHERE category = ? AND conference.category = category.ID ORDER BY conference.date DESC,conference.ID DESC", [req.params.id]);
+        sql = mysql.format(`SELECT ${select_conference} FROM conference,category WHERE category = ? AND conference.category = category.ID ORDER BY conference.date DESC,conference.ID DESC`, [req.params.id]);
         return conn.query(sql, callback);
     },
     fetchOne: (req, callback) => {
