@@ -58,11 +58,12 @@ module.exports = {
             const nickname = "小王";
             const sex = "男";
             const birth = "2021-07-14";
+            const anonymous = "1"
             const pwd = pwd_rand();
             const salt = await bcrypt.genSalt(10);
             const password = await bcrypt.hash(pwd, salt)
 
-            sql = mysql.format('INSERT INTO member(sID,password,name,nickname,sex,birth) VALUES(?,?,?,?,?,?)', [sID, password, name, nickname, sex, birth]);
+            sql = mysql.format('INSERT INTO member(sID,password,name,nickname,sex,birth,anonymous) VALUES(?,?,?,?,?,?,?)', [sID, password, name, nickname, sex, birth, anonymous]);
             conn.query(sql, (err, res) => {
                 if (err) {
                     if (err.sqlState == "23000") {

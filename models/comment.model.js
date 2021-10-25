@@ -1,3 +1,4 @@
+const e = require("express");
 const mysql = require("mysql");
 const conf = require("../conf");
 
@@ -11,15 +12,48 @@ const fetchComment = (commentID) => {
             if (err) {
                 reject(err);
             } else if (!res.length) {
-                reject("Comment does not exist.")
+                reject("Comment does not exist.");
             } else {
-                resolve(res);
+                const sID = res[0].sID;
+                const isHide = res[0].isHide
+                searchName(isHide, sID).then((name) => {
+                    // console.log(name);
+                    res[0]["name"] = name;
+                    resolve(res);
+                }).catch((anonymousERROR) => {
+                    reject(anonymousERROR);
+                });
+
             }
+        })
+    });
+}
+const searchName = (isHide, sID) => {
+    return new Promise((resolve, reject) => {
+        let name = '';
+        if (isHide == 1) {
+            name = 'nickname';
+        } else {
+            name = 'name';
+        }
+        sql = `SELECT ${name} FROM member WHERE sID = ${sID}`;
+        conn.query(sql, (err, res) => {
+            if (err) {
+                reject(err);
+            } else {
+                if (isHide == 1) {
+                    resolve(res[0].nickname);
+                } else {
+                    resolve(res[0].name);
+                }
+            }
+
         })
     });
 }
 
 module.exports = {
+
     searchSID: (commentID) => {
         return new Promise((resolve, reject) => {
             sql = `SELECT sID FROM comment WHERE ID = ${commentID}`;
@@ -83,6 +117,11 @@ module.exports = {
                     res.forEach((element, index, array) => {
                         fetchComment(element.commentID).then((comment) => {
                             cnt += 1;
+                            // 修改回傳日期
+                            const Year = comment[0].date.getFullYear();
+                            const Month = ((comment[0].date.getMonth() + 1) < 10) ? "0" + (comment[0].date.getMonth() + 1) : (comment[0].date.getMonth() + 1);
+                            const Date = (comment[0].date.getDate() < 10) ? "0" + comment[0].date.getDate() : comment[0].date.getDate();
+                            comment[0].date = Year + "-" + Month + "-" + Date;
                             arr.push(comment[0]);
                             json[tableID] = arr;
                             if (cnt == array.length) {
@@ -93,6 +132,32 @@ module.exports = {
                         })
                     });
 
+                }
+            })
+        });
+    },
+    fetchByMember: (sID) => {
+        return new Promise((resolve, reject) => {
+            sql = `SELECT * FROM comment WHERE sID = ${sID}`;
+            conn.query(sql, (err, res) => {
+                if (err) {
+                    reject(err);
+                } else if (!res.length) {
+                    reject("There is nothing to show.");
+                } else {
+                    let cnt = 0;
+                    res.forEach((element, index, array) => {
+                        const isHide = element.isHide;
+                        searchName(isHide, sID).then((name) => {
+                            cnt += 1;
+                            element["name"] = name;
+                            if (cnt == array.length) {
+                                resolve(res);
+                            }
+                        }).catch((anonymousERROR) => {
+                            reject(anonymousERROR);
+                        });
+                    })
                 }
             })
         });
@@ -118,9 +183,9 @@ module.exports = {
             })
         });
     },
-    delete: (commentID, isHide) => {
+    delete: (commentID) => {
         return new Promise((resolve, reject) => {
-            sql = `UPDATE comment SET isHide = ${isHide} WHERE ID = ${commentID}`;
+            sql = `UPDATE comment SET status = 2 WHERE ID = ${commentID}`;
             conn.query(sql, (err, res) => {
                 err ? reject(err) : resolve(res);
             })
