@@ -58,7 +58,13 @@ module.exports = {
         return new Promise((resolve, reject) => {
             sql = `SELECT sID FROM comment WHERE ID = ${commentID}`;
             conn.query(sql, (err, res) => {
-                err ? reject(err) : resolve(res[0].sID);
+                if (err) {
+                    reject(err)
+                } else if (!res.length) {
+                    reject("comment not found.")
+                } else {
+                    resolve(res[0].sID);
+                }
             })
         });
     },
