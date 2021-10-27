@@ -8,8 +8,8 @@ router.route('/update').post(commentController.update);
 router.route('/delete').post(commentController.delete);
 
 //GET
-router.route('/fetch/:tables/:tableID').get(commentController.fetchByID);
+router.route('/fetch/Bymember/:sID').get(commentController.fetchByMember);
 router.route('/fetch/all').get(commentController.fetchAll);
-router.route('/fetch/Bymember').get(commentController.fetchByMember);
+router.route('/fetch/:tables/:tableID').get(commentController.fetchByID);
 
 module.exports = router;
