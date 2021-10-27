@@ -96,8 +96,13 @@ class Comment {
             res.status(200).json(result);
             return new Promise((resolve, reject) => { });
         }).catch((err) => {
-            res.status(500).json({ "result": err });
-            return new Promise((resolve, reject) => { });
+            if(err=="There is nothing to show."){
+                res.status(404).json({ "result": err });
+                return new Promise((resolve, reject) => { });
+            }else{
+                res.status(500).json({ "result": err });
+                return new Promise((resolve, reject) => { });
+            }
         })
 
     }
