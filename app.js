@@ -48,7 +48,7 @@ MySQLEventWatcher.start().then(() => console.log('MySQLEventWatcher is running!'
     .catch(err => console.error('Something bad happened', err));
 MySQLEventWatcher.addTrigger({
     name: 'SuiioEvents',
-    expression: 'suiio.events',
+    expression: 'suiio.logs',
     statement: MySQLEvents.STATEMENTS.ALL,
     onEvent: async (event) => {
         const organization = '組織負責人';
@@ -56,12 +56,13 @@ MySQLEventWatcher.addTrigger({
         const meeting = '會議負責人';
         const officer = '一般幹部';
         const member = '組織成員'
-        const affectedRows = event.affectedRows[0].after;
         const sID = event.affectedRows[0].after.who;
         const type = event.affectedRows[0].after.type;
         const objectID = event.affectedRows[0].after.objectID;
         const action = event.affectedRows[0].after.action;
         const content = event.affectedRows[0].after.content;
+        const eventsID = event.affectedRows[0].after.ID;
+        const timestamp = event.affectedRows[0].after.timestamp;
         const arr = ["account", "statement", "conference"];
 
         //account
@@ -72,16 +73,22 @@ MySQLEventWatcher.addTrigger({
                         let eventJSON = {
                             "events": `${results[0].name}新增了一筆收支`,
                             "table": type,
-                            "tableID": objectID
+                            "tableID": objectID,
+                            "time": timestamp
                         }
                         eventsmodel.fetch_officer().then((officer_sID) => {
-                            officer_sID.forEach((element) => {
-                                if (element.permission === organization || element.permission === finance) {
-                                    let element_sID = element.sID;
-                                    eventsmodel.add(element_sID, `${results[0].name}新增了一筆收支`, type, objectID).catch((Add_err) => {
-                                        console.log(Add_err);
-                                    })
-                                }
+                            eventsmodel.add(`${results[0].name}新增了一筆收支`, type, objectID, eventsID).then((res) => {
+                                let notificationID = res.insertId;
+                                officer_sID.forEach((element) => {
+                                    if (element.permission === organization || element.permission === finance) {
+                                        let element_sID = element.sID;
+                                        eventsmodel.addmember(notificationID, element_sID).catch((addmemberErr) => {
+                                            console.log(addmemberErr);
+                                        })
+                                    }
+                                })
+                            }).catch((Add_err) => {
+                                console.log(Add_err);
                             })
                         }).catch((err) => {
                             console.log(err);
@@ -99,9 +106,15 @@ MySQLEventWatcher.addTrigger({
                             eventJSON = {
                                 "events": `收支狀態變更為 未審核`,
                                 "table": type,
-                                "tableID": objectID
+                                "tableID": objectID,
+                                "time": timestamp
                             }
-                            eventsmodel.add(sID, `收支狀態變更為 未審核`, type, objectID).catch((Add_err) => {
+                            eventsmodel.add(`收支狀態變更為 未審核`, type, objectID, eventsID).then((res) => {
+                                let notificationID = res.insertId;
+                                eventsmodel.addmember(notificationID, sID).catch((addmemberErr) => {
+                                    console.log(addmemberErr);
+                                })
+                            }).catch((Add_err) => {
                                 console.log(Add_err);
                             })
                             io.emit(sID, eventJSON);
@@ -110,9 +123,15 @@ MySQLEventWatcher.addTrigger({
                             eventJSON = {
                                 "events": `收支狀態變更為 通過`,
                                 "table": type,
-                                "tableID": objectID
+                                "tableID": objectID,
+                                "time": timestamp
                             }
-                            eventsmodel.add(sID, `收支狀態變更為 通過`, type, objectID).catch((Add_err) => {
+                            eventsmodel.add(`收支狀態變更為 通過`, type, objectID, eventsID).then((res) => {
+                                let notificationID = res.insertId;
+                                eventsmodel.addmember(notificationID, sID).catch((addmemberErr) => {
+                                    console.log(addmemberErr);
+                                })
+                            }).catch((Add_err) => {
                                 console.log(Add_err);
                             })
                             io.emit(sID, eventJSON);
@@ -121,9 +140,15 @@ MySQLEventWatcher.addTrigger({
                             eventJSON = {
                                 "events": `收支狀態變更為 組織負責人已審核`,
                                 "table": type,
-                                "tableID": objectID
+                                "tableID": objectID,
+                                "time": timestamp
                             }
-                            eventsmodel.add(sID, `收支狀態變更為 組織負責人已審核`, type, objectID).catch((Add_err) => {
+                            eventsmodel.add(`收支狀態變更為 組織負責人已審核`, type, objectID, eventsID).then((res) => {
+                                let notificationID = res.insertId;
+                                eventsmodel.addmember(notificationID, sID).catch((addmemberErr) => {
+                                    console.log(addmemberErr);
+                                })
+                            }).catch((Add_err) => {
                                 console.log(Add_err);
                             })
                             io.emit(sID, eventJSON);
@@ -132,9 +157,15 @@ MySQLEventWatcher.addTrigger({
                             eventJSON = {
                                 "events": `收支狀態變更為 財務負責人已審核`,
                                 "table": type,
-                                "tableID": objectID
+                                "tableID": objectID,
+                                "time": timestamp
                             }
-                            eventsmodel.add(sID, `收支狀態變更為 財務負責人已審核`, type, objectID).catch((Add_err) => {
+                            eventsmodel.add(`收支狀態變更為 財務負責人已審核`, type, objectID, eventsID).then((res) => {
+                                let notificationID = res.insertId;
+                                eventsmodel.addmember(notificationID, sID).catch((addmemberErr) => {
+                                    console.log(addmemberErr);
+                                })
+                            }).catch((Add_err) => {
                                 console.log(Add_err);
                             })
                             io.emit(sID, eventJSON);
@@ -143,9 +174,15 @@ MySQLEventWatcher.addTrigger({
                             eventJSON = {
                                 "events": `收支狀態變更為 駁回`,
                                 "table": type,
-                                "tableID": objectID
+                                "tableID": objectID,
+                                "time": timestamp
                             }
-                            eventsmodel.add(sID, `收支狀態變更為 駁回`, type, objectID).catch((Add_err) => {
+                            eventsmodel.add(`收支狀態變更為 駁回`, type, objectID, eventsID).then((res) => {
+                                let notificationID = res.insertId;
+                                eventsmodel.addmember(notificationID, sID).catch((addmemberErr) => {
+                                    console.log(addmemberErr);
+                                })
+                            }).catch((Add_err) => {
                                 console.log(Add_err);
                             })
                             io.emit(sID, eventJSON);
@@ -158,16 +195,22 @@ MySQLEventWatcher.addTrigger({
                             let eventJSON = {
                                 "events": `${results[0].name}修改了一筆收支紀錄`,
                                 "table": type,
-                                "tableID": objectID
+                                "tableID": objectID,
+                                "time": timestamp
                             }
                             eventsmodel.fetch_officer().then((officer_sID) => {
-                                officer_sID.forEach((element) => {
-                                    if (element.permission === organization || element.permission === finance) {
-                                        let element_sID = element.sID;
-                                        eventsmodel.add(element_sID, `${results[0].name}修改了一筆收支紀錄`, type, objectID).catch((Add_err) => {
-                                            console.log(Add_err);
-                                        })
-                                    }
+                                eventsmodel.add(`${results[0].name}修改了一筆收支紀錄`, type, objectID, eventsID).then((res) => {
+                                    let notificationID = res.insertId;
+                                    officer_sID.forEach((element) => {
+                                        if (element.permission === organization || element.permission === finance) {
+                                            let element_sID = element.sID;
+                                            eventsmodel.addmember(notificationID, element_sID).catch((addmemberErr) => {
+                                                console.log(addmemberErr);
+                                            })
+                                        }
+                                    })
+                                }).catch((Add_err) => {
+                                    console.log(Add_err);
                                 })
                             }).catch((err) => {
                                 console.log(err);
@@ -184,16 +227,22 @@ MySQLEventWatcher.addTrigger({
                         let eventJSON = {
                             "events": `${results[0].name}刪除了一筆收支紀錄`,
                             "table": type,
-                            "tableID": objectID
+                            "tableID": objectID,
+                            "time": timestamp
                         }
                         eventsmodel.fetch_officer().then((officer_sID) => {
-                            officer_sID.forEach((element) => {
-                                if (element.permission === organization || element.permission === finance) {
-                                    let element_sID = element.sID;
-                                    eventsmodel.add(element_sID, `${results[0].name}刪除了一筆收支紀錄`, type, objectID).catch((Add_err) => {
-                                        console.log(Add_err);
-                                    })
-                                }
+                            eventsmodel.add(`${results[0].name}刪除了一筆收支紀錄`, type, objectID, eventsID).then((res) => {
+                                let notificationID = res.insertId;
+                                officer_sID.forEach((element) => {
+                                    if (element.permission === organization || element.permission === finance) {
+                                        let element_sID = element.sID;
+                                        eventsmodel.addmember(notificationID, element_sID).catch((addmemberErr) => {
+                                            console.log(addmemberErr);
+                                        })
+                                    }
+                                })
+                            }).catch((Add_err) => {
+                                console.log(Add_err);
                             })
                         }).catch((err) => {
                             console.log(err);
@@ -212,16 +261,22 @@ MySQLEventWatcher.addTrigger({
                         let eventJSON = {
                             "events": `${results[0].name}新增了一筆財務報表`,
                             "table": type,
-                            "tableID": objectID
+                            "tableID": objectID,
+                            "time": timestamp
                         }
                         eventsmodel.fetch_officer().then((officer_sID) => {
-                            officer_sID.forEach((element) => {
-                                if (element.permission === organization || element.permission === finance) {
-                                    let element_sID = element.sID;
-                                    eventsmodel.add(element_sID, `${results[0].name}新增了一筆財務報表`, type, objectID).catch((Add_err) => {
-                                        console.log(Add_err);
-                                    })
-                                }
+                            eventsmodel.add(`${results[0].name}新增了一筆財務報表`, type, objectID, eventsID).then((res) => {
+                                let notificationID = res.insertId;
+                                officer_sID.forEach((element) => {
+                                    if (element.permission === organization || element.permission === finance) {
+                                        let element_sID = element.sID;
+                                        eventsmodel.addmember(notificationID, element_sID).catch((addmemberErr) => {
+                                            console.log(addmemberErr);
+                                        })
+                                    }
+                                })
+                            }).catch((Add_err) => {
+                                console.log(Add_err);
                             })
                         }).catch((err) => {
                             console.log(err);
@@ -241,9 +296,15 @@ MySQLEventWatcher.addTrigger({
                                     eventJSON = {
                                         "events": `財務報表狀態變更為 未審核`,
                                         "table": type,
-                                        "tableID": objectID
+                                        "tableID": objectID,
+                                        "time": timestamp
                                     }
-                                    eventsmodel.add(sID, `財務報表狀態變更為 未審核`, type, objectID).catch((Add_err) => {
+                                    eventsmodel.add(`財務報表狀態變更為 未審核`, type, objectID, eventsID).then((res) => {
+                                        let notificationID = res.insertId;
+                                        eventsmodel.addmember(notificationID, sID).catch((addmemberErr) => {
+                                            console.log(addmemberErr);
+                                        })
+                                    }).catch((Add_err) => {
                                         console.log(Add_err);
                                     })
                                     io.emit(sID, eventJSON);
@@ -252,9 +313,15 @@ MySQLEventWatcher.addTrigger({
                                     eventJSON = {
                                         "events": `財務報表狀態變更為 通過`,
                                         "table": type,
-                                        "tableID": objectID
+                                        "tableID": objectID,
+                                        "time": timestamp
                                     }
-                                    eventsmodel.add(sID, `財務報表狀態變更為 通過`, type, objectID).catch((Add_err) => {
+                                    eventsmodel.add(`財務報表狀態變更為 通過`, type, objectID, eventsID).then((res) => {
+                                        let notificationID = res.insertId;
+                                        eventsmodel.addmember(notificationID, sID).catch((addmemberErr) => {
+                                            console.log(addmemberErr);
+                                        })
+                                    }).catch((Add_err) => {
                                         console.log(Add_err);
                                     })
                                     io.emit(sID, eventJSON);
@@ -263,9 +330,15 @@ MySQLEventWatcher.addTrigger({
                                     eventJSON = {
                                         "events": `財務報表狀態變更為 組織負責人已審核`,
                                         "table": type,
-                                        "tableID": objectID
+                                        "tableID": objectID,
+                                        "time": timestamp
                                     }
-                                    eventsmodel.add(sID, `財務報表狀態變更為 組織負責人已審核`, type, objectID).catch((Add_err) => {
+                                    eventsmodel.add(`財務報表狀態變更為 組織負責人已審核`, type, objectID, eventsID).then((res) => {
+                                        let notificationID = res.insertId;
+                                        eventsmodel.addmember(notificationID, sID).catch((addmemberErr) => {
+                                            console.log(addmemberErr);
+                                        })
+                                    }).catch((Add_err) => {
                                         console.log(Add_err);
                                     })
                                     io.emit(sID, eventJSON);
@@ -274,9 +347,15 @@ MySQLEventWatcher.addTrigger({
                                     eventJSON = {
                                         "events": `財務報表狀態變更為 財務負責人已審核`,
                                         "table": type,
-                                        "tableID": objectID
+                                        "tableID": objectID,
+                                        "time": timestamp
                                     }
-                                    eventsmodel.add(sID, `財務報表狀態變更為 財務負責人已審核`, type, objectID).catch((Add_err) => {
+                                    eventsmodel.add(`財務報表狀態變更為 財務負責人已審核`, type, objectID, eventsID).then((res) => {
+                                        let notificationID = res.insertId;
+                                        eventsmodel.addmember(notificationID, sID).catch((addmemberErr) => {
+                                            console.log(addmemberErr);
+                                        })
+                                    }).catch((Add_err) => {
                                         console.log(Add_err);
                                     })
                                     io.emit(sID, eventJSON);
@@ -285,9 +364,15 @@ MySQLEventWatcher.addTrigger({
                                     eventJSON = {
                                         "events": `財務報表狀態變更為 駁回`,
                                         "table": type,
-                                        "tableID": objectID
+                                        "tableID": objectID,
+                                        "time": timestamp
                                     }
-                                    eventsmodel.add(sID, `財務報表狀態變更為 駁回`, type, objectID).catch((Add_err) => {
+                                    eventsmodel.add(`財務報表狀態變更為 駁回`, type, objectID, eventsID).then((res) => {
+                                        let notificationID = res.insertId;
+                                        eventsmodel.addmember(notificationID, sID).catch((addmemberErr) => {
+                                            console.log(addmemberErr);
+                                        })
+                                    }).catch((Add_err) => {
                                         console.log(Add_err);
                                     })
                                     io.emit(sID, eventJSON);
@@ -302,16 +387,22 @@ MySQLEventWatcher.addTrigger({
                             let eventJSON = {
                                 "events": `${results[0].name}修改了一筆財務報表`,
                                 "table": type,
-                                "tableID": objectID
+                                "tableID": objectID,
+                                "time": timestamp
                             }
                             eventsmodel.fetch_officer().then((officer_sID) => {
-                                officer_sID.forEach((element) => {
-                                    if (element.permission === organization || element.permission === finance) {
-                                        let element_sID = element.sID;
-                                        eventsmodel.add(element_sID, `${results[0].name}修改了一筆財務報表`, type, objectID).catch((Add_err) => {
-                                            console.log(Add_err);
-                                        })
-                                    }
+                                eventsmodel.add(`${results[0].name}修改了一筆財務報表`, type, objectID, eventsID).then((res) => {
+                                    let notificationID = res.insertId;
+                                    officer_sID.forEach((element) => {
+                                        if (element.permission === organization || element.permission === finance) {
+                                            let element_sID = element.sID;
+                                            eventsmodel.addmember(notificationID, element_sID).catch((addmemberErr) => {
+                                                console.log(addmemberErr);
+                                            })
+                                        }
+                                    })
+                                }).catch((Add_err) => {
+                                    console.log(Add_err);
                                 })
                             }).catch((err) => {
                                 console.log(err);
@@ -328,16 +419,22 @@ MySQLEventWatcher.addTrigger({
                         let eventJSON = {
                             "events": `${results[0].name}刪除了一筆財務報表`,
                             "table": type,
-                            "tableID": objectID
+                            "tableID": objectID,
+                            "time": timestamp
                         }
                         eventsmodel.fetch_officer().then((officer_sID) => {
-                            officer_sID.forEach((element) => {
-                                if (element.permission === organization || element.permission === finance) {
-                                    let element_sID = element.sID;
-                                    eventsmodel.add(element_sID, `${results[0].name}刪除了一筆財務報表`, type, objectID).catch((Add_err) => {
-                                        console.log(Add_err);
-                                    })
-                                }
+                            eventsmodel.add(`${results[0].name}刪除了一筆財務報表`, type, objectID, eventsID).then((res) => {
+                                let notificationID = res.insertId;
+                                officer_sID.forEach((element) => {
+                                    if (element.permission === organization || element.permission === finance) {
+                                        let element_sID = element.sID;
+                                        eventsmodel.addmember(notificationID, element_sID).catch((addmemberErr) => {
+                                            console.log(addmemberErr);
+                                        })
+                                    }
+                                })
+                            }).catch((Add_err) => {
+                                console.log(Add_err);
                             })
                         }).catch((err) => {
                             console.log(err);
@@ -356,16 +453,22 @@ MySQLEventWatcher.addTrigger({
                         let eventJSON = {
                             "events": `${results[0].name}新增了一筆會議記錄`,
                             "table": type,
-                            "tableID": objectID
+                            "tableID": objectID,
+                            "time": timestamp
                         }
                         eventsmodel.fetch_officer().then((officer_sID) => {
-                            officer_sID.forEach((element) => {
-                                if (element.permission === organization || element.permission === finance || element.permission === meeting) {
-                                    let element_sID = element.sID;
-                                    eventsmodel.add(element_sID, `${results[0].name}新增了一筆會議記錄`, type, objectID).catch((Add_err) => {
-                                        console.log(Add_err);
-                                    })
-                                }
+                            eventsmodel.add(`${results[0].name}新增了一筆會議記錄`, type, objectID, eventsID).then((res) => {
+                                let notificationID = res.insertId;
+                                officer_sID.forEach((element) => {
+                                    if (element.permission === organization || element.permission === finance || element.permission === meeting) {
+                                        let element_sID = element.sID;
+                                        eventsmodel.addmember(notificationID, element_sID).catch((addmemberErr) => {
+                                            console.log(addmemberErr);
+                                        })
+                                    }
+                                })
+                            }).catch((Add_err) => {
+                                console.log(Add_err);
                             })
                         }).catch((err) => {
                             console.log(err);
@@ -386,9 +489,15 @@ MySQLEventWatcher.addTrigger({
                                     eventJSON = {
                                         "events": `會議記錄狀態變更為 未審核`,
                                         "table": type,
-                                        "tableID": objectID
+                                        "tableID": objectID,
+                                        "time": timestamp
                                     }
-                                    eventsmodel.add(sID, `會議記錄狀態變更為 未審核`, type, objectID).catch((Add_err) => {
+                                    eventsmodel.add(`會議記錄狀態變更為 未審核`, type, objectID, eventsID).then((res) => {
+                                        let notificationID = res.insertId;
+                                        eventsmodel.addmember(notificationID, sID).catch((addmemberErr) => {
+                                            console.log(addmemberErr);
+                                        })
+                                    }).catch((Add_err) => {
                                         console.log(Add_err);
                                     })
                                     io.emit(sID, eventJSON);
@@ -397,9 +506,15 @@ MySQLEventWatcher.addTrigger({
                                     eventJSON = {
                                         "events": `會議記錄狀態變更為 通過`,
                                         "table": type,
-                                        "tableID": objectID
+                                        "tableID": objectID,
+                                        "time": timestamp
                                     }
-                                    eventsmodel.add(sID, `會議記錄狀態變更為 通過`, type, objectID).catch((Add_err) => {
+                                    eventsmodel.add(`會議記錄狀態變更為 通過`, type, objectID, eventsID).then((res) => {
+                                        let notificationID = res.insertId;
+                                        eventsmodel.addmember(notificationID, sID).catch((addmemberErr) => {
+                                            console.log(addmemberErr);
+                                        })
+                                    }).catch((Add_err) => {
                                         console.log(Add_err);
                                     })
                                     io.emit(sID, eventJSON);
@@ -408,9 +523,15 @@ MySQLEventWatcher.addTrigger({
                                     eventJSON = {
                                         "events": `會議記錄狀態變更為 組織負責人已審核`,
                                         "table": type,
-                                        "tableID": objectID
+                                        "tableID": objectID,
+                                        "time": timestamp
                                     }
-                                    eventsmodel.add(sID, `會議記錄狀態變更為 組織負責人已審核`, type, objectID).catch((Add_err) => {
+                                    eventsmodel.add(`會議記錄狀態變更為 組織負責人已審核`, type, objectID, eventsID).then((res) => {
+                                        let notificationID = res.insertId;
+                                        eventsmodel.addmember(notificationID, sID).catch((addmemberErr) => {
+                                            console.log(addmemberErr);
+                                        })
+                                    }).catch((Add_err) => {
                                         console.log(Add_err);
                                     })
                                     io.emit(sID, eventJSON);
@@ -419,9 +540,15 @@ MySQLEventWatcher.addTrigger({
                                     eventJSON = {
                                         "events": `會議記錄狀態變更為 財務負責人已審核`,
                                         "table": type,
-                                        "tableID": objectID
+                                        "tableID": objectID,
+                                        "time": timestamp
                                     }
-                                    eventsmodel.add(sID, `會議記錄狀態變更為 財務負責人已審核`, type, objectID).catch((Add_err) => {
+                                    eventsmodel.add(`會議記錄狀態變更為 財務負責人已審核`, type, objectID, eventsID).then((res) => {
+                                        let notificationID = res.insertId;
+                                        eventsmodel.addmember(notificationID, sID).catch((addmemberErr) => {
+                                            console.log(addmemberErr);
+                                        })
+                                    }).catch((Add_err) => {
                                         console.log(Add_err);
                                     })
                                     io.emit(sID, eventJSON);
@@ -430,9 +557,15 @@ MySQLEventWatcher.addTrigger({
                                     eventJSON = {
                                         "events": `會議記錄狀態變更為 駁回`,
                                         "table": type,
-                                        "tableID": objectID
+                                        "tableID": objectID,
+                                        "time": timestamp
                                     }
-                                    eventsmodel.add(sID, `會議記錄狀態變更為 駁回`, type, objectID).catch((Add_err) => {
+                                    eventsmodel.add(`會議記錄狀態變更為 駁回`, type, objectID, eventsID).then((res) => {
+                                        let notificationID = res.insertId;
+                                        eventsmodel.addmember(notificationID, sID).catch((addmemberErr) => {
+                                            console.log(addmemberErr);
+                                        })
+                                    }).catch((Add_err) => {
                                         console.log(Add_err);
                                     })
                                     io.emit(sID, eventJSON);
@@ -447,16 +580,22 @@ MySQLEventWatcher.addTrigger({
                             let eventJSON = {
                                 "events": `${results[0].name}修改了一筆會議記錄`,
                                 "table": type,
-                                "tableID": objectID
+                                "tableID": objectID,
+                                "time": timestamp
                             }
                             eventsmodel.fetch_officer().then((officer_sID) => {
-                                officer_sID.forEach((element) => {
-                                    if (element.permission === organization || element.permission === finance || element.permission === meeting) {
-                                        let element_sID = element.sID;
-                                        eventsmodel.add(element_sID, `${results[0].name}修改了一筆會議記錄`, type, objectID).catch((Add_err) => {
-                                            console.log(Add_err);
-                                        })
-                                    }
+                                eventsmodel.add(`${results[0].name}修改了一筆會議記錄`, type, objectID, eventsID).then((res) => {
+                                    let notificationID = res.insertId;
+                                    officer_sID.forEach((element) => {
+                                        if (element.permission === organization || element.permission === finance || element.permission === meeting) {
+                                            let element_sID = element.sID;
+                                            eventsmodel.addmember(notificationID, element_sID).catch((addmemberErr) => {
+                                                console.log(addmemberErr);
+                                            })
+                                        }
+                                    })
+                                }).catch((Add_err) => {
+                                    console.log(Add_err);
                                 })
                             }).catch((err) => {
                                 console.log(err);
@@ -474,16 +613,22 @@ MySQLEventWatcher.addTrigger({
                         let eventJSON = {
                             "events": `${results[0].name}刪除了一筆會議記錄`,
                             "table": type,
-                            "tableID": objectID
+                            "tableID": objectID,
+                            "time": timestamp
                         }
                         eventsmodel.fetch_officer().then((officer_sID) => {
-                            officer_sID.forEach((element) => {
-                                if (element.permission === organization || element.permission === finance || element.permission === meeting) {
-                                    let element_sID = element.sID;
-                                    eventsmodel.add(element_sID, `${results[0].name}刪除了一筆會議記錄`, type, objectID).catch((Add_err) => {
-                                        console.log(Add_err);
-                                    })
-                                }
+                            eventsmodel.add(`${results[0].name}刪除了一筆會議記錄`, type, objectID, eventsID).then((res) => {
+                                let notificationID = res.insertId;
+                                officer_sID.forEach((element) => {
+                                    if (element.permission === organization || element.permission === finance || element.permission === meeting) {
+                                        let element_sID = element.sID;
+                                        eventsmodel.addmember(notificationID, element_sID).catch((addmemberErr) => {
+                                            console.log(addmemberErr);
+                                        })
+                                    }
+                                })
+                            }).catch((Add_err) => {
+                                console.log(Add_err);
                             })
                         }).catch((err) => {
                             console.log(err);
@@ -504,6 +649,87 @@ MySQLEventWatcher.addTrigger({
                         //搜尋為哪個類型的留言
                         eventsmodel.fetch(element, objectID, (err, result) => {
                             if (!err && result.length) {
+                                if (element == "account") {
+                                    let eventJSON2 = {
+                                        "events": `收支紀錄新增了一則留言`,
+                                        "table": element,
+                                        "tableID": result[0][element + "ID"],
+                                        "time": timestamp
+                                    }
+                                    eventsmodel.fetch_officer().then((officer_sID) => {
+                                        eventsmodel.add(`收支紀錄新增了一則留言`, type, objectID, eventsID).then((res) => {
+                                            let notificationID = res.insertId;
+                                            officer_sID.forEach((element) => {
+                                                if (element.permission === organization || element.permission === finance) {
+                                                    let element_sID = element.sID;
+                                                    eventsmodel.addmember(notificationID, element_sID).catch((addmemberErr) => {
+                                                        console.log(addmemberErr);
+                                                    })
+                                                }
+                                            })
+                                        }).catch((Add_err) => {
+                                            console.log(Add_err);
+                                        })
+                                    }).catch((err) => {
+                                        console.log(err);
+                                    })
+                                    io.emit(organization, eventJSON2);
+                                    io.emit(finance, eventJSON2);
+                                }
+                                if (element == "statement") {
+                                    let eventJSON2 = {
+                                        "events": `財務報表新增了一則留言`,
+                                        "table": element,
+                                        "tableID": result[0][element + "ID"],
+                                        "time": timestamp
+                                    }
+                                    eventsmodel.fetch_officer().then((officer_sID) => {
+                                        eventsmodel.add(`財務報表新增了一則留言`, type, objectID, eventsID).then((res) => {
+                                            let notificationID = res.insertId;
+                                            officer_sID.forEach((element) => {
+                                                if (element.permission === organization || element.permission === finance) {
+                                                    let element_sID = element.sID;
+                                                    eventsmodel.addmember(notificationID, element_sID).catch((addmemberErr) => {
+                                                        console.log(addmemberErr);
+                                                    })
+                                                }
+                                            })
+                                        }).catch((Add_err) => {
+                                            console.log(Add_err);
+                                        })
+                                    }).catch((err) => {
+                                        console.log(err);
+                                    })
+                                    io.emit(organization, eventJSON2);
+                                    io.emit(finance, eventJSON2);
+                                }
+                                if (element == "conference") {
+                                    let eventJSON2 = {
+                                        "events": `會議記錄新增了一則留言`,
+                                        "table": element,
+                                        "tableID": result[0][element + "ID"],
+                                        "time": timestamp
+                                    }
+                                    eventsmodel.fetch_officer().then((officer_sID) => {
+                                        eventsmodel.add(`會議記錄新增了一則留言`, type, objectID, eventsID).then((res) => {
+                                            let notificationID = res.insertId;
+                                            officer_sID.forEach((element) => {
+                                                if (element.permission === organization || element.permission === finance) {
+                                                    let element_sID = element.sID;
+                                                    eventsmodel.addmember(notificationID, element_sID).catch((addmemberErr) => {
+                                                        console.log(addmemberErr);
+                                                    })
+                                                }
+                                            })
+                                        }).catch((Add_err) => {
+                                            console.log(Add_err);
+                                        })
+                                    }).catch((err) => {
+                                        console.log(err);
+                                    })
+                                    io.emit(organization, eventJSON2);
+                                    io.emit(finance, eventJSON2);
+                                }
                                 //搜尋所有留過言的人
                                 eventsmodel.fetch_sID(element, result[0][element + "ID"], async (IDerr, results) => {
                                     if (!IDerr && result.length) {
@@ -515,95 +741,59 @@ MySQLEventWatcher.addTrigger({
                                             return item != sID;
                                         })
                                         array.forEach(emit_sID => {
+                                            //account
                                             if (element == "account") {
                                                 let eventJSON = {
                                                     "events": `您留言過的收支紀錄新增了一則留言`,
                                                     "table": element,
-                                                    "tableID": result[0][element + "ID"]
+                                                    "tableID": result[0][element + "ID"],
+                                                    "time": timestamp
                                                 }
-                                                let eventJSON2 = {
-                                                    "events": `收支紀錄新增了一則留言`,
-                                                    "table": element,
-                                                    "tableID": result[0][element + "ID"]
-                                                }
-                                                eventsmodel.fetch_officer().then((officer_sID) => {
-                                                    officer_sID.forEach((element) => {
-                                                        if (element.permission === organization || element.permission === finance) {
-                                                            let element_sID = element.sID;
-                                                            eventsmodel.add(element_sID, `收支紀錄新增了一則留言`, type, objectID).catch((Add_err) => {
-                                                                console.log(Add_err);
-                                                            })
-                                                        }
+                                                eventsmodel.add(`您留言過的收支紀錄新增了一則留言`, type, objectID, eventsID).then((res) => {
+                                                    let notificationID = res.insertId;
+                                                    eventsmodel.addmember(notificationID, emit_sID).catch((addmemberErr) => {
+                                                        console.log(addmemberErr);
                                                     })
-                                                }).catch((err) => {
-                                                    console.log(err);
-                                                })
-                                                eventsmodel.add(emit_sID, `您留言過的收支紀錄新增了一則留言`, type, objectID).catch((Add_err) => {
+                                                }).catch((Add_err) => {
                                                     console.log(Add_err);
                                                 })
                                                 io.emit(emit_sID, eventJSON);
-                                                io.emit(organization, eventJSON);
-                                                io.emit(finance, eventJSON);
                                             }
+                                            //statement
                                             if (element == "statement") {
                                                 let eventJSON = {
                                                     "events": `您留言過的財務報表新增了一則留言`,
                                                     "table": element,
-                                                    "tableID": result[0][element + "ID"]
+                                                    "tableID": result[0][element + "ID"],
+                                                    "time": timestamp
                                                 }
-                                                let eventJSON2 = {
-                                                    "events": `財務報表新增了一則留言`,
-                                                    "table": element,
-                                                    "tableID": result[0][element + "ID"]
-                                                }
-                                                eventsmodel.fetch_officer().then((officer_sID) => {
-                                                    officer_sID.forEach((element) => {
-                                                        if (element.permission === organization || element.permission === finance) {
-                                                            let element_sID = element.sID;
-                                                            eventsmodel.add(element_sID, `財務報表新增了一則留言`, type, objectID).catch((Add_err) => {
-                                                                console.log(Add_err);
-                                                            })
-                                                        }
+                                                eventsmodel.add(`您留言過的財務報表新增了一則留言`, type, objectID, eventsID).then((res) => {
+                                                    let notificationID = res.insertId;
+                                                    eventsmodel.addmember(notificationID, emit_sID).catch((addmemberErr) => {
+                                                        console.log(addmemberErr);
                                                     })
-                                                }).catch((err) => {
-                                                    console.log(err);
-                                                })
-                                                eventsmodel.add(emit_sID, `您留言過的財務報表新增了一則留言`, type, objectID).catch((Add_err) => {
+                                                }).catch((Add_err) => {
                                                     console.log(Add_err);
                                                 })
                                                 io.emit(emit_sID, eventJSON);
-                                                io.emit(organization, eventJSON2);
-                                                io.emit(finance, eventJSON2);
                                             }
+                                            //conference
                                             if (element == "conference") {
                                                 let eventJSON = {
                                                     "events": `您留言過的會議記錄新增了一則留言`,
                                                     "table": element,
-                                                    "tableID": result[0][element + "ID"]
+                                                    "tableID": result[0][element + "ID"],
+                                                    "time": timestamp
                                                 }
-                                                let eventJSON2 = {
-                                                    "events": `會議記錄新增了一則留言`,
-                                                    "table": element,
-                                                    "tableID": result[0][element + "ID"]
-                                                }
-                                                eventsmodel.fetch_officer().then((officer_sID) => {
-                                                    officer_sID.forEach((element) => {
-                                                        if (element.permission === organization || element.permission === finance) {
-                                                            let element_sID = element.sID;
-                                                            eventsmodel.add(element_sID, `會議記錄新增了一則留言`, type, objectID).catch((Add_err) => {
-                                                                console.log(Add_err);
-                                                            })
-                                                        }
+                                                eventsmodel.add(`您留言過的會議記錄新增了一則留言`, type, objectID, eventsID).then((res) => {
+                                                    let notificationID = res.insertId;
+                                                    eventsmodel.addmember(notificationID, emit_sID).catch((addmemberErr) => {
+                                                        console.log(addmemberErr);
                                                     })
-                                                }).catch((err) => {
-                                                    console.log(err);
-                                                })
-                                                eventsmodel.add(emit_sID, `您留言過的會議記錄新增了一則留言`, type, objectID).catch((Add_err) => {
+                                                }).catch((Add_err) => {
                                                     console.log(Add_err);
                                                 })
                                                 io.emit(emit_sID, eventJSON);
-                                                io.emit(organization, eventJSON2);
-                                                io.emit(finance, eventJSON2);
                                             }
 
                                         })

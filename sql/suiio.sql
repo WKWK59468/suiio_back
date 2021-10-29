@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.0
+-- version 5.1.1
 -- https://www.phpmyadmin.net/
 --
 -- 主機： 127.0.0.1
--- 產生時間： 2021-10-28 13:49:16
--- 伺服器版本： 10.4.18-MariaDB-log
--- PHP 版本： 7.4.16
+-- 產生時間： 2021-10-29 17:54:47
+-- 伺服器版本： 10.4.21-MariaDB-log
+-- PHP 版本： 7.4.24
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- 資料庫： `suiio`
+-- 資料庫: `suiio`
 --
 CREATE DATABASE IF NOT EXISTS `suiio` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 USE `suiio`;
@@ -30,16 +30,13 @@ USE `suiio`;
 --
 
 DROP TABLE IF EXISTS `absentees`;
-CREATE TABLE `absentees` (
+CREATE TABLE IF NOT EXISTS `absentees` (
   `conference` int(11) NOT NULL,
-  `absentees` varchar(10) NOT NULL
+  `absentees` varchar(10) NOT NULL,
+  PRIMARY KEY (`conference`,`absentees`),
+  KEY `officer_absentees` (`absentees`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='缺席者';
 
---
--- 資料表新增資料前，先清除舊資料 `absentees`
---
-
-TRUNCATE TABLE `absentees`;
 -- --------------------------------------------------------
 
 --
@@ -47,8 +44,8 @@ TRUNCATE TABLE `absentees`;
 --
 
 DROP TABLE IF EXISTS `account`;
-CREATE TABLE `account` (
-  `ID` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `account` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
   `date` datetime NOT NULL,
   `category` int(11) NOT NULL,
   `name` varchar(20) NOT NULL,
@@ -56,14 +53,12 @@ CREATE TABLE `account` (
   `content` varchar(200) DEFAULT NULL,
   `receipt` varchar(50) NOT NULL,
   `status` char(1) NOT NULL,
-  `uploadBy` varchar(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='收支紀錄';
+  `uploadBy` varchar(10) NOT NULL,
+  PRIMARY KEY (`ID`,`category`) USING BTREE,
+  KEY `category_ID_account` (`category`),
+  KEY `officer_position_account` (`uploadBy`)
+) ENGINE=InnoDB AUTO_INCREMENT=153 DEFAULT CHARSET=utf8 COMMENT='收支紀錄';
 
---
--- 資料表新增資料前，先清除舊資料 `account`
---
-
-TRUNCATE TABLE `account`;
 --
 -- 傾印資料表的資料 `account`
 --
@@ -226,7 +221,7 @@ DROP TRIGGER IF EXISTS `account_DELETE`;
 DELIMITER $$
 CREATE TRIGGER `account_DELETE` AFTER DELETE ON `account` FOR EACH ROW BEGIN
 
-INSERT INTO events (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=OLD.uploadBy),"刪除","收支","account",OLD.ID);
+INSERT INTO logs (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=OLD.uploadBy),"刪除","收支","account",OLD.ID);
 
 END
 $$
@@ -235,7 +230,7 @@ DROP TRIGGER IF EXISTS `account_INSERT`;
 DELIMITER $$
 CREATE TRIGGER `account_INSERT` AFTER INSERT ON `account` FOR EACH ROW BEGIN
 
-INSERT INTO events (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=NEW.uploadBy),"新增","收支","account",NEW.ID);
+INSERT INTO logs (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=NEW.uploadBy),"新增","收支","account",NEW.ID);
 
 END
 $$
@@ -243,14 +238,14 @@ DELIMITER ;
 DROP TRIGGER IF EXISTS `account_UPDATE_CONTENT`;
 DELIMITER $$
 CREATE TRIGGER `account_UPDATE_CONTENT` AFTER UPDATE ON `account` FOR EACH ROW IF OLD.status = NEW.status THEN
-INSERT INTO events (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=NEW.uploadBy),"修改","收支","account",OLD.ID);
+INSERT INTO logs (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=NEW.uploadBy),"修改","收支","account",OLD.ID);
 END IF
 $$
 DELIMITER ;
 DROP TRIGGER IF EXISTS `account_UPDATE_STATUS`;
 DELIMITER $$
 CREATE TRIGGER `account_UPDATE_STATUS` AFTER UPDATE ON `account` FOR EACH ROW IF OLD.status <> NEW.status THEN
-INSERT INTO events (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=NEW.uploadBy),"修改",NEW.status,"account",OLD.ID);
+INSERT INTO logs (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=NEW.uploadBy),"修改",NEW.status,"account",OLD.ID);
 END IF
 $$
 DELIMITER ;
@@ -262,27 +257,11 @@ DELIMITER ;
 --
 
 DROP TABLE IF EXISTS `account_comment`;
-CREATE TABLE `account_comment` (
+CREATE TABLE IF NOT EXISTS `account_comment` (
   `accountID` int(11) NOT NULL,
-  `commentID` int(11) NOT NULL
+  `commentID` int(11) NOT NULL,
+  PRIMARY KEY (`accountID`,`commentID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- 資料表新增資料前，先清除舊資料 `account_comment`
---
-
-TRUNCATE TABLE `account_comment`;
---
--- 傾印資料表的資料 `account_comment`
---
-
-INSERT INTO `account_comment` (`accountID`, `commentID`) VALUES
-(7, 1),
-(7, 32),
-(7, 37),
-(29, 2),
-(32, 3),
-(38, 4);
 
 -- --------------------------------------------------------
 
@@ -291,16 +270,13 @@ INSERT INTO `account_comment` (`accountID`, `commentID`) VALUES
 --
 
 DROP TABLE IF EXISTS `attendees`;
-CREATE TABLE `attendees` (
+CREATE TABLE IF NOT EXISTS `attendees` (
   `conference` int(11) NOT NULL,
-  `attendees` varchar(10) NOT NULL
+  `attendees` varchar(10) NOT NULL,
+  PRIMARY KEY (`conference`,`attendees`),
+  KEY `officer_attendees` (`attendees`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='出席者';
 
---
--- 資料表新增資料前，先清除舊資料 `attendees`
---
-
-TRUNCATE TABLE `attendees`;
 -- --------------------------------------------------------
 
 --
@@ -308,7 +284,7 @@ TRUNCATE TABLE `attendees`;
 --
 
 DROP TABLE IF EXISTS `budget`;
-CREATE TABLE `budget` (
+CREATE TABLE IF NOT EXISTS `budget` (
   `ID` int(11) NOT NULL,
   `cID` int(11) NOT NULL,
   `name` varchar(20) NOT NULL,
@@ -317,11 +293,6 @@ CREATE TABLE `budget` (
   `review` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='預算';
 
---
--- 資料表新增資料前，先清除舊資料 `budget`
---
-
-TRUNCATE TABLE `budget`;
 -- --------------------------------------------------------
 
 --
@@ -329,16 +300,11 @@ TRUNCATE TABLE `budget`;
 --
 
 DROP TABLE IF EXISTS `budgetcategory`;
-CREATE TABLE `budgetcategory` (
+CREATE TABLE IF NOT EXISTS `budgetcategory` (
   `bID` int(11) NOT NULL,
   `category` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='預算分類';
 
---
--- 資料表新增資料前，先清除舊資料 `budgetcategory`
---
-
-TRUNCATE TABLE `budgetcategory`;
 -- --------------------------------------------------------
 
 --
@@ -346,17 +312,13 @@ TRUNCATE TABLE `budgetcategory`;
 --
 
 DROP TABLE IF EXISTS `category`;
-CREATE TABLE `category` (
-  `ID` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `category` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(10) NOT NULL,
-  `status` int(1) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='活動類別';
+  `status` int(1) NOT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COMMENT='活動類別';
 
---
--- 資料表新增資料前，先清除舊資料 `category`
---
-
-TRUNCATE TABLE `category`;
 --
 -- 傾印資料表的資料 `category`
 --
@@ -379,20 +341,17 @@ INSERT INTO `category` (`ID`, `name`, `status`) VALUES
 --
 
 DROP TABLE IF EXISTS `comment`;
-CREATE TABLE `comment` (
-  `ID` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `comment` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
   `date` datetime NOT NULL,
   `content` varchar(500) NOT NULL,
   `status` char(1) NOT NULL,
   `isHide` tinyint(1) NOT NULL,
-  `sID` char(10) NOT NULL
+  `sID` char(10) NOT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `sID_comment` (`sID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='留言';
 
---
--- 資料表新增資料前，先清除舊資料 `comment`
---
-
-TRUNCATE TABLE `comment`;
 --
 -- 觸發器 `comment`
 --
@@ -400,7 +359,7 @@ DROP TRIGGER IF EXISTS `comment_DELETE`;
 DELIMITER $$
 CREATE TRIGGER `comment_DELETE` AFTER UPDATE ON `comment` FOR EACH ROW IF NEW.isHide = 1 THEN
 
-INSERT INTO events (who,action,content,type,objectID) VALUES (NEW.sID,"刪除","留言","comment",NEW.ID);
+INSERT INTO logs (who,action,content,type,objectID) VALUES (NEW.sID,"刪除","留言","comment",NEW.ID);
 
 END IF
 $$
@@ -409,7 +368,7 @@ DROP TRIGGER IF EXISTS `comment_INSERT`;
 DELIMITER $$
 CREATE TRIGGER `comment_INSERT` AFTER INSERT ON `comment` FOR EACH ROW BEGIN
 
-INSERT INTO events (who,action,content,type,objectID) VALUES (NEW.sID,"新增","留言","comment",NEW.ID);
+INSERT INTO logs (who,action,content,type,objectID) VALUES (NEW.sID,"新增","留言","comment",NEW.ID);
 
 END
 $$
@@ -418,7 +377,7 @@ DROP TRIGGER IF EXISTS `comment_UPDATE_CONTENT`;
 DELIMITER $$
 CREATE TRIGGER `comment_UPDATE_CONTENT` AFTER UPDATE ON `comment` FOR EACH ROW IF (OLD.status = NEW.status && NEW.isHide <> 1)THEN
 
-INSERT INTO events (who,action,content,type,objectID) VALUES (NEW.sID,"修改","留言","comment",NEW.ID);
+INSERT INTO logs (who,action,content,type,objectID) VALUES (NEW.sID,"修改","留言","comment",NEW.ID);
 
 END IF
 $$
@@ -427,7 +386,7 @@ DROP TRIGGER IF EXISTS `comment_UPDATE_STATUS`;
 DELIMITER $$
 CREATE TRIGGER `comment_UPDATE_STATUS` AFTER UPDATE ON `comment` FOR EACH ROW IF OLD.status <> NEW.status THEN
 
-INSERT INTO events (who,action,content,type,objectID) VALUES (NEW.sID,"修改",NEW.status,"comment",NEW.ID);
+INSERT INTO logs (who,action,content,type,objectID) VALUES (NEW.sID,"修改",NEW.status,"comment",NEW.ID);
 
 END IF
 $$
@@ -440,8 +399,8 @@ DELIMITER ;
 --
 
 DROP TABLE IF EXISTS `conference`;
-CREATE TABLE `conference` (
-  `ID` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `conference` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
   `category` int(11) NOT NULL,
   `name` varchar(20) NOT NULL,
   `date` date NOT NULL,
@@ -449,14 +408,13 @@ CREATE TABLE `conference` (
   `content` varchar(500) NOT NULL,
   `host` varchar(10) NOT NULL,
   `recorder` varchar(10) NOT NULL,
-  `status` char(1) NOT NULL
+  `status` char(1) NOT NULL,
+  PRIMARY KEY (`ID`) USING BTREE,
+  KEY `category_ID_conference` (`category`),
+  KEY `recorder` (`recorder`),
+  KEY `host` (`host`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='會議紀錄';
 
---
--- 資料表新增資料前，先清除舊資料 `conference`
---
-
-TRUNCATE TABLE `conference`;
 --
 -- 觸發器 `conference`
 --
@@ -464,7 +422,7 @@ DROP TRIGGER IF EXISTS `conference_DELETE`;
 DELIMITER $$
 CREATE TRIGGER `conference_DELETE` AFTER DELETE ON `conference` FOR EACH ROW BEGIN
 
-INSERT INTO events (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=OLD.recorder),"刪除","會議記錄","conference",OLD.ID);
+INSERT INTO logs (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=OLD.recorder),"刪除","會議記錄","conference",OLD.ID);
 
 END
 $$
@@ -473,7 +431,7 @@ DROP TRIGGER IF EXISTS `conference_INSERT`;
 DELIMITER $$
 CREATE TRIGGER `conference_INSERT` AFTER INSERT ON `conference` FOR EACH ROW BEGIN
 
-INSERT INTO events (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=NEW.recorder),"新增","會議記錄","conference",NEW.ID);
+INSERT INTO logs (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=NEW.recorder),"新增","會議記錄","conference",NEW.ID);
 
 END
 $$
@@ -482,7 +440,7 @@ DROP TRIGGER IF EXISTS `conference_UPDATE_CONTENT`;
 DELIMITER $$
 CREATE TRIGGER `conference_UPDATE_CONTENT` AFTER UPDATE ON `conference` FOR EACH ROW IF OLD.status = NEW.status THEN
 
-INSERT INTO events (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=OLD.recorder),"修改","會議記錄","conference",OLD.ID);
+INSERT INTO logs (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=OLD.recorder),"修改","會議記錄","conference",OLD.ID);
 
 END IF
 $$
@@ -491,7 +449,7 @@ DROP TRIGGER IF EXISTS `conference_UPDATE_STATUS`;
 DELIMITER $$
 CREATE TRIGGER `conference_UPDATE_STATUS` AFTER UPDATE ON `conference` FOR EACH ROW IF OLD.status <> NEW.status THEN
 
-INSERT INTO events (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=OLD.recorder),"修改",NEW.status,"conference",OLD.ID);
+INSERT INTO logs (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=OLD.recorder),"修改",NEW.status,"conference",OLD.ID);
 
 END IF
 $$
@@ -504,16 +462,13 @@ DELIMITER ;
 --
 
 DROP TABLE IF EXISTS `conference_comment`;
-CREATE TABLE `conference_comment` (
+CREATE TABLE IF NOT EXISTS `conference_comment` (
   `conferenceID` int(11) NOT NULL,
-  `commentID` int(11) NOT NULL
+  `commentID` int(11) NOT NULL,
+  PRIMARY KEY (`conferenceID`,`commentID`),
+  KEY `comment_ID_confernece` (`commentID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- 資料表新增資料前，先清除舊資料 `conference_comment`
---
-
-TRUNCATE TABLE `conference_comment`;
 -- --------------------------------------------------------
 
 --
@@ -521,16 +476,13 @@ TRUNCATE TABLE `conference_comment`;
 --
 
 DROP TABLE IF EXISTS `content`;
-CREATE TABLE `content` (
+CREATE TABLE IF NOT EXISTS `content` (
   `statement` int(11) NOT NULL,
-  `account` int(11) NOT NULL
+  `account` int(11) NOT NULL,
+  PRIMARY KEY (`statement`,`account`),
+  KEY `account_ID` (`account`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- 資料表新增資料前，先清除舊資料 `content`
---
-
-TRUNCATE TABLE `content`;
 --
 -- 傾印資料表的資料 `content`
 --
@@ -680,45 +632,22 @@ INSERT INTO `content` (`statement`, `account`) VALUES
 -- --------------------------------------------------------
 
 --
--- 資料表結構 `events`
+-- 資料表結構 `logs`
 --
 
-DROP TABLE IF EXISTS `events`;
-CREATE TABLE `events` (
-  `id` int(11) NOT NULL,
+DROP TABLE IF EXISTS `logs`;
+CREATE TABLE IF NOT EXISTS `logs` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
   `timestamp` timestamp NOT NULL DEFAULT current_timestamp(),
   `who` char(10) NOT NULL,
   `action` varchar(20) NOT NULL,
   `content` varchar(20) NOT NULL,
   `type` varchar(20) NOT NULL,
-  `objectID` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='通知';
+  `objectID` int(11) NOT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `who` (`who`)
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8 COMMENT='事件';
 
---
--- 資料表新增資料前，先清除舊資料 `events`
---
-
-TRUNCATE TABLE `events`;
--- --------------------------------------------------------
-
---
--- 資料表結構 `events_member`
---
-
-DROP TABLE IF EXISTS `events_member`;
-CREATE TABLE `events_member` (
-  `ID` int(11) NOT NULL,
-  `sID` char(10) NOT NULL,
-  `content` varchar(100) NOT NULL,
-  `type` varchar(20) NOT NULL,
-  `objectID` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- 資料表新增資料前，先清除舊資料 `events_member`
---
-
-TRUNCATE TABLE `events_member`;
 -- --------------------------------------------------------
 
 --
@@ -726,20 +655,16 @@ TRUNCATE TABLE `events_member`;
 --
 
 DROP TABLE IF EXISTS `member`;
-CREATE TABLE `member` (
+CREATE TABLE IF NOT EXISTS `member` (
   `sID` char(10) NOT NULL,
   `password` char(60) NOT NULL,
   `name` varchar(10) NOT NULL,
   `nickname` varchar(10) NOT NULL,
   `sex` char(1) NOT NULL,
-  `birth` date NOT NULL
+  `birth` date NOT NULL,
+  PRIMARY KEY (`sID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='成員';
 
---
--- 資料表新增資料前，先清除舊資料 `member`
---
-
-TRUNCATE TABLE `member`;
 --
 -- 傾印資料表的資料 `member`
 --
@@ -763,21 +688,48 @@ INSERT INTO `member` (`sID`, `password`, `name`, `nickname`, `sex`, `birth`) VAL
 -- --------------------------------------------------------
 
 --
+-- 資料表結構 `notification`
+--
+
+DROP TABLE IF EXISTS `notification`;
+CREATE TABLE IF NOT EXISTS `notification` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `content` varchar(100) NOT NULL,
+  `type` varchar(20) NOT NULL,
+  `objectID` int(11) NOT NULL,
+  `eventsID` int(11) NOT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `logID` (`eventsID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='通知';
+
+-- --------------------------------------------------------
+
+--
+-- 資料表結構 `notification_member`
+--
+
+DROP TABLE IF EXISTS `notification_member`;
+CREATE TABLE IF NOT EXISTS `notification_member` (
+  `notificationID` int(11) NOT NULL,
+  `sID` char(10) NOT NULL,
+  KEY `notificationID` (`notificationID`),
+  KEY `notification_sID` (`sID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
 -- 資料表結構 `officer`
 --
 
 DROP TABLE IF EXISTS `officer`;
-CREATE TABLE `officer` (
+CREATE TABLE IF NOT EXISTS `officer` (
   `permission` varchar(10) NOT NULL DEFAULT '一般幹部',
   `position` varchar(10) NOT NULL,
-  `sID` char(10) NOT NULL
+  `sID` char(10) NOT NULL,
+  PRIMARY KEY (`position`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='幹部';
 
---
--- 資料表新增資料前，先清除舊資料 `officer`
---
-
-TRUNCATE TABLE `officer`;
 --
 -- 傾印資料表的資料 `officer`
 --
@@ -802,21 +754,19 @@ INSERT INTO `officer` (`permission`, `position`, `sID`) VALUES
 --
 
 DROP TABLE IF EXISTS `statement`;
-CREATE TABLE `statement` (
-  `ID` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `statement` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
   `category` int(11) NOT NULL,
   `name` varchar(20) NOT NULL,
   `date` datetime NOT NULL,
   `status` char(1) NOT NULL,
   `uploadBy` varchar(10) NOT NULL,
-  `balance` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='財務報表';
+  `balance` int(11) NOT NULL,
+  PRIMARY KEY (`ID`) USING BTREE,
+  KEY `officer_position_statement` (`uploadBy`),
+  KEY `category_ID_statement` (`category`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COMMENT='財務報表';
 
---
--- 資料表新增資料前，先清除舊資料 `statement`
---
-
-TRUNCATE TABLE `statement`;
 --
 -- 傾印資料表的資料 `statement`
 --
@@ -840,7 +790,7 @@ DROP TRIGGER IF EXISTS `statement_DELETE`;
 DELIMITER $$
 CREATE TRIGGER `statement_DELETE` AFTER DELETE ON `statement` FOR EACH ROW BEGIN
 
-INSERT INTO events (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=OLD.uploadBy),"刪除","財務報表","statement",OLD.ID);
+INSERT INTO logs (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=OLD.uploadBy),"刪除","財務報表","statement",OLD.ID);
 
 END
 $$
@@ -849,7 +799,7 @@ DROP TRIGGER IF EXISTS `statement_INSERT`;
 DELIMITER $$
 CREATE TRIGGER `statement_INSERT` AFTER INSERT ON `statement` FOR EACH ROW BEGIN
 
-INSERT INTO events (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=NEW.uploadBy),"新增","財務報表","statement",NEW.ID);
+INSERT INTO logs (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=NEW.uploadBy),"新增","財務報表","statement",NEW.ID);
 
 END
 $$
@@ -858,7 +808,7 @@ DROP TRIGGER IF EXISTS `statement_UPDATE_CONTENT`;
 DELIMITER $$
 CREATE TRIGGER `statement_UPDATE_CONTENT` AFTER UPDATE ON `statement` FOR EACH ROW IF OLD.status = NEW.status THEN
 
-INSERT INTO events (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=OLD.uploadBy),"修改","財務報表","statement",OLD.ID);
+INSERT INTO logs (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=OLD.uploadBy),"修改","財務報表","statement",OLD.ID);
 
 END IF
 $$
@@ -867,7 +817,7 @@ DROP TRIGGER IF EXISTS `statement_UPDATE_STATUS`;
 DELIMITER $$
 CREATE TRIGGER `statement_UPDATE_STATUS` AFTER UPDATE ON `statement` FOR EACH ROW IF OLD.status <> NEW.status THEN
 
-INSERT INTO events (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=OLD.uploadBy),"修改",NEW.status,"statement",OLD.ID);
+INSERT INTO logs (who,action,content,type,objectID) VALUES ((SELECT sID FROM officer WHERE officer.position=OLD.uploadBy),"修改",NEW.status,"statement",OLD.ID);
 
 END IF
 $$
@@ -880,153 +830,74 @@ DELIMITER ;
 --
 
 DROP TABLE IF EXISTS `statement_comment`;
-CREATE TABLE `statement_comment` (
+CREATE TABLE IF NOT EXISTS `statement_comment` (
   `statementID` int(11) NOT NULL,
-  `commentID` int(11) NOT NULL
+  `commentID` int(11) NOT NULL,
+  PRIMARY KEY (`statementID`,`commentID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- 資料表新增資料前，先清除舊資料 `statement_comment`
---
-
-TRUNCATE TABLE `statement_comment`;
---
--- 已傾印資料表的索引
+-- 已傾印資料表的限制式
 --
 
 --
--- 資料表索引 `absentees`
+-- 資料表的限制式 `absentees`
 --
 ALTER TABLE `absentees`
-  ADD PRIMARY KEY (`conference`,`absentees`);
+  ADD CONSTRAINT `confernece_ID_absentees` FOREIGN KEY (`conference`) REFERENCES `conference` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `officer_absentees` FOREIGN KEY (`absentees`) REFERENCES `officer` (`position`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- 資料表索引 `account`
+-- 資料表的限制式 `account`
 --
 ALTER TABLE `account`
-  ADD PRIMARY KEY (`ID`,`category`) USING BTREE,
-  ADD KEY `category_ID_account` (`category`),
-  ADD KEY `officer_position_account` (`uploadBy`);
+  ADD CONSTRAINT `category_ID_account` FOREIGN KEY (`category`) REFERENCES `category` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- 資料表索引 `account_comment`
---
-ALTER TABLE `account_comment`
-  ADD PRIMARY KEY (`accountID`,`commentID`);
-
---
--- 資料表索引 `attendees`
+-- 資料表的限制式 `attendees`
 --
 ALTER TABLE `attendees`
-  ADD PRIMARY KEY (`conference`,`attendees`);
+  ADD CONSTRAINT `confernece_ID_attendees` FOREIGN KEY (`conference`) REFERENCES `conference` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `officer_attendees` FOREIGN KEY (`attendees`) REFERENCES `officer` (`position`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- 資料表索引 `category`
---
-ALTER TABLE `category`
-  ADD PRIMARY KEY (`ID`);
-
---
--- 資料表索引 `comment`
---
-ALTER TABLE `comment`
-  ADD PRIMARY KEY (`ID`),
-  ADD KEY `sID_comment` (`sID`);
-
---
--- 資料表索引 `conference`
+-- 資料表的限制式 `conference`
 --
 ALTER TABLE `conference`
-  ADD PRIMARY KEY (`ID`,`category`) USING BTREE,
-  ADD KEY `category_ID_conference` (`category`),
-  ADD KEY `recorder` (`recorder`),
-  ADD KEY `host` (`host`);
+  ADD CONSTRAINT `confernece_category` FOREIGN KEY (`category`) REFERENCES `category` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- 資料表索引 `conference_comment`
+-- 資料表的限制式 `conference_comment`
 --
 ALTER TABLE `conference_comment`
-  ADD PRIMARY KEY (`conferenceID`,`commentID`);
+  ADD CONSTRAINT `comment_ID_confernece` FOREIGN KEY (`commentID`) REFERENCES `comment` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `confernece_ID_comment` FOREIGN KEY (`conferenceID`) REFERENCES `conference` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- 資料表索引 `content`
+-- 資料表的限制式 `content`
 --
 ALTER TABLE `content`
-  ADD PRIMARY KEY (`statement`,`account`);
+  ADD CONSTRAINT `account_ID` FOREIGN KEY (`account`) REFERENCES `account` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `statement_ID` FOREIGN KEY (`statement`) REFERENCES `statement` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- 資料表索引 `events`
+-- 資料表的限制式 `logs`
 --
-ALTER TABLE `events`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `who` (`who`);
+ALTER TABLE `logs`
+  ADD CONSTRAINT `who` FOREIGN KEY (`who`) REFERENCES `member` (`sID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- 資料表索引 `events_member`
+-- 資料表的限制式 `notification`
 --
-ALTER TABLE `events_member`
-  ADD PRIMARY KEY (`ID`),
-  ADD KEY `sID_events` (`sID`);
+ALTER TABLE `notification`
+  ADD CONSTRAINT `logID` FOREIGN KEY (`eventsID`) REFERENCES `logs` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- 資料表索引 `statement`
+-- 資料表的限制式 `notification_member`
 --
-ALTER TABLE `statement`
-  ADD PRIMARY KEY (`ID`) USING BTREE,
-  ADD KEY `officer_position_statement` (`uploadBy`),
-  ADD KEY `category_ID_statement` (`category`);
-
---
--- 資料表索引 `statement_comment`
---
-ALTER TABLE `statement_comment`
-  ADD PRIMARY KEY (`statementID`,`commentID`);
-
---
--- 在傾印的資料表使用自動遞增(AUTO_INCREMENT)
---
-
---
--- 使用資料表自動遞增(AUTO_INCREMENT) `account`
---
-ALTER TABLE `account`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=153;
-
---
--- 使用資料表自動遞增(AUTO_INCREMENT) `category`
---
-ALTER TABLE `category`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
-
---
--- 使用資料表自動遞增(AUTO_INCREMENT) `comment`
---
-ALTER TABLE `comment`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- 使用資料表自動遞增(AUTO_INCREMENT) `conference`
---
-ALTER TABLE `conference`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- 使用資料表自動遞增(AUTO_INCREMENT) `events`
---
-ALTER TABLE `events`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- 使用資料表自動遞增(AUTO_INCREMENT) `events_member`
---
-ALTER TABLE `events_member`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- 使用資料表自動遞增(AUTO_INCREMENT) `statement`
---
-ALTER TABLE `statement`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+ALTER TABLE `notification_member`
+  ADD CONSTRAINT `notificationID` FOREIGN KEY (`notificationID`) REFERENCES `notification` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `notification_sID` FOREIGN KEY (`sID`) REFERENCES `member` (`sID`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
