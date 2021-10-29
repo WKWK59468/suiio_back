@@ -4,7 +4,6 @@ const conf = require("../conf");
 const conn = mysql.createPool(conf.db);
 let sql = "";
 module.exports = {
-
     fetch: (type, objectID, callback) => {
         sql = `SELECT ${type}ID FROM ${type}_comment WHERE commentID = ${objectID} GROUP BY ${type}ID`;
         conn.query(sql, callback);
@@ -29,9 +28,17 @@ module.exports = {
             });
         })
     },
-    add: (sID, content, type, objectID) => {
+    add: (content, type, objectID, eventsID) => {
         return new Promise((resolve, reject) => {
-            sql = `INSERT INTO events_member(sID, content, type, objectID) VALUES('${sID}','${content}','${type}','${objectID}')`;
+            sql = `INSERT INTO notification(content, type, objectID, eventsID) VALUES('${content}','${type}','${objectID}','${eventsID}')`;
+            conn.query(sql, (err, res) => {
+                err ? reject(err) : resolve(res);
+            });
+        })
+    },
+    addmember: (notification, sID) => {
+        return new Promise((resolve, reject) => {
+            sql = `INSERT INTO notification_member(notificationID, sID) VALUES('${notification}','${sID}')`;
             conn.query(sql, (err, res) => {
                 err ? reject(err) : resolve(res);
             });
@@ -39,9 +46,15 @@ module.exports = {
     },
     fetch_comment: (sID) => {
         return new Promise((resolve, reject) => {
-            sql = `SELECT * FROM events_member WHERE sID = '${sID}'`;
+            sql = `SELECT notification.*, logs.timestamp,notification_member.sID FROM notification_member,notification,logs WHERE notification_member.sID = '${sID}' AND notification.ID = notification_member.notificationID AND notification.eventsID = logs.ID`;
             conn.query(sql, (err, res) => {
-                err ? reject(err) : resolve(res);
+                if (err) {
+                    reject(err)
+                } else if (!res.length) {
+                    reject("There is nothing to show.")
+                } else {
+                    resolve(res)
+                }
             });
         })
     }
