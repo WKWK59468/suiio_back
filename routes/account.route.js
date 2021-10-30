@@ -8,6 +8,7 @@ router.route('/delete').post(AccountController.delete);
 router.route('/update').post(AccountController.update);
 router.route('/update/status').post(AccountController.updateStatus);
 //GET
+router.route('/fetch/diagram/year').get(AccountController.diagram_year);
 router.route('/fetch/diagram/category/:year').get(AccountController.diagram_category);
 router.route('/fetch/diagram/compare/:year').get(AccountController.diagram_compare);
 router.route('/fetch/diagram/:year/:month').get(AccountController.diagram);

@@ -281,6 +281,36 @@ class AccountController {
             return new Promise((resolve, reject) => { });
         })
     }
+    diagram_year = (req, res) => {
+        let arr = []
+        models.fetchAll(req, (err, results) => {
+            if (err) {
+                res.status(500).json({ "result": err });
+                return new Promise((resolve, reject) => { });
+            } else if (!results.length) {
+                res.status(404).json({ "result": "There is nothing to show." });
+                return new Promise((resolve, reject) => { });
+            } else {
+                results.forEach(async (element) => {
+                    let year = element.date.getFullYear();
+                    let date1 = new Date(year + '-05-31');
+                    if (element.date <= date1) {
+                        year = (year - 1911) - 1;
+                        arr.push(year);
+                    }
+                    else if (element.date > date1) {
+                        year = year - 1911;
+                        arr.push(year);
+                    }
+                })
+                let arr2 = arr.filter(function (element, index, array) {
+                    return array.indexOf(element) === index;
+                });
+                res.status(200).json(arr2);
+                return new Promise((resolve, reject) => { });
+            }
+        })
+    }
 }
 
 module.exports = new AccountController();
