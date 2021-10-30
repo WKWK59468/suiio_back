@@ -306,7 +306,7 @@ class AccountController {
                 let arr2 = arr.filter(function (element, index, array) {
                     return array.indexOf(element) === index;
                 });
-                res.status(200).json(arr2);
+                res.status(200).json(arr2.sort());
                 return new Promise((resolve, reject) => { });
             }
         })
