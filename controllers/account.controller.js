@@ -248,7 +248,7 @@ class AccountController {
             })
             gains_and_losses = cost + income;
 
-            res.status(200).json({ "income": income, "cost": cost, "net_total": gains_and_losses });
+            res.status(200).json({ "income": income, "cost": cost, "net": gains_and_losses });
             return new Promise((resolve, reject) => { });
         }).catch((err) => {
             res.status(500).json(err);
@@ -260,21 +260,24 @@ class AccountController {
         const year = parseInt(params.year) + 1911;
         const next_year = year + 1;
         let jsonObj = {};
-
+        let arr = [];
         models.diagram_compare(year, next_year).then(async (result) => {
 
             await result.forEach((element) => {
-                jsonObj[element.category] = { "cost": 0, "income": 0, "net_total": 0 };
+                jsonObj[element.categoryID] = { "category": element.category, "cost": 0, "income": 0, "net": 0 };
             })
             await result.forEach((element) => {
                 if (element.amount < 0) {
-                    jsonObj[element.category].cost += element.amount;
+                    jsonObj[element.categoryID].cost += element.amount;
                 } else if (element.amount > 0) {
-                    jsonObj[element.category].income += element.amount;
+                    jsonObj[element.categoryID].income += element.amount;
                 }
-                jsonObj[element.category].net_total += element.amount;
+                jsonObj[element.categoryID].net += element.amount;
             })
-            res.status(200).json(jsonObj);
+            for (let i in jsonObj) {
+                arr.push(jsonObj[i]);
+            }
+            res.status(200).json(arr);
             return new Promise((resolve, reject) => { });
         }).catch((err) => {
             res.status(500).json({ "result": err });

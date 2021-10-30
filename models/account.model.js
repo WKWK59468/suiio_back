@@ -148,7 +148,7 @@ module.exports = {
         const next_date = next_year + "-05-31";
 
         return new Promise((resolve, reject) => {
-            sql = `SELECT ${diagram_sql} FROM account,category WHERE category.ID = account.category AND account.date >= '${now_date}' AND account.date <= '${next_date}' AND account.status = 1 ORDER BY account.date DESC,account.ID DESC`;
+            sql = `SELECT ${diagram_sql},account.category AS categoryID FROM account,category WHERE category.ID = account.category AND account.date >= '${now_date}' AND account.date <= '${next_date}' AND account.status = 1 ORDER BY account.date DESC,account.ID DESC`;
             conn.query(sql, (err, res) => {
                 err ? reject(err) : resolve(res);
             })
