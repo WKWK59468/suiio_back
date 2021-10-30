@@ -291,7 +291,7 @@ class AccountController {
                 res.status(404).json({ "result": "There is nothing to show." });
                 return new Promise((resolve, reject) => { });
             } else {
-                results.forEach(async (element) => {
+                results.forEach((element) => {
                     let year = element.date.getFullYear();
                     let date1 = new Date(year + '-05-31');
                     if (element.date <= date1) {
