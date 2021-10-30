@@ -29,7 +29,7 @@ class eventsController {
         const params = req.params;
         const sID = params.sID;
 
-        eventsModels.fetch_comment(sID).then(async (result) => {
+        eventsModels.fetch_comment(sID).then((result) => {
             res.status(200).json(result);
             return new Promise((resolve, reject) => { });
         }).catch((err) => {
