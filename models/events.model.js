@@ -46,7 +46,7 @@ module.exports = {
     },
     fetch_comment: (sID) => {
         return new Promise((resolve, reject) => {
-            sql = `SELECT notification.*, logs.timestamp,notification_member.sID FROM notification_member,notification,logs WHERE notification_member.sID = '${sID}' AND notification.ID = notification_member.notificationID AND notification.eventsID = logs.ID`;
+            sql = `SELECT notification.*, logs.timestamp,notification_member.sID FROM notification_member,notification,logs WHERE notification_member.sID = '${sID}' AND notification.ID = notification_member.notificationID AND notification.eventsID = logs.ID ORDER BY notification.ID DESC`;
             conn.query(sql, (err, res) => {
                 if (err) {
                     reject(err)
