@@ -1,9 +1,9 @@
 module.exports = {
-    db: {
-        host: 'localhost',
-        user: 'root',
-        password: '',
-        database: 'suiio',
-        port: 3306
-    }
+  db: {
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "suiio",
+    port: 3306,
+  },
 };

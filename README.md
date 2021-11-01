@@ -1,12 +1,14 @@
 # Suiio
-## MySQL連線錯誤
+
+## MySQL 連線錯誤
+
 Check SQL port 3306 or 3308 or others.
 
 ## Socket.io
 
 -----server-----
 
-**建立io**\
+**建立 io**\
 const io = req.app.get('socketio');
 
 **送出訊息**\
@@ -25,11 +27,12 @@ const socket = io('http://localhost:4000');
 
 **監聽**\
 socket.on('getMessage', (socket_content) => {
-    console.log(socket_content)
+console.log(socket_content)
 })
 
 ## mysql-events
-修改mysql.ini
+
+修改 mysql.ini
 
 新增下列幾行\
 log-bin=mysql-bin\
