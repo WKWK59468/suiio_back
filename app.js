@@ -914,7 +914,7 @@ MySQLEventWatcher.addTrigger({
                     .fetch_officer()
                     .then((officer_sID) => {
                       eventsmodel
-                        .add(`收支紀錄新增了一則留言`, type, objectID, eventsID)
+                        .add(`收支紀錄新增了一則留言`, element, result[0][element + "ID"], eventsID)
                         .then((res) => {
                           let notificationID = res.insertId;
                           officer_sID.forEach((element) => {
@@ -952,7 +952,7 @@ MySQLEventWatcher.addTrigger({
                     .fetch_officer()
                     .then((officer_sID) => {
                       eventsmodel
-                        .add(`財務報表新增了一則留言`, type, objectID, eventsID)
+                        .add(`財務報表新增了一則留言`, element, result[0][element + "ID"], eventsID)
                         .then((res) => {
                           let notificationID = res.insertId;
                           officer_sID.forEach((element) => {
@@ -990,7 +990,7 @@ MySQLEventWatcher.addTrigger({
                     .fetch_officer()
                     .then((officer_sID) => {
                       eventsmodel
-                        .add(`會議記錄新增了一則留言`, type, objectID, eventsID)
+                        .add(`會議記錄新增了一則留言`, element, result[0][element + "ID"], eventsID)
                         .then((res) => {
                           let notificationID = res.insertId;
                           officer_sID.forEach((element) => {
@@ -1042,8 +1042,8 @@ MySQLEventWatcher.addTrigger({
                           eventsmodel
                             .add(
                               `您留言過的收支紀錄新增了一則留言`,
-                              type,
-                              objectID,
+                              element,
+                              result[0][element + "ID"],
                               eventsID
                             )
                             .then((res) => {
@@ -1070,8 +1070,8 @@ MySQLEventWatcher.addTrigger({
                           eventsmodel
                             .add(
                               `您留言過的財務報表新增了一則留言`,
-                              type,
-                              objectID,
+                              element,
+                              result[0][element + "ID"],
                               eventsID
                             )
                             .then((res) => {
@@ -1098,8 +1098,8 @@ MySQLEventWatcher.addTrigger({
                           eventsmodel
                             .add(
                               `您留言過的會議記錄新增了一則留言`,
-                              type,
-                              objectID,
+                              element,
+                              result[0][element + "ID"],
                               eventsID
                             )
                             .then((res) => {
