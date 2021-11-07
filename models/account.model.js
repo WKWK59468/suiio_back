@@ -163,19 +163,39 @@ module.exports = {
             category: element.category,
           });
         });
-        err ? reject(err) : resolve(obj);
+        err ? reject(err) : res.length ? resolve(obj) : reject("There is nothing to show.");
       });
     });
   },
-  diagram_compare: (year, next_year) => {
-    const now_date = year + "-06-01";
-    const next_date = next_year + "-05-31";
+  diagram_compare: (year, next_year, schoolyear) => {
+    const now_date = year + "-07-01";
+    const next_date = next_year + "-06-30";
 
-    return new Promise((resolve, reject) => {
-      sql = `SELECT ${diagram_sql},account.category AS categoryID FROM account,category WHERE category.ID = account.category AND account.date >= '${now_date}' AND account.date <= '${next_date}' AND account.status = 1 ORDER BY account.date DESC,account.ID DESC`;
-      conn.query(sql, (err, res) => {
-        err ? reject(err) : resolve(res);
+    if (schoolyear === "108") {
+      const now_date_108 = year + "-06-01";
+      const next_date_108 = next_year + "-06-30";
+      return new Promise((resolve, reject) => {
+        sql = `SELECT ${diagram_sql},account.category AS categoryID FROM account,category WHERE category.ID = account.category AND account.date >= '${now_date_108}' AND account.date <= '${next_date_108}' AND account.status = 1 ORDER BY account.date DESC,account.ID DESC`;
+        conn.query(sql, (err, res) => {
+          err ? reject(err) : res.length ? resolve(res) : reject("There is nothing to show.");
+        });
       });
-    });
+    } else if (schoolyear === "107") {
+      const now_date_107 = year + "-07-01";
+      const next_date_107 = next_year + "-05-31";
+      return new Promise((resolve, reject) => {
+        sql = `SELECT ${diagram_sql},account.category AS categoryID FROM account,category WHERE category.ID = account.category AND account.date >= '${now_date_107}' AND account.date <= '${next_date_107}' AND account.status = 1 ORDER BY account.date DESC,account.ID DESC`;
+        conn.query(sql, (err, res) => {
+          err ? reject(err) : res.length ? resolve(res) : reject("There is nothing to show.");
+        });
+      });
+    } else {
+      return new Promise((resolve, reject) => {
+        sql = `SELECT ${diagram_sql},account.category AS categoryID FROM account,category WHERE category.ID = account.category AND account.date >= '${now_date}' AND account.date <= '${next_date}' AND account.status = 1 ORDER BY account.date DESC,account.ID DESC`;
+        conn.query(sql, (err, res) => {
+          err ? reject(err) : res.length ? resolve(res) : reject("There is nothing to show.");
+        });
+      });
+    }
   },
 };
