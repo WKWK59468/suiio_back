@@ -43,15 +43,8 @@ module.exports = {
   sendMail: (req, pwd) => {
     const sID = req.body.sID;
     return new Promise((resolve, reject) => {
-      myFunction
-        .check_session(req)
-        .then(() => {
-          mail(sID, pwd);
-          resolve(true);
-        })
-        .catch(() => {
-          reject(false);
-        });
+      mail(sID, pwd);
+      resolve(true);
     });
   },
 };
