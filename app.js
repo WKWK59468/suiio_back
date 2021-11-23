@@ -4,7 +4,6 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const cors = require("cors");
-const session = require("express-session");
 const MySQLEvents = require("@rodrigogs/mysql-events");
 const mysql = require("mysql");
 const conf = require("./conf");
@@ -24,17 +23,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "view")));
-
-// Session
-app.use(
-  session({
-    secret: "secret",
-    name: "suiio",
-    cookie: { maxAge: 30 * 60 * 1000 }, // 分 * 60 * 1000
-    resave: false,
-    saveUninitialized: true,
-  })
-);
 
 //Router
 app.use("/api", index);
