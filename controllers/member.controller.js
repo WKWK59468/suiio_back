@@ -1,7 +1,8 @@
 const models = require("../models/member.model");
 const bcrypt = require("bcrypt");
-const myFunction = require("../myFunction");
 const mail = require("../mail/mail");
+const jwt = require("jsonwebtoken");
+const SECRET = "suiio";
 
 const check_sID = (sID) => {
   if (sID.length == 10) {
@@ -290,25 +291,25 @@ class UserController {
                 .find(sID)
                 .then((result) => {
                   if (result == "Member is not officer.") {
-                    req.session.sID = sID;
-                    req.session.position = "組織成員";
-                    req.session.permission = "組織成員";
+                    let jwt_token = jwt.sign({ sID: sID }, SECRET, { expiresIn: '1 day' });
                     res.status(200).json({
-                      result: result,
-                      sID: req.session.sID,
-                      position: req.session.position,
-                      permission: req.session.permission,
+                      "result": true,
+                      "token": jwt_token,
+                      "sID": sID,
+                      "position": "組織成員",
+                      "permission": "組織成員"
+
                     });
                     return new Promise((resolve, reject) => { });
                   } else {
-                    req.session.sID = sID;
-                    req.session.position = result[0].position;
-                    req.session.permission = result[0].permission;
+                    let jwt_token = jwt.sign({ sID: sID }, SECRET, { expiresIn: '1 day' });
                     res.status(200).json({
-                      result: true,
-                      sID: req.session.sID,
-                      position: req.session.position,
-                      permission: req.session.permission,
+                      "result": true,
+                      "token": jwt_token,
+                      "sID": sID,
+                      "position": result[0].position,
+                      "permission": result[0].permission
+
                     });
                     return new Promise((resolve, reject) => { });
                   }
@@ -342,14 +343,12 @@ class UserController {
     res.status(200).json({ result: true });
   };
   check = (req, res) => {
-    myFunction
-      .check_session(req)
-      .then(() => {
-        res.status(200).json({ result: true });
-      })
-      .catch(() => {
-        res.status(200).json({ result: false });
-      });
+    const token = req.header('Authorization').replace('Bearer ', '');
+    jwt.verify(token, SECRET, (jwterr, decoded) => {
+      jwterr
+        ? res.status(200).json({ "result": "not login" })
+        : res.status(200).json({ "result": decoded });
+    });
   };
   updateAnonymous = (req, res) => {
     const anonymous = req.body.anonymous;
