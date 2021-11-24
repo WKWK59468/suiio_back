@@ -291,25 +291,17 @@ class UserController {
                 .find(sID)
                 .then((result) => {
                   if (result == "Member is not officer.") {
-                    let jwt_token = jwt.sign({ sID: sID }, SECRET, { expiresIn: '1 day' });
+                    let jwt_token = jwt.sign({ sID: sID, "position": "組織成員", "permission": "組織成員" }, SECRET, { expiresIn: '1 day' });
                     res.status(200).json({
                       "result": true,
-                      "token": jwt_token,
-                      "sID": sID,
-                      "position": "組織成員",
-                      "permission": "組織成員"
-
+                      "token": jwt_token
                     });
                     return new Promise((resolve, reject) => { });
                   } else {
-                    let jwt_token = jwt.sign({ sID: sID }, SECRET, { expiresIn: '1 day' });
+                    let jwt_token = jwt.sign({ sID: sID, "position": result[0].position, "permission": result[0].permission }, SECRET, { expiresIn: '1 day' });
                     res.status(200).json({
                       "result": true,
-                      "token": jwt_token,
-                      "sID": sID,
-                      "position": result[0].position,
-                      "permission": result[0].permission
-
+                      "token": jwt_token
                     });
                     return new Promise((resolve, reject) => { });
                   }
@@ -342,12 +334,12 @@ class UserController {
     req.session.destroy();
     res.status(200).json({ result: true });
   };
-  check = (req, res) => {
-    const token = req.header('Authorization').replace('Bearer ', '');
+  check = (req, res, next) => {
+    const token = req.header('Authorization')?.replace('Bearer ', '');
     jwt.verify(token, SECRET, (jwterr, decoded) => {
       jwterr
-        ? res.status(200).json({ "result": "not login" })
-        : res.status(200).json({ "result": decoded });
+        ? res.status(401).json({ "result": "not login" })
+        : (req.userData = { "decoded": decoded }, next());
     });
   };
   updateAnonymous = (req, res) => {
