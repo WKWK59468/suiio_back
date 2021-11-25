@@ -1,14 +1,15 @@
 const express = require("express");
 const router = express.Router();
 const Statement = require("../controllers/statement.controller");
+const UserController = require("../controllers/member.controller");
 
-router.route("/add/byMonth").post(Statement.addByMonth);
-router.route("/add/byCategory").post(Statement.addByCategory);
-router.route("/add/").post(Statement.add);
+router.route("/add/byMonth").post(UserController.check, Statement.addByMonth);
+router.route("/add/byCategory").post(UserController.check, Statement.addByCategory);
+router.route("/add/").post(UserController.check, Statement.add);
 
-router.route("/delete").post(Statement.delete);
-router.route("/update").post(Statement.update);
-router.route("/update/status").post(Statement.updateStatus);
+router.route("/delete").post(UserController.check, Statement.delete);
+router.route("/update").post(UserController.check, Statement.update);
+router.route("/update/status").post(UserController.check, Statement.updateStatus);
 
 router.route("/fetch/all").get(Statement.fetchAll);
 router.route("/fetch/name/:name").get(Statement.fetchByName);
