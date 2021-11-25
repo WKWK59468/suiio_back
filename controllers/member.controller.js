@@ -342,6 +342,17 @@ class UserController {
         : (req.userData = { "decoded": decoded }, next());
     });
   };
+  check_permission = (req, res, next) => {
+    const token = req.header('Authorization')?.replace('Bearer ', '');
+    jwt.verify(token, SECRET, (jwterr, decoded) => {
+      jwterr
+        ? res.status(401).json({ "result": "not login" })
+        :
+        (decoded.permission === "組織成員")
+          ? res.status(403).json({ "result": "Permission denied." })
+          : next();
+    });
+  };
   updateAnonymous = (req, res) => {
     const anonymous = req.body.anonymous;
 
