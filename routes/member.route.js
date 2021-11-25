@@ -4,7 +4,7 @@ const UserController = require("../controllers/member.controller");
 
 router.route("/delete").post(UserController.check, UserController.delMember);
 router.route("/add").post(UserController.check, UserController.addMember);
-router.route("/fetch/all").get(UserController.check, UserController.listMember);
+router.route("/fetch/all").get(UserController.listMember);
 router.route("/login").post(UserController.login);
 router.route("/logout").post(UserController.logout);
 router.route("/check").get(UserController.check, (req, res, next) => {
