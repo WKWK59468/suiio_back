@@ -87,7 +87,7 @@ module.exports = {
   },
   patch: (req) => {
     const body = req.body;
-    const sID = req.session.sID;
+    const sID = req.userData.decoded.sID;
     const nickname = body.nickname;
     const sex = body.sex;
     const birth = body.birth;
@@ -111,11 +111,10 @@ module.exports = {
   },
   patchPwd: async (req) => {
     const body = req.body;
-    const sID = req.session.sID;
+    const sID = req.userData.decoded.sID;
     const password = body.password;
     const salt = await bcrypt.genSalt(10);
     const dbpassword = await bcrypt.hash(password, salt);
-    console.log(sID);
     return new Promise((resolve, reject) => {
       sql = `UPDATE member SET password='${dbpassword}' WHERE sID = '${sID}'`;
       conn.query(sql, (err, res) => {

@@ -182,7 +182,7 @@ class UserController {
 
     //DBpassword
     models
-      .login(req.session.sID)
+      .login(req.userData.decoded.sID)
       .then((dbPWD) => {
         //verify
         bcrypt
@@ -232,10 +232,9 @@ class UserController {
   patchPassword = (req, res) => {
     const body = req.body;
     const oldPassword = body.oldpassword;
-    //session
 
     models
-      .login(req.session.sID)
+      .login(req.userData.decoded.sID)
       .then((dbPWD) => {
         bcrypt
           .compare(oldPassword, dbPWD)
