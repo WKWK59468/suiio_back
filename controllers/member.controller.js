@@ -1,7 +1,9 @@
 const models = require("../models/member.model");
+const Commentmodels = require("../models/comment.model");
 const bcrypt = require("bcrypt");
 const mail = require("../mail/mail");
 const jwt = require("jsonwebtoken");
+const { get } = require("http");
 const SECRET = "suiio";
 
 const check_sID = (sID) => {
@@ -343,15 +345,43 @@ class UserController {
     });
   };
   check_permission = (req, res, next) => {
-    const token = req.header('Authorization')?.replace('Bearer ', '');
-    jwt.verify(token, SECRET, (jwterr, decoded) => {
-      jwterr
-        ? res.status(401).json({ "result": "not login" })
-        :
-        (decoded.permission === "組織成員")
-          ? res.status(403).json({ "result": "Permission denied." })
-          : next();
-    });
+    (req.userData.decoded.permission === "組織成員")
+      ? res.status(403).json({ "result": "Permission denied." })
+      : next();
+  };
+  //組織
+  check_permission_organization = (req, res, next) => {
+    (req.userData.decoded.permission === "組織負責人")
+      ? res.status(403).json({ "result": "Permission denied." })
+      : next();
+  };
+  //會議
+  check_permission_conference = (req, res, next) => {
+    (req.userData.decoded.permission === "會議負責人" || req.userData.decoded.permission === "組織負責人")
+      ? res.status(403).json({ "result": "Permission denied." })
+      : next();
+  };
+  //財務
+  check_permission_finance = (req, res, next) => {
+    (req.userData.decoded.permission === "財務負責人" || req.userData.decoded.permission === "組織負責人")
+      ? res.status(403).json({ "result": "Permission denied." })
+      : next();
+  };
+  //本人
+  check_permission_self = (req, res, next) => {
+    Commentmodels.searchSID(req.body.commentID).then((getsID) => {
+      if (req.userData.decoded.permission !== "組織成員" || req.userData.decoded.sID === getsID) {
+        next();
+      } else {
+        res.status(403).json({ "result": "Permission denied." });
+      }
+    }).catch((sIDerr) => {
+      if (sIDerr === "comment not found.") {
+        res.status(404).json({ "result": sIDerr })
+      } else {
+        res.status(500).json({ "result": sIDerr })
+      }
+    })
   };
   updateAnonymous = (req, res) => {
     const anonymous = req.body.anonymous;

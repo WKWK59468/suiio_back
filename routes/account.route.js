@@ -4,10 +4,10 @@ const AccountController = require("../controllers/account.controller");
 const UserController = require("../controllers/member.controller");
 
 //POST
-router.route("/add").post(UserController.check, AccountController.add);
-router.route("/delete").post(UserController.check, AccountController.delete);
-router.route("/update").post(UserController.check, AccountController.update);
-router.route("/update/status").post(UserController.check, AccountController.updateStatus);
+router.route("/add").post(UserController.check, UserController.check_permission, AccountController.add);
+router.route("/delete").post(UserController.check, UserController.check_permission, AccountController.delete);
+router.route("/update").post(UserController.check, UserController.check_permission, AccountController.update);
+router.route("/update/status").post(UserController.check, UserController.check_permission, UserController.check_permission_finance, AccountController.updateStatus);
 //GET
 router.route("/fetch/diagram/year").get(AccountController.diagram_year);
 router.route("/fetch/diagram/category/:year").get(AccountController.diagram_category);

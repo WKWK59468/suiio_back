@@ -1,6 +1,4 @@
-const session = require("express-session");
 const commentModels = require("../models/comment.model");
-const myFunction = require("../myFunction");
 
 const dateFormat = (res) => {
   res.forEach((element, index) => {
@@ -25,13 +23,13 @@ class Comment {
     const body = req.body;
     const content = body.content;
     const tableID = body.tableID;
-    const sID = body.sID;
+    const sID = req.userData.decoded.sID;
     let isHide;
     if (body.isHide == true || body.isHide == false) {
       isHide = body.isHide;
     } else {
       res.status(400).json({ result: "isHide Error." });
-      return new Promise((resolve, reject) => {});
+      return new Promise((resolve, reject) => { });
     }
 
     const time = new Date();
@@ -65,25 +63,25 @@ class Comment {
                 .addTables(tables, tableID, commentID)
                 .then(() => {
                   res.status(201).json({ result: true });
-                  return new Promise((resolve, reject) => {});
+                  return new Promise((resolve, reject) => { });
                 })
                 .catch((err) => {
                   res.status(500).json({ result: err });
-                  return new Promise((resolve, reject) => {});
+                  return new Promise((resolve, reject) => { });
                 });
             })
             .catch((err) => {
               res.status(500).json({ result: err });
-              return new Promise((resolve, reject) => {});
+              return new Promise((resolve, reject) => { });
             });
         })
         .catch((err) => {
           res.status(500).json({ result: err });
-          return new Promise((resolve, reject) => {});
+          return new Promise((resolve, reject) => { });
         });
     } else {
       res.status(404).json({ result: "No this table." });
-      return new Promise((resolve, reject) => {});
+      return new Promise((resolve, reject) => { });
     }
   };
   fetchByID = (req, res) => {
@@ -100,15 +98,15 @@ class Comment {
         .fetchByID(tables, tableID)
         .then((result) => {
           res.status(200).json(result);
-          return new Promise((resolve, reject) => {});
+          return new Promise((resolve, reject) => { });
         })
         .catch((err) => {
           res.status(500).json({ result: err });
-          return new Promise((resolve, reject) => {});
+          return new Promise((resolve, reject) => { });
         });
     } else {
       res.status(404).json({ result: "No this table." });
-      return new Promise((resolve, reject) => {});
+      return new Promise((resolve, reject) => { });
     }
   };
   fetchByMember = (req, res) => {
@@ -119,15 +117,15 @@ class Comment {
       .then((result) => {
         result = dateFormat(result);
         res.status(200).json(result);
-        return new Promise((resolve, reject) => {});
+        return new Promise((resolve, reject) => { });
       })
       .catch((err) => {
         if (err == "There is nothing to show.") {
           res.status(404).json({ result: err });
-          return new Promise((resolve, reject) => {});
+          return new Promise((resolve, reject) => { });
         } else {
           res.status(500).json({ result: err });
-          return new Promise((resolve, reject) => {});
+          return new Promise((resolve, reject) => { });
         }
       });
   };
@@ -160,24 +158,24 @@ class Comment {
                 if (index == array.length - 1) {
                   if (index2 == array2.length - 1) {
                     res.status(200).json(json);
-                    return new Promise((resolve, reject) => {});
+                    return new Promise((resolve, reject) => { });
                   }
                 }
               })
               .catch((err) => {
                 if (err == "Comment does not exist.") {
                   res.status(404).json({ result: err });
-                  return new Promise((resolve, reject) => {});
+                  return new Promise((resolve, reject) => { });
                 } else {
                   res.status(500).json({ result: err });
-                  return new Promise((resolve, reject) => {});
+                  return new Promise((resolve, reject) => { });
                 }
               });
           });
         })
         .catch((err) => {
           res.status(500).json({ result: err });
-          return new Promise((resolve, reject) => {});
+          return new Promise((resolve, reject) => { });
         });
     });
   };
@@ -201,66 +199,32 @@ class Comment {
     };
 
     commentModels
-      .searchSID(commentID)
-      .then((ID) => {
-        if (ID == req.body.sID) {
-          commentModels
-            .update(comment)
-            .then(() => {
-              res.status(200).json({ result: true });
-              return new Promise((resolve, reject) => {});
-            })
-            .catch((err) => {
-              res.status(500).json({ result: err });
-              return new Promise((resolve, reject) => {});
-            });
-        } else {
-          res.status(403).json({ result: "Permission denied." });
-          return new Promise((resolve, reject) => {});
-        }
+      .update(comment)
+      .then(() => {
+        res.status(200).json({ result: true });
+        return new Promise((resolve, reject) => { });
       })
-      .catch((error) => {
-        if (error == "comment not found.") {
-          res.status(404).json({ result: error });
-          return new Promise((resolve, reject) => {});
-        } else {
-          res.status(500).json({ result: error });
-          return new Promise((resolve, reject) => {});
-        }
+      .catch((err) => {
+        res.status(500).json({ result: err });
+        return new Promise((resolve, reject) => { });
       });
+
   };
   delete = (req, res) => {
     const body = req.body;
     const commentID = body.commentID;
 
     commentModels
-      .searchSID(commentID)
-      .then((sID) => {
-        if (req.body.permission !== "組織成員" || req.body.sID == sID) {
-          commentModels
-            .delete(commentID)
-            .then(() => {
-              res.status(200).json({ result: true });
-              return new Promise((resolve, reject) => {});
-            })
-            .catch((err) => {
-              res.status(500).json({ result: err });
-              return new Promise((resolve, reject) => {});
-            });
-        } else {
-          res.status(403).json({ result: "Permission denied." });
-          return new Promise((resolve, reject) => {});
-        }
+      .delete(commentID)
+      .then(() => {
+        res.status(200).json({ result: true });
+        return new Promise((resolve, reject) => { });
       })
-      .catch((error) => {
-        if (error == "comment not found.") {
-          res.status(404).json({ result: error });
-          return new Promise((resolve, reject) => {});
-        } else {
-          res.status(500).json({ result: error });
-          return new Promise((resolve, reject) => {});
-        }
+      .catch((err) => {
+        res.status(500).json({ result: err });
+        return new Promise((resolve, reject) => { });
       });
+
   };
 }
 
