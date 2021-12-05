@@ -2,18 +2,32 @@ const models = require("../models/category.model");
 const myFunction = require("../myFunction");
 
 class categoryController {
+  check = (req, res, next) => {
+    const category = req.body.category;
+    //對其他項目做例外處理
+    (category == "0")
+      ? next()
+      : models.check(category)
+        .then((check) => {
+          check ? next() : res.status(400).json({ result: "Category is closed." });
+        })
+        .catch((err) => {
+          res.status(500).json({ result: err });
+        })
+
+  }
   addCategory = (req, res) => {
     models.add(req, (err, results) => {
       if (err) {
         if (err.sqlState == "23000") {
           res.status(500).json({ result: "Duplicate primary key" });
-          return new Promise((resolve, reject) => {});
+          return new Promise((resolve, reject) => { });
         }
         res.status(500).json({ result: err });
-        return new Promise((resolve, reject) => {});
+        return new Promise((resolve, reject) => { });
       }
       res.status(201).json({ result: true });
-      return new Promise((resolve, reject) => {});
+      return new Promise((resolve, reject) => { });
     });
   };
   listCategory = (req, res) => {
@@ -21,11 +35,11 @@ class categoryController {
     models.list(req, (err, results) => {
       if (err) {
         res.status(500).json({ result: err });
-        return new Promise((resolve, reject) => {});
+        return new Promise((resolve, reject) => { });
       }
       if (!results.length) {
         res.status(404).json({ result: "There is nothing to show." });
-        return new Promise((resolve, reject) => {});
+        return new Promise((resolve, reject) => { });
       }
       results.forEach((element) => {
         if (element.ID != 0) {
@@ -33,7 +47,7 @@ class categoryController {
         }
       });
       res.status(200).json(arr);
-      return new Promise((resolve, reject) => {});
+      return new Promise((resolve, reject) => { });
     });
   };
   fetchStatusOn = (req, res) => {
@@ -44,11 +58,11 @@ class categoryController {
       models.StatusOn(req, (err, results) => {
         if (err) {
           res.status(500).json({ result: err });
-          return new Promise((resolve, reject) => {});
+          return new Promise((resolve, reject) => { });
         }
         if (!results.length) {
           res.status(404).json({ result: "There is nothing to show." });
-          return new Promise((resolve, reject) => {});
+          return new Promise((resolve, reject) => { });
         }
         results.forEach((element) => {
           if (element.ID != 0) {
@@ -56,25 +70,25 @@ class categoryController {
           }
         });
         res.status(200).json(arr);
-        return new Promise((resolve, reject) => {});
+        return new Promise((resolve, reject) => { });
       });
     } else {
       res.status(400).json({ result: "Please Enter 0 or 1." });
-      return new Promise((resolve, reject) => {});
+      return new Promise((resolve, reject) => { });
     }
   };
   delCategory = (req, res) => {
     models.del(req, (err, results) => {
       if (err) {
         res.status(500).json({ result: err });
-        return new Promise((resolve, reject) => {});
+        return new Promise((resolve, reject) => { });
       }
       if (!results.affectedRows) {
         res.status(404).json({ result: "Can't find category." });
-        return new Promise((resolve, reject) => {});
+        return new Promise((resolve, reject) => { });
       }
       res.status(200).json({ result: true });
-      return new Promise((resolve, reject) => {});
+      return new Promise((resolve, reject) => { });
     });
   };
   patchStatus = (req, res) => {
@@ -83,18 +97,18 @@ class categoryController {
       models.setStatus(req, function (err, results, fields) {
         if (err) {
           res.status(500).json({ result: err });
-          return new Promise((resolve, reject) => {});
+          return new Promise((resolve, reject) => { });
         }
         if (!results.affectedRows) {
           res.status(404).json({ result: "Can't find category." });
-          return new Promise((resolve, reject) => {});
+          return new Promise((resolve, reject) => { });
         }
         res.status(200).json({ result: true });
-        return new Promise((resolve, reject) => {});
+        return new Promise((resolve, reject) => { });
       });
     } else {
       res.status(400).json({ result: "Please Enter 0 or 1." });
-      return new Promise((resolve, reject) => {});
+      return new Promise((resolve, reject) => { });
     }
   };
 }

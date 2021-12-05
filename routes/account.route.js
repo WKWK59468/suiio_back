@@ -1,9 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const AccountController = require("../controllers/account.controller");
+const Category = require("../controllers/category.controller");
 
 //POST
-router.route("/add").post(AccountController.add);
+router.route("/add").post(Category.check, AccountController.add);
 router.route("/delete").post(AccountController.delete);
 router.route("/update").post(AccountController.update);
 router.route("/update/status").post(AccountController.updateStatus);
