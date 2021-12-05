@@ -94,6 +94,16 @@ module.exports = {
     );
     return conn.query(sql, callback);
   },
+  fetchByCategory: (category) => {
+    sql = `SELECT account.ID, account.date, category.name AS category, account.name, account.amount, account.status, account.uploadBy FROM account,category WHERE account.category = ${category} AND category.ID = account.category ORDER BY account.date DESC,account.ID DESC`
+    return new Promise((resolve, reject) => {
+      conn.query(sql, (err, res) => {
+        console.log(sql)
+        err ? reject(err) : ((res.length) ? resolve(res) : reject("There is nothing to show."))
+      })
+    });
+
+  },
   fetchByDate: (req, callback) => {
     const body = req.params;
     const date = "%" + body.date + "%";
