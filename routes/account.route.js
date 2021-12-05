@@ -17,6 +17,7 @@ router.route("/fetch/all").get(AccountController.fetchAll);
 router.route("/fetch/status/:status").get(AccountController.fetchByStatus);
 router.route("/fetch/name/:name").get(AccountController.fetchByName);
 router.route("/fetch/bywhom/:whom").get(AccountController.fetchByWhom);
+router.route("/fetch/bycategory/:category").get(AccountController.fetchByCategory);
 router.route("/fetch/date/:date").get(AccountController.fetchByDate);
 router.route("/fetch/id/:ID").get(AccountController.fetchByID);
 module.exports = router;
