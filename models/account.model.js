@@ -163,7 +163,11 @@ module.exports = {
             category: element.category,
           });
         });
-        err ? reject(err) : res.length ? resolve(obj) : reject("There is nothing to show.");
+        err
+          ? reject(err)
+          : res.length
+          ? resolve(obj)
+          : reject("There is nothing to show.");
       });
     });
   },
@@ -177,7 +181,11 @@ module.exports = {
       return new Promise((resolve, reject) => {
         sql = `SELECT ${diagram_sql},account.category AS categoryID FROM account,category WHERE category.ID = account.category AND account.date >= '${now_date_108}' AND account.date <= '${next_date_108}' AND account.status = 1 ORDER BY account.date DESC,account.ID DESC`;
         conn.query(sql, (err, res) => {
-          err ? reject(err) : res.length ? resolve(res) : reject("There is nothing to show.");
+          err
+            ? reject(err)
+            : res.length
+            ? resolve(res)
+            : reject("There is nothing to show.");
         });
       });
     } else if (schoolyear === "107") {
@@ -186,14 +194,22 @@ module.exports = {
       return new Promise((resolve, reject) => {
         sql = `SELECT ${diagram_sql},account.category AS categoryID FROM account,category WHERE category.ID = account.category AND account.date >= '${now_date_107}' AND account.date <= '${next_date_107}' AND account.status = 1 ORDER BY account.date DESC,account.ID DESC`;
         conn.query(sql, (err, res) => {
-          err ? reject(err) : res.length ? resolve(res) : reject("There is nothing to show.");
+          err
+            ? reject(err)
+            : res.length
+            ? resolve(res)
+            : reject("There is nothing to show.");
         });
       });
     } else {
       return new Promise((resolve, reject) => {
         sql = `SELECT ${diagram_sql},account.category AS categoryID FROM account,category WHERE category.ID = account.category AND account.date >= '${now_date}' AND account.date <= '${next_date}' AND account.status = 1 ORDER BY account.date DESC,account.ID DESC`;
         conn.query(sql, (err, res) => {
-          err ? reject(err) : res.length ? resolve(res) : reject("There is nothing to show.");
+          err
+            ? reject(err)
+            : res.length
+            ? resolve(res)
+            : reject("There is nothing to show.");
         });
       });
     }
