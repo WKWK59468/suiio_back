@@ -27,51 +27,51 @@ class AccountController {
           models.add(req, (err, results) => {
             if (err) {
               res.status(500).json({ result: err });
-              return new Promise((resolve, reject) => { });
+              return new Promise((resolve, reject) => {});
             }
             if (!results.affectedRows) {
               res.status(404).json({ result: "The account is not add." });
-              return new Promise((resolve, reject) => { });
+              return new Promise((resolve, reject) => {});
             }
             res.status(201).json({ result: true });
-            return new Promise((resolve, reject) => { });
+            return new Promise((resolve, reject) => {});
           });
         } else {
           res.status(404).json({ result: "Position does not exist." });
-          return new Promise((resolve, reject) => { });
+          return new Promise((resolve, reject) => {});
         }
       })
       .catch((err) => {
         res.status(500).json({ result: err });
-        return new Promise((resolve, reject) => { });
+        return new Promise((resolve, reject) => {});
       });
   };
   delete = (req, res) => {
     models.delete(req, (err, results) => {
       if (err) {
         res.status(500).json({ result: err });
-        return new Promise((resolve, reject) => { });
+        return new Promise((resolve, reject) => {});
       }
       if (!results.affectedRows) {
         res.status(404).json({ result: "The account is not exist." });
-        return new Promise((resolve, reject) => { });
+        return new Promise((resolve, reject) => {});
       }
       res.status(200).json({ result: true });
-      return new Promise((resolve, reject) => { });
+      return new Promise((resolve, reject) => {});
     });
   };
   update = (req, res) => {
     models.update(req, (err, results) => {
       if (err) {
         res.status(500).json({ result: err });
-        return new Promise((resolve, reject) => { });
+        return new Promise((resolve, reject) => {});
       }
       if (!results.affectedRows) {
         res.status(404).json({ result: "Can't find account." });
-        return new Promise((resolve, reject) => { });
+        return new Promise((resolve, reject) => {});
       }
       res.status(200).json({ result: true });
-      return new Promise((resolve, reject) => { });
+      return new Promise((resolve, reject) => {});
     });
   };
   updateStatus = (req, res) => {
@@ -86,33 +86,33 @@ class AccountController {
       models.updateStatus(req, (err, results) => {
         if (err) {
           res.status(500).json({ result: err });
-          return new Promise((resolve, reject) => { });
+          return new Promise((resolve, reject) => {});
         }
         if (!results.affectedRows) {
           res.status(404).json({ result: "Can't find account." });
-          return new Promise((resolve, reject) => { });
+          return new Promise((resolve, reject) => {});
         }
         res.status(200).json({ result: true });
-        return new Promise((resolve, reject) => { });
+        return new Promise((resolve, reject) => {});
       });
     } else {
       res.status(400).json({ result: "Please Enter 0 ~ 4." });
-      return new Promise((resolve, reject) => { });
+      return new Promise((resolve, reject) => {});
     }
   };
   fetchAll = (req, res) => {
     models.fetchAll(req, (err, results) => {
       if (err) {
         res.status(500).json({ result: err });
-        return new Promise((resolve, reject) => { });
+        return new Promise((resolve, reject) => {});
       }
       if (!results.length) {
         res.status(404).json({ result: "There is nothing to show." });
-        return new Promise((resolve, reject) => { });
+        return new Promise((resolve, reject) => {});
       }
       results = dateFormat(results);
       res.status(200).json(results);
-      return new Promise((resolve, reject) => { });
+      return new Promise((resolve, reject) => {});
     });
   };
   fetchByStatus = (req, res) => {
@@ -127,59 +127,60 @@ class AccountController {
       models.fetchByStatus(req, (err, results) => {
         if (err) {
           res.status(500).json({ result: err });
-          return new Promise((resolve, reject) => { });
+          return new Promise((resolve, reject) => {});
         }
         if (!results.length) {
           res.status(404).json({ result: "There is nothing to show." });
-          return new Promise((resolve, reject) => { });
+          return new Promise((resolve, reject) => {});
         }
         results = dateFormat(results);
         res.status(200).json(results);
-        return new Promise((resolve, reject) => { });
+        return new Promise((resolve, reject) => {});
       });
     } else {
       res.status(400).json({ result: "Please Enter 0 ~ 4." });
-      return new Promise((resolve, reject) => { });
+      return new Promise((resolve, reject) => {});
     }
   };
   fetchByName = (req, res) => {
     models.fetchByName(req, (err, results) => {
       if (err) {
         res.status(500).json({ result: err });
-        return new Promise((resolve, reject) => { });
+        return new Promise((resolve, reject) => {});
       }
       if (!results.length) {
         res.status(404).json({ result: "There is nothing to show." });
-        return new Promise((resolve, reject) => { });
+        return new Promise((resolve, reject) => {});
       }
       results = dateFormat(results);
       res.status(200).json(results);
-      return new Promise((resolve, reject) => { });
+      return new Promise((resolve, reject) => {});
     });
   };
   fetchByWhom = (req, res) => {
     models.fetchByWhom(req, (err, results) => {
       if (err) {
         res.status(500).json({ result: err });
-        return new Promise((resolve, reject) => { });
+        return new Promise((resolve, reject) => {});
       }
       if (!results.length) {
         res.status(404).json({ result: "There is nothing to show." });
-        return new Promise((resolve, reject) => { });
+        return new Promise((resolve, reject) => {});
       }
       results = dateFormat(results);
       res.status(200).json(results);
-      return new Promise((resolve, reject) => { });
+      return new Promise((resolve, reject) => {});
     });
   };
   fetchByCategory = (req, res) => {
     const params = req.params;
     const category = params.category;
-    models.fetchByCategory(category)
+    models
+      .fetchByCategory(category)
       .then((results) => {
         results = dateFormat(results);
         res.status(200).json(results);
-        return new Promise((resolve, reject) => { });
+        return new Promise((resolve, reject) => {});
       })
       .catch((err) => {
         if (err === "There is nothing to show.") {
@@ -193,30 +194,30 @@ class AccountController {
     models.fetchByDate(req, (err, results) => {
       if (err) {
         res.status(500).json({ result: err });
-        return new Promise((resolve, reject) => { });
+        return new Promise((resolve, reject) => {});
       }
       if (!results.length) {
         res.status(404).json({ result: "There is nothing to show." });
-        return new Promise((resolve, reject) => { });
+        return new Promise((resolve, reject) => {});
       }
       results = dateFormat(results);
       res.status(200).json(results);
-      return new Promise((resolve, reject) => { });
+      return new Promise((resolve, reject) => {});
     });
   };
   fetchByID = (req, res) => {
     models.fetchByID(req, (err, results) => {
       if (err) {
         res.status(500).json({ result: err });
-        return new Promise((resolve, reject) => { });
+        return new Promise((resolve, reject) => {});
       }
       if (!results.length) {
         res.status(404).json({ result: "There is nothing to show." });
-        return new Promise((resolve, reject) => { });
+        return new Promise((resolve, reject) => {});
       }
       results = dateFormat(results);
       res.status(200).json(results);
-      return new Promise((resolve, reject) => { });
+      return new Promise((resolve, reject) => {});
     });
   };
   diagram = (req, res) => {
@@ -239,7 +240,7 @@ class AccountController {
         .diagram(year, now_month, last_month)
         .then((result) => {
           res.status(200).json(result);
-          return new Promise((resolve, reject) => { });
+          return new Promise((resolve, reject) => {});
         })
         .catch((err) => {
           if (err === "There is nothing to show.") {
@@ -252,7 +253,7 @@ class AccountController {
         });
     } else {
       res.status(400).json({ result: "Month Enter Error." });
-      return new Promise((resolve, reject) => { });
+      return new Promise((resolve, reject) => {});
     }
   };
   diagram_compare = (req, res) => {
@@ -278,7 +279,7 @@ class AccountController {
         res
           .status(200)
           .json({ income: income, cost: cost, net: gains_and_losses });
-        return new Promise((resolve, reject) => { });
+        return new Promise((resolve, reject) => {});
       })
       .catch((err) => {
         if (err === "There is nothing to show.") {
@@ -319,7 +320,7 @@ class AccountController {
           arr.push(jsonObj[i]);
         }
         res.status(200).json(arr);
-        return new Promise((resolve, reject) => { });
+        return new Promise((resolve, reject) => {});
       })
       .catch((err) => {
         if (err === "There is nothing to show.") {
@@ -336,10 +337,10 @@ class AccountController {
     models.fetchAll(req, (err, results) => {
       if (err) {
         res.status(500).json({ result: err });
-        return new Promise((resolve, reject) => { });
+        return new Promise((resolve, reject) => {});
       } else if (!results.length) {
         res.status(404).json({ result: "There is nothing to show." });
-        return new Promise((resolve, reject) => { });
+        return new Promise((resolve, reject) => {});
       } else {
         results.forEach((element) => {
           let year = element.date.getFullYear();
@@ -356,7 +357,7 @@ class AccountController {
           return array.indexOf(element) === index;
         });
         res.status(200).json(arr2.sort());
-        return new Promise((resolve, reject) => { });
+        return new Promise((resolve, reject) => {});
       }
     });
   };

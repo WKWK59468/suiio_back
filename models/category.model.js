@@ -5,6 +5,14 @@ const conn = mysql.createConnection(conf.db);
 let sql = "";
 
 module.exports = {
+  check: (category) => {
+    sql = `SELECT status FROM category WHERE ID = ${category}`;
+    return new Promise((resolve, reject) => {
+      conn.query(sql, (err, res) => {
+        err ? reject(err) : resolve(res[0].status);
+      });
+    });
+  },
   add: (req, callback) => {
     const body = req.body;
     const name = body.name;

@@ -2,6 +2,22 @@ const models = require("../models/category.model");
 const myFunction = require("../myFunction");
 
 class categoryController {
+  check = (req, res, next) => {
+    const category = req.body.category;
+    //對其他項目做例外處理
+    category == "0"
+      ? next()
+      : models
+          .check(category)
+          .then((check) => {
+            check
+              ? next()
+              : res.status(400).json({ result: "Category is closed." });
+          })
+          .catch((err) => {
+            res.status(500).json({ result: err });
+          });
+  };
   addCategory = (req, res) => {
     models.add(req, (err, results) => {
       if (err) {
