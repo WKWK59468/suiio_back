@@ -117,11 +117,11 @@ class UserController {
     models.list(req, (err, results) => {
       if (err) {
         res.status(500).json({ result: "false" });
-        return new Promise((resolve, reject) => { });
+        return new Promise((resolve, reject) => {});
       }
       if (!results.length) {
         res.sendStatus(404).json({ result: "There is nothing to show." });
-        return new Promise((resolve, reject) => { });
+        return new Promise((resolve, reject) => {});
       }
       results = dateFormat(results);
       res.status(200).json(results);
@@ -134,23 +134,24 @@ class UserController {
       models
         .add(req)
         .then(function (pwd) {
-          mail.sendMail(req, pwd)
+          mail
+            .sendMail(req, pwd)
             .then(() => {
               res.status(201).json({ result: true });
-              return new Promise((resolve, reject) => { });
+              return new Promise((resolve, reject) => {});
             })
             .catch((mailerr) => {
               res.status(500).json({ result: mailerr });
-              return new Promise((resolve, reject) => { });
+              return new Promise((resolve, reject) => {});
             });
         })
         .catch((err) => {
           res.status(500).json({ result: err });
-          return new Promise((resolve, reject) => { });
+          return new Promise((resolve, reject) => {});
         });
     } else {
       res.status(400).json({ result: "format error" });
-      return new Promise((resolve, reject) => { });
+      return new Promise((resolve, reject) => {});
     }
   };
 
@@ -160,18 +161,18 @@ class UserController {
       models.del(req, (err, results) => {
         if (err) {
           res.status(500).json({ result: err });
-          return new Promise((resolve, reject) => { });
+          return new Promise((resolve, reject) => {});
         }
         if (!results.affectedRows) {
           res.status(404).json({ result: "Can't find member." });
-          return new Promise((resolve, reject) => { });
+          return new Promise((resolve, reject) => {});
         }
         res.status(200).json({ result: true });
-        return new Promise((resolve, reject) => { });
+        return new Promise((resolve, reject) => {});
       });
     } else {
       res.status(400).json({ result: "format error" });
-      return new Promise((resolve, reject) => { });
+      return new Promise((resolve, reject) => {});
     }
   };
 
@@ -194,37 +195,37 @@ class UserController {
                 .patch(req)
                 .then(() => {
                   res.status(200).json({ result: true });
-                  return new Promise((resolve, reject) => { });
+                  return new Promise((resolve, reject) => {});
                 })
                 .catch((patcherr) => {
                   if (patcherr == "sex err") {
                     res.status(400).json({ result: patcherr });
-                    return new Promise((resolve, reject) => { });
+                    return new Promise((resolve, reject) => {});
                   } else if (err == "update err") {
                     res.status(404).json({ result: patcherr });
-                    return new Promise((resolve, reject) => { });
+                    return new Promise((resolve, reject) => {});
                   } else {
                     res.status(500).json({ result: patcherr });
-                    return new Promise((resolve, reject) => { });
+                    return new Promise((resolve, reject) => {});
                   }
                 });
             } else {
               res.status(400).json({ result: "Password Error." });
-              return new Promise((resolve, reject) => { });
+              return new Promise((resolve, reject) => {});
             }
           })
           .catch((err) => {
             res.status(400).json({ result: err });
-            return new Promise((resolve, reject) => { });
+            return new Promise((resolve, reject) => {});
           });
       })
       .catch((error) => {
         if (error == "User Not Found.") {
           res.status(404).json({ result: error });
-          return new Promise((resolve, reject) => { });
+          return new Promise((resolve, reject) => {});
         } else {
           res.status(500).json({ result: error });
-          return new Promise((resolve, reject) => { });
+          return new Promise((resolve, reject) => {});
         }
       });
   };
@@ -244,34 +245,34 @@ class UserController {
                 .patchPwd(req)
                 .then(() => {
                   res.status(200).json({ result: true });
-                  return new Promise((resolve, reject) => { });
+                  return new Promise((resolve, reject) => {});
                 })
                 .catch((patcherr) => {
                   if (err == "update err") {
                     res.status(404).json({ result: patcherr });
-                    return new Promise((resolve, reject) => { });
+                    return new Promise((resolve, reject) => {});
                   } else {
                     res.status(500).json({ result: patcherr });
-                    return new Promise((resolve, reject) => { });
+                    return new Promise((resolve, reject) => {});
                   }
                 });
             } else {
               res.status(400).json({ result: "Password Error." });
-              return new Promise((resolve, reject) => { });
+              return new Promise((resolve, reject) => {});
             }
           })
           .catch((err) => {
             res.status(400).json({ result: err });
-            return new Promise((resolve, reject) => { });
+            return new Promise((resolve, reject) => {});
           });
       })
       .catch((error) => {
         if (error == "User Not Found.") {
           res.status(404).json({ result: error });
-          return new Promise((resolve, reject) => { });
+          return new Promise((resolve, reject) => {});
         } else {
           res.status(500).json({ result: error });
-          return new Promise((resolve, reject) => { });
+          return new Promise((resolve, reject) => {});
         }
       });
   };
@@ -292,42 +293,58 @@ class UserController {
                 .find(sID)
                 .then((result) => {
                   if (result == "Member is not officer.") {
-                    let jwt_token = jwt.sign({ sID: sID, "position": "組織成員", "permission": "組織成員" }, SECRET, { expiresIn: '1 day' });
+                    let jwt_token = jwt.sign(
+                      {
+                        sID: sID,
+                        position: "組織成員",
+                        permission: "組織成員",
+                      },
+                      SECRET,
+                      { expiresIn: "1 day" }
+                    );
                     res.status(200).json({
-                      "result": true,
-                      "token": jwt_token
+                      result: true,
+                      token: jwt_token,
                     });
-                    return new Promise((resolve, reject) => { });
+                    return new Promise((resolve, reject) => {});
                   } else {
-                    let jwt_token = jwt.sign({ sID: sID, "position": result[0].position, "permission": result[0].permission }, SECRET, { expiresIn: '1 day' });
+                    let jwt_token = jwt.sign(
+                      {
+                        sID: sID,
+                        position: result[0].position,
+                        permission: result[0].permission,
+                      },
+                      SECRET,
+                      { expiresIn: "1 day" }
+                    );
                     res.status(200).json({
-                      "result": true,
-                      "token": jwt_token
+                      result: true,
+                      token: jwt_token,
                     });
-                    return new Promise((resolve, reject) => { });
+                    return new Promise((resolve, reject) => {});
                   }
                 })
                 .catch((err) => {
                   res.status(500).json({ result: err });
-                  return new Promise((resolve, reject) => { });
+                  return new Promise((resolve, reject) => {});
                 });
             } else {
               res.status(400).json({ result: "Password Error." });
-              return new Promise((resolve, reject) => { });
+              return new Promise((resolve, reject) => {});
             }
           })
           .catch((err) => {
             res.status(400).json({ result: err });
-            return new Promise((resolve, reject) => { });
+            return new Promise((resolve, reject) => {});
           });
       })
       .catch((error) => {
         if (error == "User Not Found.") {
           res.status(404).json({ result: error });
-          return new Promise((resolve, reject) => { });
+          return new Promise((resolve, reject) => {});
         } else {
           res.status(500).json({ result: error });
-          return new Promise((resolve, reject) => { });
+          return new Promise((resolve, reject) => {});
         }
       });
   };
@@ -336,51 +353,58 @@ class UserController {
     res.status(200).json({ result: true });
   };
   check = (req, res, next) => {
-    const token = req.header('Authorization')?.replace('Bearer ', '');
+    const token = req.header("Authorization")?.replace("Bearer ", "");
     jwt.verify(token, SECRET, (jwterr, decoded) => {
       jwterr
-        ? res.status(401).json({ "result": "not login" })
-        : (req.userData = { "decoded": decoded }, next());
+        ? res.status(401).json({ result: "not login" })
+        : ((req.userData = { decoded: decoded }), next());
     });
   };
   check_permission = (req, res, next) => {
-    (req.userData.decoded.permission === "組織成員")
-      ? res.status(403).json({ "result": "Permission denied." })
+    req.userData.decoded.permission === "組織成員"
+      ? res.status(403).json({ result: "Permission denied." })
       : next();
   };
   //組織
   check_permission_organization = (req, res, next) => {
-    (req.userData.decoded.permission === "組織負責人")
-      ? res.status(403).json({ "result": "Permission denied." })
+    req.userData.decoded.permission === "組織負責人"
+      ? res.status(403).json({ result: "Permission denied." })
       : next();
   };
   //會議
   check_permission_conference = (req, res, next) => {
-    (req.userData.decoded.permission === "會議負責人" || req.userData.decoded.permission === "組織負責人")
-      ? res.status(403).json({ "result": "Permission denied." })
+    req.userData.decoded.permission === "會議負責人" ||
+    req.userData.decoded.permission === "組織負責人"
+      ? res.status(403).json({ result: "Permission denied." })
       : next();
   };
   //財務
   check_permission_finance = (req, res, next) => {
-    (req.userData.decoded.permission === "財務負責人" || req.userData.decoded.permission === "組織負責人")
-      ? res.status(403).json({ "result": "Permission denied." })
+    req.userData.decoded.permission === "財務負責人" ||
+    req.userData.decoded.permission === "組織負責人"
+      ? res.status(403).json({ result: "Permission denied." })
       : next();
   };
   //本人
   check_permission_self = (req, res, next) => {
-    Commentmodels.searchSID(req.body.commentID).then((getsID) => {
-      if (req.userData.decoded.permission !== "組織成員" || req.userData.decoded.sID === getsID) {
-        next();
-      } else {
-        res.status(403).json({ "result": "Permission denied." });
-      }
-    }).catch((sIDerr) => {
-      if (sIDerr === "comment not found.") {
-        res.status(404).json({ "result": sIDerr })
-      } else {
-        res.status(500).json({ "result": sIDerr })
-      }
-    })
+    Commentmodels.searchSID(req.body.commentID)
+      .then((getsID) => {
+        if (
+          req.userData.decoded.permission !== "組織成員" ||
+          req.userData.decoded.sID === getsID
+        ) {
+          next();
+        } else {
+          res.status(403).json({ result: "Permission denied." });
+        }
+      })
+      .catch((sIDerr) => {
+        if (sIDerr === "comment not found.") {
+          res.status(404).json({ result: sIDerr });
+        } else {
+          res.status(500).json({ result: sIDerr });
+        }
+      });
   };
   updateAnonymous = (req, res) => {
     const anonymous = req.body.anonymous;
@@ -389,11 +413,11 @@ class UserController {
       .updateAnonymous(anonymous, req.session.sID)
       .then(() => {
         res.status(200).json({ result: true });
-        return new Promise((resolve, reject) => { });
+        return new Promise((resolve, reject) => {});
       })
       .catch((err) => {
         res.status(500).json({ result: err });
-        return new Promise((resolve, reject) => { });
+        return new Promise((resolve, reject) => {});
       });
   };
 }

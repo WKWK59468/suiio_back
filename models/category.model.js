@@ -10,8 +10,8 @@ module.exports = {
     return new Promise((resolve, reject) => {
       conn.query(sql, (err, res) => {
         err ? reject(err) : resolve(res[0].status);
-      })
-    })
+      });
+    });
   },
   add: (req, callback) => {
     const body = req.body;

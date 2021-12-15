@@ -29,7 +29,7 @@ class Comment {
       isHide = body.isHide;
     } else {
       res.status(400).json({ result: "isHide Error." });
-      return new Promise((resolve, reject) => { });
+      return new Promise((resolve, reject) => {});
     }
 
     const time = new Date();
@@ -63,25 +63,25 @@ class Comment {
                 .addTables(tables, tableID, commentID)
                 .then(() => {
                   res.status(201).json({ result: true });
-                  return new Promise((resolve, reject) => { });
+                  return new Promise((resolve, reject) => {});
                 })
                 .catch((err) => {
                   res.status(500).json({ result: err });
-                  return new Promise((resolve, reject) => { });
+                  return new Promise((resolve, reject) => {});
                 });
             })
             .catch((err) => {
               res.status(500).json({ result: err });
-              return new Promise((resolve, reject) => { });
+              return new Promise((resolve, reject) => {});
             });
         })
         .catch((err) => {
           res.status(500).json({ result: err });
-          return new Promise((resolve, reject) => { });
+          return new Promise((resolve, reject) => {});
         });
     } else {
       res.status(404).json({ result: "No this table." });
-      return new Promise((resolve, reject) => { });
+      return new Promise((resolve, reject) => {});
     }
   };
   fetchByID = (req, res) => {
@@ -98,15 +98,15 @@ class Comment {
         .fetchByID(tables, tableID)
         .then((result) => {
           res.status(200).json(result);
-          return new Promise((resolve, reject) => { });
+          return new Promise((resolve, reject) => {});
         })
         .catch((err) => {
           res.status(500).json({ result: err });
-          return new Promise((resolve, reject) => { });
+          return new Promise((resolve, reject) => {});
         });
     } else {
       res.status(404).json({ result: "No this table." });
-      return new Promise((resolve, reject) => { });
+      return new Promise((resolve, reject) => {});
     }
   };
   fetchByMember = (req, res) => {
@@ -117,15 +117,15 @@ class Comment {
       .then((result) => {
         result = dateFormat(result);
         res.status(200).json(result);
-        return new Promise((resolve, reject) => { });
+        return new Promise((resolve, reject) => {});
       })
       .catch((err) => {
         if (err == "There is nothing to show.") {
           res.status(404).json({ result: err });
-          return new Promise((resolve, reject) => { });
+          return new Promise((resolve, reject) => {});
         } else {
           res.status(500).json({ result: err });
-          return new Promise((resolve, reject) => { });
+          return new Promise((resolve, reject) => {});
         }
       });
   };
@@ -158,24 +158,24 @@ class Comment {
                 if (index == array.length - 1) {
                   if (index2 == array2.length - 1) {
                     res.status(200).json(json);
-                    return new Promise((resolve, reject) => { });
+                    return new Promise((resolve, reject) => {});
                   }
                 }
               })
               .catch((err) => {
                 if (err == "Comment does not exist.") {
                   res.status(404).json({ result: err });
-                  return new Promise((resolve, reject) => { });
+                  return new Promise((resolve, reject) => {});
                 } else {
                   res.status(500).json({ result: err });
-                  return new Promise((resolve, reject) => { });
+                  return new Promise((resolve, reject) => {});
                 }
               });
           });
         })
         .catch((err) => {
           res.status(500).json({ result: err });
-          return new Promise((resolve, reject) => { });
+          return new Promise((resolve, reject) => {});
         });
     });
   };
@@ -202,13 +202,12 @@ class Comment {
       .update(comment)
       .then(() => {
         res.status(200).json({ result: true });
-        return new Promise((resolve, reject) => { });
+        return new Promise((resolve, reject) => {});
       })
       .catch((err) => {
         res.status(500).json({ result: err });
-        return new Promise((resolve, reject) => { });
+        return new Promise((resolve, reject) => {});
       });
-
   };
   delete = (req, res) => {
     const body = req.body;
@@ -218,13 +217,12 @@ class Comment {
       .delete(commentID)
       .then(() => {
         res.status(200).json({ result: true });
-        return new Promise((resolve, reject) => { });
+        return new Promise((resolve, reject) => {});
       })
       .catch((err) => {
         res.status(500).json({ result: err });
-        return new Promise((resolve, reject) => { });
+        return new Promise((resolve, reject) => {});
       });
-
   };
 }
 
