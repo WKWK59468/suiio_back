@@ -2,9 +2,10 @@ const express = require("express");
 const router = express.Router();
 const AccountController = require("../controllers/account.controller");
 const UserController = require("../controllers/member.controller");
+const Category = require("../controllers/category.controller");
 
 //POST
-router.route("/add").post(UserController.check, UserController.check_permission, AccountController.add);
+router.route("/add").post(UserController.check, UserController.check_permission,Category.check, AccountController.add);
 router.route("/delete").post(UserController.check, UserController.check_permission, AccountController.delete);
 router.route("/update").post(UserController.check, UserController.check_permission, AccountController.update);
 router.route("/update/status").post(UserController.check, UserController.check_permission, UserController.check_permission_finance, AccountController.updateStatus);
