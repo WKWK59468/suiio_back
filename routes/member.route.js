@@ -7,7 +7,7 @@ const SECRET = "suiio";
 router.route("/delete").post(UserController.check, UserController.check_permission, UserController.check_permission_organization, UserController.delMember);
 router.route("/add").post(UserController.check, UserController.check_permission, UserController.addMember);
 router.route("/fetch/all").get(UserController.listMember);
-
+router.route("/fetch/:sID").get(UserController.fetchOne);
 router.route("/login").post((req, res, next) => {
     const token = req.header('Authorization')?.replace('Bearer ', '');
     jwt.verify(token, SECRET, (jwterr, decoded) => {

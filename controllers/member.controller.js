@@ -113,6 +113,25 @@ const dateFormat = (res) => {
 };
 
 class UserController {
+  fetchOne = (req, res) => {
+    const sID = req.params.sID;
+    models.fetchOne(sID)
+      .then(async (result) => {
+        result = await dateFormat(result);
+        res.status(200).json({ result: result[0] });
+        return new Promise((resolve, reject) => { });
+      })
+      .catch((err) => {
+        if (err === "NoData") {
+          res.status(404).json({ result: err })
+          return new Promise((resolve, reject) => { });
+        } else {
+          res.status(500).json({ result: err });
+          return new Promise((resolve, reject) => { });
+        }
+      });
+  }
+
   listMember = (req, res) => {
     models.list(req, (err, results) => {
       if (err) {

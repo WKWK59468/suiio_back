@@ -33,6 +33,14 @@ function pwd_rand() {
   return str;
 }
 module.exports = {
+  fetchOne: (sID) => {
+    return new Promise((resolve, reject) => {
+      sql = `SELECT sID,name,nickname,sex,birth FROM member WHERE sID = ${sID}`
+      conn.query(sql, (err, res) => {
+        err ? reject(err) : res ? resolve(res) : reject("NoData")
+      })
+    })
+  },
   find: (sID) => {
     return new Promise((resolve, reject) => {
       sql = mysql.format(
